@@ -7,8 +7,8 @@ class Unauthorized extends AuthState {}
 class Fail extends AuthState {}
 
 class Success extends AuthState {
-  late String accessToken;
-  Success(this.accessToken);
+  final String _accessToken;
+  Success(this._accessToken);
 
-  String get getAccessToken => accessToken;
+  String get getAccessToken => _accessToken;
 }

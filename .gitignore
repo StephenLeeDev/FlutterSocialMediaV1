@@ -49,3 +49,6 @@ app.*.map.json
 /lib/firebase_options.dart
 /pubspec.lock
 debug.keystore
+
+.env.debug
+.env.release
