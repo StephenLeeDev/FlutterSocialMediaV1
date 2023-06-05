@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_social_media_v1/domain/usecase/auth/get_access_token_use_case.dart';
+import 'package:flutter_social_media_v1/data/repository/post/post_repository_impl.dart';
+import 'package:flutter_social_media_v1/domain/usecase/auth/get_access_token_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/auth/post_sign_in_usecase.dart';
 import 'package:flutter_social_media_v1/presentation/router/router.dart';
 import 'package:flutter_social_media_v1/presentation/viewmodel/auth_viewmodel.dart';
@@ -8,7 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 import 'data/repository/auth/auth_repository_impl.dart';
-import 'domain/usecase/auth/set_access_token_use_case.dart';
+import 'domain/usecase/auth/set_access_token_usecase.dart';
 
 void main() async {
 
