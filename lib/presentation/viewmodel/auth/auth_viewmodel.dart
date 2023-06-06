@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 
-import '../../data/model/auth/auth_request.dart';
-import '../../data/model/auth/auth_state.dart';
-import '../../domain/usecase/auth/post_sign_in_usecase.dart';
-import '../../domain/usecase/auth/set_access_token_use_case.dart';
+import '../../../data/model/auth/auth_request.dart';
+import '../../../data/model/auth/auth_state.dart';
+import '../../../data/singleton/dio_singleton.dart';
+import '../../../domain/usecase/auth/post_sign_in_usecase.dart';
+import '../../../domain/usecase/auth/set_access_token_usecase.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final PostSignInUseCase _postSignInUseCase;
@@ -25,6 +26,7 @@ class AuthViewModel extends ChangeNotifier {
   Future<void> signIn({required AuthRequest authRequest}) async {
     final state = await _postSignInUseCase.execute(authRequest: authRequest);
     if (state is Success) {
+      DioSingleton.setAuthorization(accessToken: state.getAccessToken);
       _setAccessTokenUseCase.execute(accessToken: state.getAccessToken);
     }
     setAuthState(authState: state);

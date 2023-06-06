@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_media_v1/data/model/auth/auth_request.dart';
 import 'package:flutter_social_media_v1/data/model/auth/auth_state.dart';
 import 'package:flutter_social_media_v1/presentation/view/screen/feed/feed_screen.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/auth_viewmodel.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/auth/auth_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
