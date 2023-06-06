@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_social_media_v1/data/repository/post/post_repository_impl.dart';
+import 'package:flutter_social_media_v1/data/repository/secure_storage/secure_storage_repository_impl.dart';
 import 'package:flutter_social_media_v1/domain/usecase/auth/get_access_token_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/auth/post_sign_in_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/post/get_post_list_usecase.dart';
@@ -10,26 +12,35 @@ import 'package:flutter_social_media_v1/presentation/viewmodel/post/post_list_vi
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
+import 'data/singleton/dio_singleton.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'domain/usecase/auth/set_access_token_usecase.dart';
 
 void main() async {
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   // await dotenv.load(fileName: '.env.${kReleaseMode ? 'release' : 'debug'}');
   // await dotenv.load(fileName: '.env.debug');
+
+  /// SecureStorage
+  final secureStorageRepository = SecureStorageRepositoryImpl();
+  final getAccessTokenUseCase = GetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
+  final setAccessTokenUseCase = SetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
+
+  /// Dio Singleton
+  final Dio dio = DioSingleton.getInstance(accessToken: await getAccessTokenUseCase.execute());
 
   /// Authentication
   final authRepository = AuthRepositoryImpl();
   final postSignInUseCase = PostSignInUseCase(authRepository: authRepository);
-  final getAccessTokenUseCase = GetAccessTokenUseCase(authRepository: authRepository);
-  final setAccessTokenUseCase = SetAccessTokenUseCase(authRepository: authRepository);
   final authViewModel = AuthViewModel(
       postSignInUseCase: postSignInUseCase,
       setAccessTokenUseCase: setAccessTokenUseCase
   );
 
-  /// Feed(Post)
-  final postRepository = PostRepositoryImpl();
+  /// Feed(Post List)
+  final postRepository = PostRepositoryImpl(dio);
   final getPostListUseCase = GetPostListUseCase(postRepository: postRepository);
   final postListViewModel = PostListViewModel(getPostListUseCase: getPostListUseCase);
 

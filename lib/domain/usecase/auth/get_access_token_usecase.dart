@@ -1,13 +1,13 @@
-import '../../repository/auth/auth_repository.dart';
+import '../../repository/secure_storage/secure_storage_repository.dart';
 
 class GetAccessTokenUseCase {
-  final AuthRepository _authRepository;
+  final SecureStorageRepository _secureStorageRepository;
 
-  GetAccessTokenUseCase({required AuthRepository authRepository})
-      : _authRepository = authRepository;
+  GetAccessTokenUseCase({required SecureStorageRepository secureStorageRepository})
+      : _secureStorageRepository = secureStorageRepository;
 
   Future<String> execute() async {
-    return await _authRepository.getAccessTokenFromSecureStorage();
+    return await _secureStorageRepository.getAccessTokenFromSecureStorage();
   }
 
 }
