@@ -1,13 +1,13 @@
 import '../user/user_model.dart';
 
 class PostModel {
-  int id;
-  String title;
-  String description;
-  String status;
-  DateTime createdAt;
-  List<String> imageUrls;
-  UserModel user;
+  int? id;
+  String? title;
+  String? description;
+  String? status;
+  DateTime? createdAt;
+  List<String>? imageUrls;
+  UserModel? user;
 
   PostModel({
     required this.id,
@@ -40,9 +40,9 @@ class PostModel {
       'title': title,
       'description': description,
       'status': status,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
       'imageUrls': imageUrls,
-      'user': user.toJson(),
+      'user': user?.toJson(),
     };
   }
 
