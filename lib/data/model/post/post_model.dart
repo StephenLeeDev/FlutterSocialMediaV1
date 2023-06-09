@@ -50,4 +50,9 @@ class PostModel {
   String toString() {
     return 'PostModel(id: $id, title: $title, description: $description, status: $status, createdAt: $createdAt, imageUrls: $imageUrls, user: $user)';
   }
+
+  String getUserName() {
+    return user?.username ?? "Unknown";
+  }
+
 }
