@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../domain/usecase/auth/get_access_token_use_case.dart';
+import '../../domain/usecase/auth/get_access_token_usecase.dart';
 import '../view/screen/auth/auth_screen.dart';
 import '../view/screen/feed/feed_screen.dart';
 
