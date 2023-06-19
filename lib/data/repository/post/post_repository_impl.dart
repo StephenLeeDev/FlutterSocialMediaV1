@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_social_media_v1/data/model/post/post_list_model.dart';
-import 'package:flutter_social_media_v1/domain/usecase/auth/get_access_token_usecase.dart';
-import 'package:get_it/get_it.dart';
 
 import '../../../domain/repository/post/post_repository.dart';
 import '../../constant/constant.dart';

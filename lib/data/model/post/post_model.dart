@@ -2,21 +2,25 @@ import '../user/user_model.dart';
 
 class PostModel {
   int? id;
-  String? title;
   String? description;
   String? status;
+  UserModel? user;
   DateTime? createdAt;
   List<String>? imageUrls;
-  UserModel? user;
+  List<String>? likes;
+  List<String>? bookMarkedUsers;
+  int? commentCount;
 
   PostModel({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.status,
-    required this.createdAt,
-    required this.imageUrls,
-    required this.user,
+    this.id,
+    this.description,
+    this.status,
+    this.user,
+    this.createdAt,
+    this.imageUrls,
+    this.likes,
+    this.bookMarkedUsers,
+    this.commentCount,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -25,34 +29,42 @@ class PostModel {
 
     return PostModel(
       id: json['id'],
-      title: json['title'],
       description: json['description'],
       status: json['status'],
+      user: user,
       createdAt: DateTime.parse(json['createdAt']),
       imageUrls: imageUrls,
-      user: user,
+      likes: List<String>.from(json['likes']),
+      bookMarkedUsers: List<String>.from(json['bookMarkedUsers']),
+      commentCount: json['commentCount'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
       'description': description,
       'status': status,
+      'user': user?.toJson(),
       'createdAt': createdAt?.toIso8601String(),
       'imageUrls': imageUrls,
-      'user': user?.toJson(),
+      'likes': likes,
+      'bookMarkedUsers': bookMarkedUsers,
+      'commentCount': commentCount,
     };
   }
 
   @override
   String toString() {
-    return 'PostModel(id: $id, title: $title, description: $description, status: $status, createdAt: $createdAt, imageUrls: $imageUrls, user: $user)';
+    return 'PostModel(id: $id, description: $description, status: $status, user: $user, createdAt: $createdAt, imageUrls: $imageUrls, likes: $likes, bookMarkedUsers: $bookMarkedUsers, commentCount: $commentCount)';
   }
 
   String getUserName() {
     return user?.username ?? "Unknown";
+  }
+
+  bool isLikedThisPost(String myEmail) {
+    return likes?.contains(myEmail) ?? false;
   }
 
 }
