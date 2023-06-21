@@ -23,6 +23,8 @@ import 'package:provider/provider.dart';
 import 'data/singleton/dio_singleton.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'domain/usecase/auth/set_access_token_usecase.dart';
+import 'domain/usecase/user/post_bookmark_usecase.dart';
+import 'presentation/viewmodel/user/bookmark_viewmodel.dart';
 
 void main() async {
 
@@ -50,7 +52,9 @@ void main() async {
   /// User
   final userRepository = UserRepositoryImpl(dio);
   final getMyUserInfoUseCase = GetMyUserInfoUseCase(userRepository: userRepository);
+  final postBookmarkUseCase = PostBookmarkUseCase(userRepository: userRepository);
   final myUserInfoViewModel = MyUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
+  final bookmarkViewModel = BookmarkViewModel(postBookmarkUseCase: postBookmarkUseCase);
 
   /// Feed(Post List)
   final postRepository = PostRepositoryImpl(dio);
@@ -74,6 +78,9 @@ void main() async {
         ),
         ChangeNotifierProvider<MyUserInfoViewModel>(
           create: (context) => myUserInfoViewModel,
+        ),
+        ChangeNotifierProvider<BookmarkViewModel>(
+          create: (context) => bookmarkViewModel,
         ),
         ChangeNotifierProvider<PostListViewModel>(
           create: (context) => postListViewModel,

@@ -1,16 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../data/model/common/common_state.dart';
 import '../../../../data/model/post/post_model.dart';
+import '../../../viewmodel/post/post_list_viewmodel.dart';
+import '../../../viewmodel/user/bookmark_viewmodel.dart';
 
-class PostWidget extends StatelessWidget {
+class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.postModel}) : super(key: key);
   final PostModel postModel;
 
   @override
-  Widget build(BuildContext context) {
+  State<PostWidget> createState() => _PostWidgetState();
+}
 
-    const double constantPadding = 8;
+class _PostWidgetState extends State<PostWidget> {
+
+  late final BookmarkViewModel bookmarkViewModel;
+  late final PostListViewModel postListViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    bookmarkViewModel = context.read<BookmarkViewModel>();
+    // TODO : Updated post item setter implementation
+    postListViewModel = context.read<PostListViewModel>();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const double constantPadding = 12;
+    bool isBookmarked = widget.postModel.isBookmarked ?? false;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -27,13 +48,17 @@ class PostWidget extends StatelessWidget {
                     margin: const EdgeInsets.all(constantPadding),
                     width: 30,
                     height: 30,
+                    clipBehavior: Clip.hardEdge,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Image.network(postModel.user?.thumbnail ?? ""),
+                    child: Image.network(
+                      widget.postModel.user?.thumbnail ?? "",
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Text(
-                    postModel.getUserName(),
+                    widget.postModel.getUserName(),
                     style: const TextStyle(
                       fontSize: 15.0,
                       fontWeight: FontWeight.w600,
@@ -56,13 +81,13 @@ class PostWidget extends StatelessWidget {
             width: double.infinity,
             height: MediaQuery.of(context).size.width,
             initialPage: 0,
-            indicatorColor: postModel.imageUrls?.length == 1
+            indicatorColor: widget.postModel.imageUrls?.length == 1
                 ? Colors.transparent
                 : Colors.blue,
-            indicatorBackgroundColor: postModel.imageUrls?.length == 1
+            indicatorBackgroundColor: widget.postModel.imageUrls?.length == 1
                 ? Colors.transparent
                 : Colors.grey,
-            children: postModel.imageUrls?.map((imageUrl) {
+            children: widget.postModel.imageUrls?.map((imageUrl) {
                   return Image.network(
                     imageUrl,
                     fit: BoxFit.contain,
@@ -71,9 +96,57 @@ class PostWidget extends StatelessWidget {
                 [],
           ),
         ),
-        // TODO : Implement like/unlike feature & view
+
+        Row(
+          children: [
+            IconButton(
+              icon: Icon(
+                widget.postModel.isLiked == true ? Icons.favorite : Icons.favorite_outline_outlined,
+                color: widget.postModel.isLiked == true ? Colors.redAccent : Colors.black,
+              ),
+              onPressed: () async {
+                // TODO : Implement like/unlike feature
+              },
+            ),
+            IconButton(
+              padding: EdgeInsets.zero,
+              icon: const Icon(
+                Icons.send_rounded,
+                color: Colors.black,
+              ),
+              onPressed: () async {
+                // TODO : Implement create/move a chatroom
+              },
+            ),
+            const Spacer(),
+
+            /// Bookmark/unbookmark button
+            IconButton(
+              padding: EdgeInsets.zero,
+              icon: Icon(
+                isBookmarked == true ? Icons.bookmark : Icons.bookmark_border_rounded,
+                color: Colors.black,
+              ),
+              onPressed: () async {
+                final postId = widget.postModel.id;
+                if (postId == null) return;
+
+                /// Request update the bookmark to the app server
+                final result = await bookmarkViewModel.postBookmark(postId: postId);
+                if (result is Success) {
+                  postListViewModel.setUpdatedBookmark(postId: postId);
+                  /// Update current post widget
+                  setState(() {
+                    isBookmarked = !isBookmarked;
+                  });
+                }
+              },
+            ),
+          ],
+        ),
+
         Padding(
-          padding: const EdgeInsets.all(constantPadding),
+          padding: const EdgeInsets.only(left: constantPadding, right: constantPadding, bottom: constantPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -85,21 +158,19 @@ class PostWidget extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: postModel.getUserName(),
+                            text: widget.postModel.getUserName(),
                             style: const TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black
-                            ),
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black),
                           ),
                           const TextSpan(text: ' '),
                           TextSpan(
-                            text: postModel.description ?? "",
+                            text: widget.postModel.description ?? "",
                             style: const TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w400,
-                                color: Colors.black
-                            ),
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
                           ),
                         ],
                       ),
@@ -110,6 +181,7 @@ class PostWidget extends StatelessWidget {
               ),
 
               // TODO : Implement a date information feature
+              // TODO : Implement comments feature
             ],
           ),
         )

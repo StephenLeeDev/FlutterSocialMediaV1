@@ -18,12 +18,16 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   final _scrollController = ScrollController();
+  late final PostListViewModel postListViewModel;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
-    context.read<PostListViewModel>().getPostList();
+
+    postListViewModel = context.read<PostListViewModel>();
+    postListViewModel.getPostList();
+
     // TODO : Relocation to inside of the MainNavigation later
     context.read<MyUserInfoViewModel>().getMyUserInfo();
   }
@@ -31,22 +35,27 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Selector<PostListViewModel, List<PostModel>>(
-        selector: (_, viewModel) => viewModel.currentList,
-        builder: (context, list, _) {
-          return ListView.separated(
-            controller: _scrollController,
-            itemCount: list.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: PostWidget(
-                  postModel: list[index],
-                ),
-              );
-            }, separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
-          );
-        }
+      body: RefreshIndicator(
+        onRefresh: () {
+          return postListViewModel.refresh();
+        },
+        child: Selector<PostListViewModel, List<PostModel>>(
+          selector: (_, viewModel) => viewModel.currentList,
+          builder: (context, list, _) {
+            return ListView.separated(
+              controller: _scrollController,
+              itemCount: list.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
+                  child: PostWidget(
+                    postModel: list[index],
+                  ),
+                );
+              }, separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
+            );
+          }
+        ),
       ),
     );
   }
