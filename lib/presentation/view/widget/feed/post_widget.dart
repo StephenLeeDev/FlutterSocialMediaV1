@@ -224,7 +224,28 @@ class _PostWidgetState extends State<PostWidget> {
               ),
             ],
           ),
-        )
+        ),
+
+        // TODO : Implement comments detail screen feature
+        Padding(
+          padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
+          child: Text(
+            "View $commentCount comment${IntegerUtil().getPluralSuffix(count: commentCount)}",
+            style: const TextStyle(
+                fontSize: 15.0, fontWeight: FontWeight.w400, color: Colors.black),
+          ),
+        ),
+
+        if (dateString.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
+          child: Text(
+            DateUtil().getTimeAgo(dateString),
+            style: const TextStyle(
+                fontSize: 12.0, fontWeight: FontWeight.w400, color: Colors.black45),
+          ),
+        ),
+
       ],
     );
   }
