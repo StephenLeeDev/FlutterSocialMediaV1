@@ -7,6 +7,7 @@ class PostModel {
   UserModel? user;
   DateTime? createdAt;
   List<String>? imageUrls;
+  int? likeCount;
   bool? isLiked;
   bool? isBookmarked;
   int? commentCount;
@@ -18,6 +19,7 @@ class PostModel {
     this.user,
     this.createdAt,
     this.imageUrls,
+    this.likeCount,
     this.isLiked,
     this.isBookmarked,
     this.commentCount,
@@ -34,6 +36,7 @@ class PostModel {
       user: user,
       createdAt: DateTime.parse(json['createdAt']),
       imageUrls: imageUrls,
+      likeCount: json['likeCount'],
       isLiked: json['isLiked'],
       isBookmarked: json['isBookmarked'],
       commentCount: json['commentCount'],
@@ -48,6 +51,7 @@ class PostModel {
       'user': user?.toJson(),
       'createdAt': createdAt?.toIso8601String(),
       'imageUrls': imageUrls,
+      'likeCount': likeCount,
       'isLiked': isLiked,
       'isBookmarked': isBookmarked,
       'commentCount': commentCount,
@@ -56,7 +60,7 @@ class PostModel {
 
   @override
   String toString() {
-    return 'PostModel(id: $id, description: $description, status: $status, user: $user, createdAt: $createdAt, imageUrls: $imageUrls, isLiked: $isLiked, isBookmarked: $isBookmarked, commentCount: $commentCount)';
+    return 'PostModel(id: $id, description: $description, status: $status, user: $user, createdAt: $createdAt, imageUrls: $imageUrls, likeCount: $likeCount, isLiked: $isLiked, isBookmarked: $isBookmarked, commentCount: $commentCount)';
   }
 
   PostModel copyWith({
@@ -66,6 +70,7 @@ class PostModel {
     UserModel? user,
     DateTime? createdAt,
     List<String>? imageUrls,
+    int? likeCount,
     bool? isLiked,
     bool? isBookmarked,
     int? commentCount,
@@ -77,6 +82,7 @@ class PostModel {
       user: user ?? this.user,
       createdAt: createdAt ?? this.createdAt,
       imageUrls: imageUrls ?? this.imageUrls,
+      likeCount: likeCount ?? this.likeCount,
       isLiked: isLiked ?? this.isLiked,
       isBookmarked: isBookmarked ?? this.isBookmarked,
       commentCount: commentCount ?? this.commentCount,
@@ -89,5 +95,13 @@ class PostModel {
 
   setBookmark() {
     if (isBookmarked != null) isBookmarked = !isBookmarked!;
+  }
+
+  setLike() {
+    if (isLiked != null) isLiked = !isLiked!;
+  }
+
+  setLikeCount({required int value}) {
+    likeCount = value;
   }
 }

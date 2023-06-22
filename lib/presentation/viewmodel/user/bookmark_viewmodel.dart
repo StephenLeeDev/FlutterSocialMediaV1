@@ -18,7 +18,7 @@ class BookmarkViewModel extends ChangeNotifier {
     _state = state;
   }
 
-  /// Request update the bookmark to the app server
+  /// Request update the bookmark/unbookmark to the app server
   Future<CommonState> postBookmark({required int postId}) async {
     setState(state: Loading());
     final result = await _postBookmarkUseCase.execute(postId: postId);

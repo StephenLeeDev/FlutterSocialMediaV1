@@ -87,12 +87,25 @@ class PostListViewModel extends ChangeNotifier {
     getPostList();
   }
 
-  /// Set updated post item's bookmark
+  /// Set updated post item's bookmark/unbookmark
   setUpdatedBookmark({required int postId}) {
     final index = currentList.indexWhere((post) => post.id == postId);
     if (index != -1) {
       final list = currentList.toList();
       list[index].setBookmark();
+
+      /// Not using 'setCurrentList()' because of avoiding updating of the total list
+      _currentList = list;
+    }
+  }
+
+  /// Set updated post item's like/unlike
+  setUpdatedLike({required int postId, required int likeCount}) {
+    final index = currentList.indexWhere((post) => post.id == postId);
+    if (index != -1) {
+      final list = currentList.toList();
+      list[index].setLike();
+      list[index].setLikeCount(value: likeCount);
 
       /// Not using 'setCurrentList()' because of avoiding updating of the total list
       _currentList = list;

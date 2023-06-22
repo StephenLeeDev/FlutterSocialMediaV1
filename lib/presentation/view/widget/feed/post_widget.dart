@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:flutter_social_media_v1/presentation/util/date/date_util.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/post/post_like_viewmodel.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data/model/common/common_state.dart';
+import '../../../../data/model/common/single_integer_state.dart' as SingleIntegerState;
 import '../../../../data/model/post/post_model.dart';
+import '../../../util/integer/integer_util.dart';
 import '../../../viewmodel/post/post_list_viewmodel.dart';
 import '../../../viewmodel/user/bookmark_viewmodel.dart';
 
@@ -16,25 +21,33 @@ class PostWidget extends StatefulWidget {
 }
 
 class _PostWidgetState extends State<PostWidget> {
-
   late final BookmarkViewModel bookmarkViewModel;
   late final PostListViewModel postListViewModel;
+  final PostLikeViewModel postLikeViewModel =
+      GetIt.instance<PostLikeViewModel>();
 
   @override
   void initState() {
     super.initState();
     bookmarkViewModel = context.read<BookmarkViewModel>();
-    // TODO : Updated post item setter implementation
     postListViewModel = context.read<PostListViewModel>();
   }
 
   @override
   Widget build(BuildContext context) {
+
     const double constantPadding = 12;
-    bool isBookmarked = widget.postModel.isBookmarked ?? false;
+
+    bool? isBookmarked = widget.postModel.isBookmarked;
+    bool? isLiked = widget.postModel.isLiked;
+    int likeCount = widget.postModel.likeCount ?? 0;
+    int commentCount = widget.postModel.commentCount ?? 0;
+
+    String dateString = widget.postModel.createdAt != null ? widget.postModel.createdAt.toString() : "";
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -96,20 +109,35 @@ class _PostWidgetState extends State<PostWidget> {
                 [],
           ),
         ),
-
         Row(
           children: [
             IconButton(
               icon: Icon(
-                widget.postModel.isLiked == true ? Icons.favorite : Icons.favorite_outline_outlined,
-                color: widget.postModel.isLiked == true ? Colors.redAccent : Colors.black,
+                isLiked == true
+                    ? Icons.favorite
+                    : Icons.favorite_outline_outlined,
+                color: isLiked == true ? Colors.redAccent : Colors.black,
               ),
               onPressed: () async {
-                // TODO : Implement like/unlike feature
+                final postId = widget.postModel.id;
+                if (postId == null || isLiked == null) return;
+
+                /// Request update the like/unlike to the app server
+                final result = await postLikeViewModel.postLike(postId: postId);
+                if (result is SingleIntegerState.Success) {
+                  final newLikeCount = result.getValue;
+                  postListViewModel.setUpdatedLike(
+                      postId: postId, likeCount: newLikeCount);
+
+                  /// Update current post widget
+                  setState(() {
+                    isLiked = !isLiked!;
+                    likeCount = newLikeCount;
+                  });
+                }
               },
             ),
             IconButton(
-              padding: EdgeInsets.zero,
               icon: const Icon(
                 Icons.send_rounded,
                 color: Colors.black,
@@ -122,22 +150,25 @@ class _PostWidgetState extends State<PostWidget> {
 
             /// Bookmark/unbookmark button
             IconButton(
-              padding: EdgeInsets.zero,
               icon: Icon(
-                isBookmarked == true ? Icons.bookmark : Icons.bookmark_border_rounded,
+                isBookmarked == true
+                    ? Icons.bookmark
+                    : Icons.bookmark_border_rounded,
                 color: Colors.black,
               ),
               onPressed: () async {
                 final postId = widget.postModel.id;
-                if (postId == null) return;
+                if (postId == null || isBookmarked == null) return;
 
-                /// Request update the bookmark to the app server
-                final result = await bookmarkViewModel.postBookmark(postId: postId);
+                /// Request update the bookmark/unbookmark to the app server
+                final result =
+                    await bookmarkViewModel.postBookmark(postId: postId);
                 if (result is Success) {
                   postListViewModel.setUpdatedBookmark(postId: postId);
+
                   /// Update current post widget
                   setState(() {
-                    isBookmarked = !isBookmarked;
+                    isBookmarked = !isBookmarked!;
                   });
                 }
               },
@@ -146,7 +177,19 @@ class _PostWidgetState extends State<PostWidget> {
         ),
 
         Padding(
-          padding: const EdgeInsets.only(left: constantPadding, right: constantPadding, bottom: constantPadding),
+          padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
+          child: Text(
+            "$likeCount likes",
+            style: const TextStyle(
+                fontSize: 15.0, fontWeight: FontWeight.w400, color: Colors.black),
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.only(
+              left: constantPadding,
+              right: constantPadding,
+              bottom: constantPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -179,9 +222,6 @@ class _PostWidgetState extends State<PostWidget> {
                   ),
                 ],
               ),
-
-              // TODO : Implement a date information feature
-              // TODO : Implement comments feature
             ],
           ),
         )
