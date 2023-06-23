@@ -6,11 +6,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_social_media_v1/data/repository/comment/comment_repository_impl.dart';
 import 'package:flutter_social_media_v1/data/repository/post/post_repository_impl.dart';
 import 'package:flutter_social_media_v1/data/repository/secure_storage/secure_storage_repository_impl.dart';
 import 'package:flutter_social_media_v1/data/repository/user/user_repository_impl.dart';
 import 'package:flutter_social_media_v1/domain/usecase/auth/get_access_token_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/auth/post_sign_in_usecase.dart';
+import 'package:flutter_social_media_v1/domain/usecase/comment/get_comment_list_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/post/get_post_list_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/post/post_like_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/user/get_my_user_info_usecase.dart';
@@ -65,9 +67,14 @@ void main() async {
   final postListViewModel = PostListViewModel(getPostListUseCase: getPostListUseCase);
   final postLikeViewModel = PostLikeViewModel(postLikeUseCase: postLikeUseCase);
 
+  /// Comment
+  final commentRepository = CommentRepositoryImpl(dio);
+  final getCommentUseCase = GetCommentListUseCase(commentRepository: commentRepository);
+
   final getIt = GetIt.instance;
   getIt.registerSingleton<GetAccessTokenUseCase>(getAccessTokenUseCase);
   getIt.registerSingleton<PostLikeViewModel>(postLikeViewModel);
+  getIt.registerSingleton<GetCommentListUseCase>(getCommentUseCase);
 
   await Firebase.initializeApp();
   FirebaseMessaging fbMsg = FirebaseMessaging.instance;

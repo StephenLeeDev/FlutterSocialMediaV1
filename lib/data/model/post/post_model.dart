@@ -2,6 +2,7 @@ import '../user/user_model.dart';
 
 class PostModel {
   int? id;
+  int get getId => id ?? -1;
   String? description;
   String? status;
   UserModel? user;
