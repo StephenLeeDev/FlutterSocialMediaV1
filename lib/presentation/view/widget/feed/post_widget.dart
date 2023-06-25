@@ -1,19 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:flutter_social_media_v1/presentation/util/date/date_util.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/post/post_like_viewmodel.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../data/model/common/common_state.dart';
+import '../../../../data/model/common/single_integer_state.dart' as SingleIntegerState;
 import '../../../../data/model/post/post_model.dart';
+import '../../../util/integer/integer_util.dart';
+import '../../../viewmodel/post/post_list_viewmodel.dart';
+import '../../../viewmodel/user/bookmark_viewmodel.dart';
 
-class PostWidget extends StatelessWidget {
+class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.postModel}) : super(key: key);
   final PostModel postModel;
 
   @override
+  State<PostWidget> createState() => _PostWidgetState();
+}
+
+class _PostWidgetState extends State<PostWidget> {
+  late final BookmarkViewModel bookmarkViewModel;
+  late final PostListViewModel postListViewModel;
+  final PostLikeViewModel postLikeViewModel =
+      GetIt.instance<PostLikeViewModel>();
+
+  @override
+  void initState() {
+    super.initState();
+    bookmarkViewModel = context.read<BookmarkViewModel>();
+    postListViewModel = context.read<PostListViewModel>();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
-    const double constantPadding = 8;
+    const double constantPadding = 12;
+
+    bool? isBookmarked = widget.postModel.isBookmarked;
+    bool? isLiked = widget.postModel.isLiked;
+    int likeCount = widget.postModel.likeCount ?? 0;
+    int commentCount = widget.postModel.commentCount ?? 0;
+
+    String dateString = widget.postModel.createdAt != null ? widget.postModel.createdAt.toString() : "";
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -27,13 +61,17 @@ class PostWidget extends StatelessWidget {
                     margin: const EdgeInsets.all(constantPadding),
                     width: 30,
                     height: 30,
+                    clipBehavior: Clip.hardEdge,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Image.network(postModel.user?.thumbnail ?? ""),
+                    child: Image.network(
+                      widget.postModel.user?.thumbnail ?? "",
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Text(
-                    postModel.getUserName(),
+                    widget.postModel.getUserName(),
                     style: const TextStyle(
                       fontSize: 15.0,
                       fontWeight: FontWeight.w600,
@@ -56,13 +94,13 @@ class PostWidget extends StatelessWidget {
             width: double.infinity,
             height: MediaQuery.of(context).size.width,
             initialPage: 0,
-            indicatorColor: postModel.imageUrls?.length == 1
+            indicatorColor: widget.postModel.imageUrls?.length == 1
                 ? Colors.transparent
                 : Colors.blue,
-            indicatorBackgroundColor: postModel.imageUrls?.length == 1
+            indicatorBackgroundColor: widget.postModel.imageUrls?.length == 1
                 ? Colors.transparent
                 : Colors.grey,
-            children: postModel.imageUrls?.map((imageUrl) {
+            children: widget.postModel.imageUrls?.map((imageUrl) {
                   return Image.network(
                     imageUrl,
                     fit: BoxFit.contain,
@@ -71,9 +109,87 @@ class PostWidget extends StatelessWidget {
                 [],
           ),
         ),
-        // TODO : Implement like/unlike feature & view
+        Row(
+          children: [
+            IconButton(
+              icon: Icon(
+                isLiked == true
+                    ? Icons.favorite
+                    : Icons.favorite_outline_outlined,
+                color: isLiked == true ? Colors.redAccent : Colors.black,
+              ),
+              onPressed: () async {
+                final postId = widget.postModel.id;
+                if (postId == null || isLiked == null) return;
+
+                /// Request update the like/unlike to the app server
+                final result = await postLikeViewModel.postLike(postId: postId);
+                if (result is SingleIntegerState.Success) {
+                  final newLikeCount = result.getValue;
+                  postListViewModel.setUpdatedLike(
+                      postId: postId, likeCount: newLikeCount);
+
+                  /// Update current post widget
+                  setState(() {
+                    isLiked = !isLiked!;
+                    likeCount = newLikeCount;
+                  });
+                }
+              },
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.send_rounded,
+                color: Colors.black,
+              ),
+              onPressed: () async {
+                // TODO : Implement create/move a chatroom
+              },
+            ),
+            const Spacer(),
+
+            /// Bookmark/unbookmark button
+            IconButton(
+              icon: Icon(
+                isBookmarked == true
+                    ? Icons.bookmark
+                    : Icons.bookmark_border_rounded,
+                color: Colors.black,
+              ),
+              onPressed: () async {
+                final postId = widget.postModel.id;
+                if (postId == null || isBookmarked == null) return;
+
+                /// Request update the bookmark/unbookmark to the app server
+                final result =
+                    await bookmarkViewModel.postBookmark(postId: postId);
+                if (result is Success) {
+                  postListViewModel.setUpdatedBookmark(postId: postId);
+
+                  /// Update current post widget
+                  setState(() {
+                    isBookmarked = !isBookmarked!;
+                  });
+                }
+              },
+            ),
+          ],
+        ),
+
         Padding(
-          padding: const EdgeInsets.all(constantPadding),
+          padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
+          child: Text(
+            "$likeCount likes",
+            style: const TextStyle(
+                fontSize: 15.0, fontWeight: FontWeight.w400, color: Colors.black),
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.only(
+              left: constantPadding,
+              right: constantPadding,
+              bottom: constantPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -85,21 +201,19 @@ class PostWidget extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: postModel.getUserName(),
+                            text: widget.postModel.getUserName(),
                             style: const TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black
-                            ),
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black),
                           ),
                           const TextSpan(text: ' '),
                           TextSpan(
-                            text: postModel.description ?? "",
+                            text: widget.postModel.description ?? "",
                             style: const TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w400,
-                                color: Colors.black
-                            ),
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black),
                           ),
                         ],
                       ),
@@ -108,11 +222,30 @@ class PostWidget extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // TODO : Implement a date information feature
             ],
           ),
-        )
+        ),
+
+        // TODO : Implement comments detail screen feature
+        Padding(
+          padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
+          child: Text(
+            "View $commentCount comment${IntegerUtil().getPluralSuffix(count: commentCount)}",
+            style: const TextStyle(
+                fontSize: 15.0, fontWeight: FontWeight.w400, color: Colors.black),
+          ),
+        ),
+
+        if (dateString.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
+          child: Text(
+            DateUtil().getTimeAgo(dateString),
+            style: const TextStyle(
+                fontSize: 12.0, fontWeight: FontWeight.w400, color: Colors.black45),
+          ),
+        ),
+
       ],
     );
   }

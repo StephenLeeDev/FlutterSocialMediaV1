@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_social_media_v1/domain/usecase/post/get_post_list_usecase.dart';
 
 import '../../../data/model/post/post_list_state.dart';
 import '../../../data/model/post/post_model.dart';
+import '../../../domain/usecase/post/get_post_list_usecase.dart';
 
 class PostListViewModel extends ChangeNotifier {
   final GetPostListUseCase _getPostListUseCase;
@@ -25,23 +25,23 @@ class PostListViewModel extends ChangeNotifier {
   int get page => _page;
 
   increasePage() {
-    setPage(newValue: page + 1);
+    setPage(value: page + 1);
   }
 
-  setPage({required int newValue}) {
-    _page = newValue;
+  setPage({required int value}) {
+    _page = value;
   }
 
   /// The number of items to fetch at once
-  final int _limit = 5;
+  final int _limit = 3;
   int get limit => _limit;
 
   /// Total posts count can fetch
   bool _hasNext = true;
   bool get hasNext => _hasNext;
 
-  setHasNextAsFalse() {
-    _hasNext = false;
+  setHasNext({required bool value}) {
+    _hasNext = value;
   }
 
   /// List of posts fetched so far (Using for UI rendering)
@@ -74,7 +74,41 @@ class PostListViewModel extends ChangeNotifier {
       addAdditionalList(additionalList: state.list);
       setPostListState(postListState: state);
 
-      if (currentList.length >= state.total) setHasNextAsFalse();
+      if (currentList.length >= state.total) setHasNext(value: false);
+    }
+  }
+
+  /// Refresh the post list
+  Future<void> refresh() async {
+    setCurrentList(list: []);
+    setPage(value: 1);
+    setHasNext(value: true);
+
+    getPostList();
+  }
+
+  /// Set updated post item's bookmark/unbookmark
+  setUpdatedBookmark({required int postId}) {
+    final index = currentList.indexWhere((post) => post.id == postId);
+    if (index != -1) {
+      final list = currentList.toList();
+      list[index].setBookmark();
+
+      /// Not using 'setCurrentList()' because of avoiding updating of the total list
+      _currentList = list;
+    }
+  }
+
+  /// Set updated post item's like/unlike
+  setUpdatedLike({required int postId, required int likeCount}) {
+    final index = currentList.indexWhere((post) => post.id == postId);
+    if (index != -1) {
+      final list = currentList.toList();
+      list[index].setLike();
+      list[index].setLikeCount(value: likeCount);
+
+      /// Not using 'setCurrentList()' because of avoiding updating of the total list
+      _currentList = list;
     }
   }
 
