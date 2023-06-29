@@ -18,10 +18,8 @@ class PostRepositoryImpl extends PostRepository {
 
     const api = 'post';
     final url = '$baseUrl$api?page=$page&limit=$limit';
-    debugPrint("url : $url");
 
     final Response response = await _dio.get(url);
-    debugPrint("response : ${response.toString()}");
 
     if (response.statusCode == 200) {
       final postListModel = PostListModel.fromJson(response.data);
@@ -39,10 +37,8 @@ class PostRepositoryImpl extends PostRepository {
 
     const api = 'post/{postId}/like';
     const url = '$baseUrl$api';
-    debugPrint("url : $url");
 
     final Response response = await _dio.post(url, queryParameters: {'postId': postId});
-    debugPrint("response : ${response.toString()}");
 
     if (response.statusCode == 201) {
       final value = response.data['likeCount'];
