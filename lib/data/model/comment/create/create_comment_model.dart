@@ -1,18 +1,18 @@
-class CreateCommentDto {
+class CreateCommentModel {
   String? content;
   int? postId;
   int? parentCommentId;
   String? parentCommentAuthor;
 
-  CreateCommentDto({
+  CreateCommentModel({
     this.content,
     this.postId,
     this.parentCommentId,
     this.parentCommentAuthor,
   });
 
-  factory CreateCommentDto.fromJson(Map<String, dynamic> json) {
-    return CreateCommentDto(
+  factory CreateCommentModel.fromJson(Map<String, dynamic> json) {
+    return CreateCommentModel(
       content: json['content'] as String?,
       postId: json['postId'] as int?,
       parentCommentId: json['parentCommentId'] as int?,
