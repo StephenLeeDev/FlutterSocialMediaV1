@@ -3,14 +3,17 @@ import '../user/simple_user_info.dart';
 class CommentModel {
   int? id;
   String? content;
+  String get getContent => content ?? "";
   CommentType? type;
   int? parentCommentId;
   String? parentCommentAuthor;
   int? postId;
   SimpleUserInfo? user;
+  String get getUserName => user?.username ?? "Unknown";
   DateTime? createdAt;
   DateTime? updatedAt;
   int? childrenCount;
+  int get getChildrenCount => childrenCount ?? 0;
 
   CommentModel({
     this.id,

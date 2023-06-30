@@ -76,8 +76,6 @@ class CommentListViewModel extends ChangeNotifier {
     final state = await _getCommentListUseCase.execute(postId: postId, page: page, limit: limit);
     if (state is Success) {
       increasePage();
-      debugPrint("state.total : ${state.total}");
-      debugPrint("state.list : ${state.list}");
 
       addAdditionalList(additionalList: state.list);
       setCommentListState(commentListState: state);

@@ -17,10 +17,8 @@ class CommentRepositoryImpl extends CommentRepository {
 
     const api = 'comment';
     final url = '$baseUrl$api?postId=$postId&page=$page&limit=$limit';
-    debugPrint("url : $url");
 
     final Response response = await _dio.get(url);
-    debugPrint("response : ${response.toString()}");
 
     if (response.statusCode == 200) {
       final model = CommentListModel.fromJson(response.data);

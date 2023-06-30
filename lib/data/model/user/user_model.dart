@@ -1,6 +1,7 @@
 class UserModel {
   String? email;
   String? username;
+  String get getUserName => username ?? "Unknown";
   String? thumbnail;
 
   UserModel({

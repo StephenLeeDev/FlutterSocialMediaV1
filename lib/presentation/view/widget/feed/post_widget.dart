@@ -3,6 +3,7 @@ import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:flutter_social_media_v1/presentation/util/date/date_util.dart';
 import 'package:flutter_social_media_v1/presentation/viewmodel/post/post_like_viewmodel.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data/model/common/common_state.dart';
@@ -11,6 +12,7 @@ import '../../../../data/model/post/post_model.dart';
 import '../../../util/integer/integer_util.dart';
 import '../../../viewmodel/post/post_list_viewmodel.dart';
 import '../../../viewmodel/user/bookmark_viewmodel.dart';
+import '../../screen/comment/comment_screen_wrapper.dart';
 
 class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.postModel}) : super(key: key);
@@ -23,8 +25,7 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   late final BookmarkViewModel bookmarkViewModel;
   late final PostListViewModel postListViewModel;
-  final PostLikeViewModel postLikeViewModel =
-      GetIt.instance<PostLikeViewModel>();
+  final PostLikeViewModel postLikeViewModel = GetIt.instance<PostLikeViewModel>();
 
   @override
   void initState() {
@@ -179,7 +180,7 @@ class _PostWidgetState extends State<PostWidget> {
         Padding(
           padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
           child: Text(
-            "$likeCount likes",
+            "$likeCount like${IntegerUtil().getPluralSuffix(count: likeCount)}",
             style: const TextStyle(
                 fontSize: 15.0, fontWeight: FontWeight.w400, color: Colors.black),
           ),
@@ -226,13 +227,18 @@ class _PostWidgetState extends State<PostWidget> {
           ),
         ),
 
-        // TODO : Implement comments detail screen feature
-        Padding(
-          padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
-          child: Text(
-            "View $commentCount comment${IntegerUtil().getPluralSuffix(count: commentCount)}",
-            style: const TextStyle(
-                fontSize: 15.0, fontWeight: FontWeight.w400, color: Colors.black),
+        GestureDetector(
+          onTap: () {
+            final postId = widget.postModel.getId;
+            if (postId > 0) context.pushNamed(CommentScreenWrapper.routeName, pathParameters: {'postId': "$postId"});
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
+            child: Text(
+              "View $commentCount comment${IntegerUtil().getPluralSuffix(count: commentCount)}",
+              style: const TextStyle(
+                  fontSize: 15.0, fontWeight: FontWeight.w400, color: Colors.black),
+            ),
           ),
         ),
 

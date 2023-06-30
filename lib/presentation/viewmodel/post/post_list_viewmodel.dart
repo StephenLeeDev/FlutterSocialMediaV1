@@ -68,8 +68,6 @@ class PostListViewModel extends ChangeNotifier {
     final state = await _getPostListUseCase.execute(page: page, limit: limit);
     if (state is Success) {
       increasePage();
-      debugPrint("state.total : ${state.total}");
-      debugPrint("state.list : ${state.list}");
 
       addAdditionalList(additionalList: state.list);
       setPostListState(postListState: state);

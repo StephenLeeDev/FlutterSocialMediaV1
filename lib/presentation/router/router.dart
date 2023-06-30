@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/usecase/auth/get_access_token_usecase.dart';
 import '../view/screen/auth/auth_screen.dart';
+import '../view/screen/comment/comment_screen_wrapper.dart';
 import '../view/screen/feed/feed_screen.dart';
 
 final GoRouter router = GoRouter(
@@ -31,6 +32,14 @@ final GoRouter router = GoRouter(
       name: FeedScreen.routeName,
       path: FeedScreen.routeURL,
       builder: (context, state) => const FeedScreen(),
+    ),
+    GoRoute(
+      name: CommentScreenWrapper.routeName,
+      path: CommentScreenWrapper.routeURL,
+      builder: (context, state) {
+        final postId = state.pathParameters['postId'] ?? "-1";
+        return CommentScreenWrapper(postId: postId);
+      }
     ),
   ],
 );
