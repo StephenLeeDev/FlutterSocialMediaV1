@@ -17,10 +17,8 @@ class UserRepositoryImpl extends UserRepository {
   Future<MyUserInfoState.MyUserInfoState> getMyUserInfo() async {
     const api = 'user';
     const url = '$baseUrl$api';
-    debugPrint("url : $url");
 
     final Response response = await _dio.get(url);
-    debugPrint("response : ${response.toString()}");
 
     final code = response.statusCode;
 
@@ -41,8 +39,6 @@ class UserRepositoryImpl extends UserRepository {
   Future<CommonState.CommonState> postBookmark({required int postId}) async {
     const api = 'user/post/bookmark';
     const url = '$baseUrl$api';
-    debugPrint("url : $url");
-    debugPrint("postId : $postId");
 
     final Response response = await _dio.post(url, queryParameters: {'postId': postId});
 

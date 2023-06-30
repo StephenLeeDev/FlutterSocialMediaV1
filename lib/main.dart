@@ -23,7 +23,8 @@ import 'package:flutter_social_media_v1/presentation/viewmodel/user/my_user_info
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import 'data/singleton/dio_singleton.dart';
+import 'data/networking/dio_singleton.dart';
+import 'data/networking/interceptor/token_interceptor.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'domain/usecase/auth/set_access_token_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
@@ -43,7 +44,20 @@ void main() async {
   final setAccessTokenUseCase = SetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
 
   /// Dio Singleton
-  final Dio dio = DioSingleton.getInstance(accessToken: await getAccessTokenUseCase.execute());
+  final Dio dio = DioSingleton.getInstance();
+  dio.interceptors.add(TokenInterceptor(getAccessTokenUseCase: getAccessTokenUseCase));
+
+  if (kDebugMode) {
+    dio.interceptors.add(
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        responseHeader: true,
+        compact: true,
+      )
+    );
+  }
 
   /// Authentication
   final authRepository = AuthRepositoryImpl();
