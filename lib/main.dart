@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_social_media_v1/data/repository/secure_storage/secure_st
 import 'package:flutter_social_media_v1/data/repository/user/user_repository_impl.dart';
 import 'package:flutter_social_media_v1/domain/usecase/auth/get_access_token_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/auth/post_sign_in_usecase.dart';
+import 'package:flutter_social_media_v1/domain/usecase/comment/create_comment_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/comment/get_comment_list_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/post/get_post_list_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/post/post_like_usecase.dart';
@@ -21,6 +23,7 @@ import 'package:flutter_social_media_v1/presentation/viewmodel/auth/auth_viewmod
 import 'package:flutter_social_media_v1/presentation/viewmodel/post/post_list_viewmodel.dart';
 import 'package:flutter_social_media_v1/presentation/viewmodel/user/my_user_info_viewmodel.dart';
 import 'package:get_it/get_it.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
 
 import 'data/networking/dio_singleton.dart';
@@ -47,6 +50,7 @@ void main() async {
   final Dio dio = DioSingleton.getInstance();
   dio.interceptors.add(TokenInterceptor(getAccessTokenUseCase: getAccessTokenUseCase));
 
+  /// Log output only in debug mode
   if (kDebugMode) {
     dio.interceptors.add(
       PrettyDioLogger(
@@ -81,14 +85,16 @@ void main() async {
   final postListViewModel = PostListViewModel(getPostListUseCase: getPostListUseCase);
   final postLikeViewModel = PostLikeViewModel(postLikeUseCase: postLikeUseCase);
 
-  /// Comment
+  /// Comment/Reply
   final commentRepository = CommentRepositoryImpl(dio);
   final getCommentUseCase = GetCommentListUseCase(commentRepository: commentRepository);
+  final createCommentUseCase = CreateCommentUseCase(commentRepository: commentRepository);
 
   final getIt = GetIt.instance;
   getIt.registerSingleton<GetAccessTokenUseCase>(getAccessTokenUseCase);
   getIt.registerSingleton<PostLikeViewModel>(postLikeViewModel);
   getIt.registerSingleton<GetCommentListUseCase>(getCommentUseCase);
+  getIt.registerSingleton<CreateCommentUseCase>(createCommentUseCase);
 
   await Firebase.initializeApp();
   FirebaseMessaging fbMsg = FirebaseMessaging.instance;

@@ -12,7 +12,7 @@ class CommentListViewModel extends ChangeNotifier {
   }) : _getCommentListUseCase = getCommentListUseCase;
 
   /// ID of the post to fetch
-  int _postId = 1;
+  int _postId = -1;
   int get postId => _postId;
 
   setPostId({required int value}) {
@@ -41,7 +41,7 @@ class CommentListViewModel extends ChangeNotifier {
   }
 
   /// The number of items to fetch at once
-  final int _limit = 3;
+  final int _limit = 10;
   int get limit => _limit;
 
   /// Total comments count can fetch
@@ -68,6 +68,13 @@ class CommentListViewModel extends ChangeNotifier {
     setCurrentList(list: copyList);
   }
 
+  /// Prepend a new comment to the _currentList
+  prependNewCommentToList({required List<CommentModel> additionalList}) {
+    List<CommentModel> copyList = List.from(currentList);
+    copyList.insertAll(0, additionalList);
+    setCurrentList(list: copyList);
+  }
+
   /// Fetch additional paginated comments from the application server
   Future<void> getCommentList() async {
     if (commentListState is Loading || !hasNext) return;
@@ -77,7 +84,7 @@ class CommentListViewModel extends ChangeNotifier {
     if (state is Success) {
       increasePage();
 
-      addAdditionalList(additionalList: state.list);
+      addAdditionalList(additionalList: state.getList);
       setCommentListState(commentListState: state);
 
       if (currentList.length >= state.total) setHasNext(value: false);

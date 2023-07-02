@@ -44,6 +44,7 @@ class _FeedScreenState extends State<FeedScreen> {
           selector: (_, viewModel) => viewModel.currentList,
           builder: (context, list, _) {
             return ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
               controller: _scrollController,
               itemCount: list.length,
               itemBuilder: (BuildContext context, int index) {

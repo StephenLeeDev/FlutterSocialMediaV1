@@ -11,6 +11,4 @@ class Fail extends CreateCommentState {}
 class Success extends CreateCommentState {
   late CommentModel value;
   Success({required this.value});
-
-  CommentModel get getValue => value;
 }

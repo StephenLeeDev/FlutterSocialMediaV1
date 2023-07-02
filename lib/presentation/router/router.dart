@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/usecase/auth/get_access_token_usecase.dart';
 import '../view/screen/auth/auth_screen.dart';
-import '../view/screen/comment/comment_screen_wrapper.dart';
+import '../view/screen/comment/comment/comment_screen_wrapper.dart';
 import '../view/screen/feed/feed_screen.dart';
 
 final GoRouter router = GoRouter(

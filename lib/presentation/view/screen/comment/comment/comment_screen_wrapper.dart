@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_media_v1/presentation/view/screen/comment/comment_screen.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../domain/usecase/comment/get_comment_list_usecase.dart';
-import '../../../viewmodel/comment/comment_list_viewmodel.dart';
+import '../../../../../domain/usecase/comment/create_comment_usecase.dart';
+import '../../../../../domain/usecase/comment/get_comment_list_usecase.dart';
+import '../../../../viewmodel/comment/comment_list_viewmodel.dart';
+import '../../../../viewmodel/comment/create_comment_viewmodel.dart';
+import 'comment_screen.dart';
 
 class CommentScreenWrapper extends StatefulWidget {
   const CommentScreenWrapper({Key? key, required this.postId}) : super(key: key);
@@ -28,12 +30,18 @@ class CommentScreenWrapper extends StatefulWidget {
 class _CommentScreenWrapperState extends State<CommentScreenWrapper> {
 
   late final CommentListViewModel commentListViewModel;
+  late final CreateCommentViewModel createCommentViewModel;
 
   @override
   void initState() {
     super.initState();
+    /// Read
     commentListViewModel = CommentListViewModel(getCommentListUseCase: GetIt.instance<GetCommentListUseCase>());
     commentListViewModel.setPostId(value: widget.getCommentId);
+
+    /// Create
+    createCommentViewModel = CreateCommentViewModel(createCommentUseCase: GetIt.instance<CreateCommentUseCase>());
+    createCommentViewModel.setPostId(value: widget.getCommentId);
   }
 
   @override
@@ -43,22 +51,11 @@ class _CommentScreenWrapperState extends State<CommentScreenWrapper> {
         ChangeNotifierProvider<CommentListViewModel>(
           create: (context) => commentListViewModel,
         ),
-      ],
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          title: const Text(
-            "Comments",
-            style: TextStyle(
-              fontSize: 24,
-            ),
-          ),
+        ChangeNotifierProvider<CreateCommentViewModel>(
+          create: (context) => createCommentViewModel,
         ),
-        body: const CommentScreen(),
-      ),
+      ],
+      child: const CommentScreen(),
     );
   }
 }

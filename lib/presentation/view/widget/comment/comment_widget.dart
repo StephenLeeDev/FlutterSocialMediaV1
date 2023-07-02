@@ -46,7 +46,7 @@ class CommentWidget extends StatelessWidget {
                             fontSize: 12.0, fontWeight: FontWeight.w400, color: Colors.black45),
                       ),
                       Text(
-                        "  ${DateUtil().getTimeAgo(dateString)}",
+                        " · ${DateUtil().getTimeAgo(dateString)}",
                         style: const TextStyle(
                             fontSize: 12.0, fontWeight: FontWeight.w400, color: Colors.black45),
                       ),

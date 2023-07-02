@@ -12,7 +12,7 @@ import '../../../../data/model/post/post_model.dart';
 import '../../../util/integer/integer_util.dart';
 import '../../../viewmodel/post/post_list_viewmodel.dart';
 import '../../../viewmodel/user/bookmark_viewmodel.dart';
-import '../../screen/comment/comment_screen_wrapper.dart';
+import '../../screen/comment/comment/comment_screen_wrapper.dart';
 
 class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.postModel}) : super(key: key);
