@@ -58,7 +58,7 @@ class AuthScreen extends StatelessWidget {
         }
       }
     } else {
-      if (context.mounted) showSnackBar(context: context, text: "It went something wrong.\nPlease try again.");
+      if (context.mounted) showSnackBar(context: context, text: "Something went wrong.\nPlease try again.");
     }
   }
 }

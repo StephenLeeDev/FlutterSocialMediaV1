@@ -21,17 +21,22 @@ class CommentRepositoryImpl extends CommentRepository {
     const api = 'comment';
     final url = '$baseUrl$api?postId=$postId&page=$page&limit=$limit';
 
-    final Response response = await _dio.get(url);
+    try {
+      final Response response = await _dio.get(url);
 
-    if (response.statusCode == 200) {
-      final model = CommentListModel.fromJson(response.data);
-      final state = CommentListState.Success(total: model.getTotal, list: model.getCommentList);
+      debugPrint("response.statusCode : ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final model = CommentListModel.fromJson(response.data);
+        final state = CommentListState.Success(total: model.getTotal, list: model.getCommentList);
 
-      debugPrint("state : ${state.toString()}");
+        debugPrint("state : ${state.toString()}");
 
-      return state;
+        return state;
+      }
+      return CommentListState.Fail();
+    } catch (e) {
+      return CommentListState.Fail();
     }
-    return CommentListState.Fail();
   }
 
   @override

@@ -12,7 +12,7 @@ final GoRouter router = GoRouter(
 
   redirect: (context, state) async {
     String accessToken = await GetIt.instance<GetAccessTokenUseCase>().execute();
-    debugPrint("accessToken : $accessToken");
+    debugPrint("GoRouter accessToken : $accessToken");
 
     final isSignedIn = accessToken.isNotEmpty;
     if (!isSignedIn) {

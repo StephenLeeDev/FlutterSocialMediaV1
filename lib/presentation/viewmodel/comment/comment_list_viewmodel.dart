@@ -26,6 +26,7 @@ class CommentListViewModel extends ChangeNotifier {
 
   setCommentListState({required CommentListState commentListState}) {
     _commentListState = commentListState;
+    if (commentListState is Fail) notifyListeners();
   }
 
   /// Page number to fetch
@@ -81,11 +82,11 @@ class CommentListViewModel extends ChangeNotifier {
     setCommentListState(commentListState: Loading());
 
     final state = await _getCommentListUseCase.execute(postId: postId, page: page, limit: limit);
+    setCommentListState(commentListState: state);
+
     if (state is Success) {
       increasePage();
-
       addAdditionalList(additionalList: state.getList);
-      setCommentListState(commentListState: state);
 
       if (currentList.length >= state.total) setHasNext(value: false);
     }

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../data/model/comment/comment_list_state.dart' as CommentListState;
 import '../../../../../data/model/comment/comment_model.dart';
-import '../../../../../data/model/comment/create/create_comment_state.dart';
+import '../../../../../data/model/comment/create/create_comment_state.dart' as CreateCommentState;
 import '../../../../util/keyboard/keyboard_util.dart';
 import '../../../../viewmodel/comment/comment_list_viewmodel.dart';
 import '../../../../viewmodel/comment/create_comment_viewmodel.dart';
 import '../../../widget/comment/comment_widget.dart';
+import '../../../widget/common/empty/empty_widget.dart';
+import '../../../widget/common/error/error_widget.dart';
 
 class CommentScreen extends StatefulWidget {
   const CommentScreen({Key? key}) : super(key: key);
@@ -51,27 +54,20 @@ class _CommentScreenState extends State<CommentScreen> {
         child: Column(
           children: [
             Expanded(
-              child: RefreshIndicator(
-                onRefresh: () => commentListViewModel.refresh(),
-                child: Selector<CommentListViewModel, List<CommentModel>>(
-                    selector: (_, viewModel) => viewModel.currentList,
-                    builder: (context, list, _) {
-                      return ListView.separated(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        controller: _scrollController,
-                        itemCount: list.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                            child: CommentWidget(
-                              commentModel: list[index],
-                            ),
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
-                      );
-                    },
-                ),
+              child: Selector<CommentListViewModel,
+                  CommentListState.CommentListState>(
+                selector: (_, viewModel) => viewModel.commentListState,
+                builder: (context, state, _) {
+                  if (state is CommentListState.Loading) {
+                    return buildLoadingStateUI();
+                  } else if (state is CommentListState.Success) {
+                    return buildSuccessStateUI();
+                  } else if (state is CommentListState.Fail) {
+                    return buildFailStateUI();
+                  } else {
+                    return Container();
+                  }
+                },
               ),
             ),
             Container(
@@ -107,14 +103,16 @@ class _CommentScreenState extends State<CommentScreen> {
                       return IconButton(
                         onPressed: () async {
                           if (isValid) {
-                            final state = await createCommentViewModel.createComment();
-                            if (state is Success) {
+                            final state =
+                                await createCommentViewModel.createComment();
+                            if (state is CreateCommentState.Success) {
                               final CommentModel newComment = state.value;
                               onNewComment(newComment: newComment);
                             }
                           }
                         },
-                        icon: Icon(Icons.send, color: isValid ? Colors.black : Colors.grey),
+                        icon: Icon(Icons.send,
+                            color: isValid ? Colors.black : Colors.grey),
                       );
                     },
                   ),
@@ -124,6 +122,73 @@ class _CommentScreenState extends State<CommentScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildReadyStateUI() {
+    return Container();
+  }
+
+  Widget buildLoadingStateUI() {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return const Center(
+          child: SizedBox(
+            width: 36,
+            height: 36,
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildFailStateUI() {
+    return CustomErrorWidget(listener: () {
+      commentListViewModel.getCommentList();
+    });
+  }
+
+  Widget buildSuccessStateUI() {
+    return Stack(
+      children: [
+        /// List UI
+        RefreshIndicator(
+          onRefresh: () => commentListViewModel.refresh(),
+          child: Selector<CommentListViewModel, List<CommentModel>>(
+            selector: (_, viewModel) => viewModel.currentList,
+            builder: (context, list, _) {
+              return ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                controller: _scrollController,
+                itemCount: list.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    child: CommentWidget(
+                      commentModel: list[index],
+                    ),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) =>
+                    const SizedBox(width: 20),
+              );
+            },
+          ),
+        ),
+
+        /// Empty message
+        Selector<CommentListViewModel, List<CommentModel>>(
+          selector: (_, viewModel) => viewModel.currentList,
+          builder: (context, list, _) {
+            if (list.isEmpty) {
+              return const EmptyWidget(message: "No comments yet");
+            } else {
+              return Container();
+            }
+          },
+        )
+      ],
     );
   }
 
@@ -138,7 +203,8 @@ class _CommentScreenState extends State<CommentScreen> {
     KeyboardUtil().dismissKeyboard(context);
     createCommentViewModel.setContent(value: "");
     commentListViewModel.prependNewCommentToList(additionalList: [newComment]);
-    _scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    _scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   @override

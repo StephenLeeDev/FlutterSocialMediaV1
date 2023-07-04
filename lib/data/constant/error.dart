@@ -1,0 +1,1 @@
+const wentSomethingWrong = "Something went wrong.\nPlease try again.";

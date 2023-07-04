@@ -66,7 +66,7 @@ class CommentWidget extends StatelessWidget {
                         fontSize: 15.0,
                         fontWeight: FontWeight.w800,
                         color: Colors.blueAccent),
-                  )
+                  ),
                 ],
               ),
             )
