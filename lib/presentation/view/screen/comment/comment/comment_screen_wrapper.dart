@@ -48,10 +48,10 @@ class _CommentScreenWrapperState extends State<CommentScreenWrapper> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<CommentListViewModel>(
+        Provider<CommentListViewModel>(
           create: (context) => commentListViewModel,
         ),
-        ChangeNotifierProvider<CreateCommentViewModel>(
+        Provider<CreateCommentViewModel>(
           create: (context) => createCommentViewModel,
         ),
       ],

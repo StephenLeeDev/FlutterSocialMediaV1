@@ -26,11 +26,15 @@ class _FeedScreenState extends State<FeedScreen> {
     super.initState();
     _scrollController.addListener(_scrollListener);
 
-    postListViewModel = context.read<PostListViewModel>();
-    postListViewModel.getPostList();
+    fetchData();
+  }
 
+  Future<void> fetchData() async {
     // TODO : Relocation to inside of the MainNavigation later
-    context.read<MyUserInfoViewModel>().getMyUserInfo();
+    await GetIt.instance<MyUserInfoViewModel>().getMyUserInfo();
+
+    if (context.mounted) postListViewModel = context.read<PostListViewModel>();
+    postListViewModel.getPostList();
   }
 
   @override

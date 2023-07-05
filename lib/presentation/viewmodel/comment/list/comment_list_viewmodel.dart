@@ -22,7 +22,7 @@ class CommentListViewModel {
   /// Using to manage server communication state
   /// List UI rendering is through _currentList below
   final ValueNotifier<CommentListState> _commentListState = ValueNotifier<CommentListState>(Ready());
-  ValueNotifier<CommentListState> get commentListState => _commentListState;
+  ValueNotifier<CommentListState> get commentListStateNotifier => _commentListState;
 
   setCommentListState({required CommentListState commentListState}) {
     _commentListState.value = commentListState;
@@ -54,6 +54,7 @@ class CommentListViewModel {
 
   /// List of comments fetched so far (Using for UI rendering)
   final ValueNotifier<List<CommentModel>> _currentList = ValueNotifier<List<CommentModel>>([]);
+  ValueNotifier<List<CommentModel>> get currentListNotifier => _currentList;
   List<CommentModel> get currentList => _currentList.value;
 
   setCurrentList({required List<CommentModel> list}) {
@@ -62,21 +63,21 @@ class CommentListViewModel {
 
   /// Add additional comments to the _currentList
   addAdditionalList({required List<CommentModel> additionalList}) {
-    List<CommentModel> copyList = List.from(currentList);
+    List<CommentModel> copyList = List.from(currentListNotifier.value);
     copyList.addAll(additionalList);
     setCurrentList(list: copyList);
   }
 
   /// Prepend a new comment to the _currentList
   prependNewCommentToList({required List<CommentModel> additionalList}) {
-    List<CommentModel> copyList = List.from(currentList);
+    List<CommentModel> copyList = List.from(currentListNotifier.value);
     copyList.insertAll(0, additionalList);
     setCurrentList(list: copyList);
   }
 
   /// Fetch additional paginated comments from the application server
   Future<void> getCommentList() async {
-    if (commentListState is Loading || !hasNext) return;
+    if (commentListStateNotifier is Loading || !hasNext) return;
     setCommentListState(commentListState: Loading());
 
     final state = await _getCommentListUseCase.execute(postId: postId, page: page, limit: limit);
@@ -86,7 +87,7 @@ class CommentListViewModel {
       increasePage();
       addAdditionalList(additionalList: state.getList);
 
-      if (currentList.length >= state.total) setHasNext(value: false);
+      if (currentListNotifier.value.length >= state.total) setHasNext(value: false);
     }
   }
 

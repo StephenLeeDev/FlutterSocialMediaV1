@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../data/model/comment/list/comment_list_state.dart' as CommentListState;
@@ -20,10 +21,12 @@ class CommentScreen extends StatefulWidget {
 }
 
 class _CommentScreenState extends State<CommentScreen> {
-
   final _scrollController = ScrollController();
+  final TextEditingController _textEditingController = TextEditingController();
   late CommentListViewModel commentListViewModel;
   late CreateCommentViewModel createCommentViewModel;
+
+  final myEmail = GetIt.instance<MyUserInfoViewModel>().myEmail;
 
   @override
   void initState() {
@@ -33,7 +36,7 @@ class _CommentScreenState extends State<CommentScreen> {
     commentListViewModel = context.read<CommentListViewModel>();
     createCommentViewModel = context.read<CreateCommentViewModel>();
 
-    commentListViewModel.getCommentList();
+    fetchCommentList();
   }
 
   @override
@@ -54,19 +57,18 @@ class _CommentScreenState extends State<CommentScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            /// Loading, Success, Fail UI branching
             Expanded(
-              child: Selector<CommentListViewModel,
-                  CommentListState.CommentListState>(
-                selector: (_, viewModel) => viewModel.commentListState,
+              child: ValueListenableBuilder<CommentListState.CommentListState>(
+                valueListenable: commentListViewModel.commentListStateNotifier,
                 builder: (context, state, _) {
-                  if (state is CommentListState.Loading) {
+                  if (state is CommentListState.Loading &&
+                      commentListViewModel.currentList.isEmpty) {
                     return buildLoadingStateUI();
-                  } else if (state is CommentListState.Success) {
-                    return buildSuccessStateUI();
                   } else if (state is CommentListState.Fail) {
                     return buildFailStateUI();
                   } else {
-                    return Container();
+                    return buildSuccessStateUI();
                   }
                 },
               ),
@@ -86,6 +88,7 @@ class _CommentScreenState extends State<CommentScreen> {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _textEditingController,
                       decoration: const InputDecoration(
                         hintText: 'Add a comment...',
                         border: OutlineInputBorder(),
@@ -98,25 +101,28 @@ class _CommentScreenState extends State<CommentScreen> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Selector<CreateCommentViewModel, bool>(
-                    selector: (_, viewModel) => viewModel.isValid,
-                    builder: (context, isValid, _) {
-                      return IconButton(
-                        onPressed: () async {
-                          if (isValid) {
-                            final state =
-                                await createCommentViewModel.createComment();
-                            if (state is CreateCommentState.Success) {
-                              final CommentModel newComment = state.value;
-                              onNewComment(newComment: newComment);
-                            }
-                          }
-                        },
-                        icon: Icon(Icons.send,
-                            color: isValid ? Colors.black : Colors.grey),
-                      );
-                    },
-                  ),
+                  ValueListenableBuilder<bool>(
+                      valueListenable: createCommentViewModel.isValidNotifier,
+                      builder: (context, isValid, _) {
+                        return InkWell(
+                          enableFeedback: false,
+                          child: IconButton(
+                            onPressed: () async {
+                              if (isValid) {
+                                final state =
+                                    await createCommentViewModel.createComment();
+                                if (state is CreateCommentState.Success) {
+                                  final CommentModel newComment = state.value;
+                                  onNewComment(newComment: newComment);
+                                  _textEditingController.text = "";
+                                }
+                              }
+                            },
+                            icon: Icon(Icons.send,
+                                color: isValid ? Colors.black : Colors.grey),
+                          ),
+                        );
+                      })
                 ],
               ),
             ),
@@ -146,56 +152,55 @@ class _CommentScreenState extends State<CommentScreen> {
 
   Widget buildFailStateUI() {
     return CustomErrorWidget(listener: () {
-      commentListViewModel.getCommentList();
+      fetchCommentList();
     });
   }
 
   Widget buildSuccessStateUI() {
-    return Stack(
-      children: [
-        /// List UI
-        RefreshIndicator(
-          onRefresh: () => commentListViewModel.refresh(),
-          child: Selector<CommentListViewModel, List<CommentModel>>(
-            selector: (_, viewModel) => viewModel.currentList,
-            builder: (context, list, _) {
-              return ListView.separated(
-                physics: const AlwaysScrollableScrollPhysics(),
-                controller: _scrollController,
-                itemCount: list.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0),
-                    child: CommentWidget(
-                      commentModel: list[index],
-                    ),
+    return ValueListenableBuilder<List<CommentModel>>(
+      valueListenable: commentListViewModel.currentListNotifier,
+      builder: (context, list, _) {
+        return Stack(
+          children: [
+            /// List UI
+            RefreshIndicator(
+              onRefresh: () => commentListViewModel.refresh(),
+              child: ValueListenableBuilder<List<CommentModel>>(
+                valueListenable: commentListViewModel.currentListNotifier,
+                builder: (context, list, _) {
+                  return ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: _scrollController,
+                    itemCount: list.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
+                        child: CommentWidget(
+                          commentModel: list[index],
+                        ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const SizedBox(width: 20),
                   );
                 },
-                separatorBuilder: (BuildContext context, int index) =>
-                    const SizedBox(width: 20),
-              );
-            },
-          ),
-        ),
-
-        /// Empty message
-        Selector<CommentListViewModel, List<CommentModel>>(
-          selector: (_, viewModel) => viewModel.currentList,
-          builder: (context, list, _) {
-            if (list.isEmpty) {
-              return const EmptyWidget(message: "No comments yet");
-            } else {
-              return Container();
-            }
-          },
-        )
-      ],
+              ),
+            ),
+            /// Empty message UI
+            if (list.isEmpty) const EmptyWidget(message: "No comments yet"),
+          ],
+        );
+      },
     );
+  }
+
+  void fetchCommentList() {
+    commentListViewModel.getCommentList();
   }
 
   void _scrollListener() {
     if (_scrollController.position.extentAfter == 0) {
-      commentListViewModel.getCommentList();
+      fetchCommentList();
     }
   }
 

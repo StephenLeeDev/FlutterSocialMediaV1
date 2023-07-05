@@ -5,7 +5,7 @@ import '../../../../data/model/comment/create/create_comment_state.dart';
 import '../../../../domain/usecase/comment/create_comment_usecase.dart';
 
 /// This ViewModel is responsible for handling the creation of new comments/replies
-class CreateCommentViewModel extends ChangeNotifier {
+class CreateCommentViewModel {
   final CreateCommentUseCase _createCommentUseCase;
 
   CreateCommentViewModel({
@@ -39,34 +39,36 @@ class CreateCommentViewModel extends ChangeNotifier {
   }
 
   /// Content
-  String _content = "";
-  String get content => _content;
+  final ValueNotifier<String> _content = ValueNotifier<String>("");
+  ValueNotifier<String> get contentNotifier => _content;
+  String get content => _content.value;
 
   setContent({required String value}) {
-    _content = value;
+    _content.value = value;
     checkIsValid();
   }
 
   checkIsValid() {
-    final valid = postId > 0 && content.isNotEmpty;
+    final valid = postId > 0 && content.isNotEmpty && createCommentState is! Loading;
     setIsValid(value: valid);
   }
 
   /// It represents whether comments/replies can be created
-  bool _isValid = false;
-  bool get isValid => _isValid;
+  final ValueNotifier<bool> _isValid = ValueNotifier<bool>(false);
+  ValueNotifier<bool> get isValidNotifier => _isValid;
+  bool get isValid => _isValid.value;
 
   setIsValid({required bool value}) {
-    _isValid = value;
-    notifyListeners();
+    _isValid.value = value;
   }
 
   /// Using to manage server communication state
-  CreateCommentState _createCommentState = Ready();
-  CreateCommentState get createCommentState => _createCommentState;
+  final ValueNotifier<CreateCommentState> _createCommentState = ValueNotifier<CreateCommentState>(Ready());
+  ValueNotifier<CreateCommentState> get createCommentStateNotifier => _createCommentState;
+  CreateCommentState get createCommentState => _createCommentState.value;
 
   setCreateCommentState({required CreateCommentState createCommentState}) {
-    _createCommentState = createCommentState;
+    _createCommentState.value = createCommentState;
   }
 
   Future<CreateCommentState> createComment() async {
