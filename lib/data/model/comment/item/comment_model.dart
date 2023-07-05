@@ -1,4 +1,4 @@
-import '../user/simple_user_info.dart';
+import '../../user/simple_user_info.dart';
 
 class CommentModel {
   int? id;

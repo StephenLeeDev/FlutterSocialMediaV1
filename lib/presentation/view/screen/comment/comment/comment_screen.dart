@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../data/model/comment/comment_list_state.dart' as CommentListState;
-import '../../../../../data/model/comment/comment_model.dart';
+import '../../../../../data/model/comment/list/comment_list_state.dart' as CommentListState;
+import '../../../../../data/model/comment/item/comment_model.dart';
 import '../../../../../data/model/comment/create/create_comment_state.dart' as CreateCommentState;
 import '../../../../util/keyboard/keyboard_util.dart';
-import '../../../../viewmodel/comment/comment_list_viewmodel.dart';
-import '../../../../viewmodel/comment/create_comment_viewmodel.dart';
+import '../../../../viewmodel/comment/list/comment_list_viewmodel.dart';
+import '../../../../viewmodel/comment/create/create_comment_viewmodel.dart';
+import '../../../../viewmodel/user/my_info/my_user_info_viewmodel.dart';
 import '../../../widget/comment/comment_widget.dart';
 import '../../../widget/common/empty/empty_widget.dart';
 import '../../../widget/common/error/error_widget.dart';

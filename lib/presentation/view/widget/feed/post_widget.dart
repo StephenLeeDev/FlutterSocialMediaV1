@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:flutter_social_media_v1/presentation/util/date/date_util.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/post/post_like_viewmodel.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/post/like/post_like_viewmodel.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data/model/common/common_state.dart';
 import '../../../../data/model/common/single_integer_state.dart' as SingleIntegerState;
-import '../../../../data/model/post/post_model.dart';
+import '../../../../data/model/post/item/post_model.dart';
 import '../../../util/integer/integer_util.dart';
-import '../../../viewmodel/post/post_list_viewmodel.dart';
-import '../../../viewmodel/user/bookmark_viewmodel.dart';
+import '../../../viewmodel/post/list/post_list_viewmodel.dart';
+import '../../../viewmodel/user/bookmark/bookmark_viewmodel.dart';
 import '../../screen/comment/comment/comment_screen_wrapper.dart';
 
 class PostWidget extends StatefulWidget {

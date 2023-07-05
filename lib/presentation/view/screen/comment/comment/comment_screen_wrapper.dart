@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../../../../../domain/usecase/comment/create_comment_usecase.dart';
 import '../../../../../domain/usecase/comment/get_comment_list_usecase.dart';
-import '../../../../viewmodel/comment/comment_list_viewmodel.dart';
-import '../../../../viewmodel/comment/create_comment_viewmodel.dart';
+import '../../../../viewmodel/comment/list/comment_list_viewmodel.dart';
+import '../../../../viewmodel/comment/create/create_comment_viewmodel.dart';
 import 'comment_screen.dart';
 
 class CommentScreenWrapper extends StatefulWidget {

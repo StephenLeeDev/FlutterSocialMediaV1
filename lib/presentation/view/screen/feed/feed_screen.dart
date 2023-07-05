@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/post/post_list_viewmodel.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/user/my_user_info_viewmodel.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/post/list/post_list_viewmodel.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/user/my_info/my_user_info_viewmodel.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../data/model/post/post_model.dart';
+import '../../../../data/model/post/item/post_model.dart';
 import '../../widget/feed/post_widget.dart';
 
 class FeedScreen extends StatefulWidget {

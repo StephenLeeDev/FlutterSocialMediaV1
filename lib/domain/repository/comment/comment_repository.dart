@@ -1,4 +1,4 @@
-import '../../../data/model/comment/comment_list_state.dart';
+import '../../../data/model/comment/list/comment_list_state.dart';
 import '../../../data/model/comment/create/create_comment_model.dart';
 import '../../../data/model/comment/create/create_comment_state.dart';
 

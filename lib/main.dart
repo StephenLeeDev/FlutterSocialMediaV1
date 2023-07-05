@@ -20,8 +20,8 @@ import 'package:flutter_social_media_v1/domain/usecase/post/post_like_usecase.da
 import 'package:flutter_social_media_v1/domain/usecase/user/get_my_user_info_usecase.dart';
 import 'package:flutter_social_media_v1/presentation/router/router.dart';
 import 'package:flutter_social_media_v1/presentation/viewmodel/auth/auth_viewmodel.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/post/post_list_viewmodel.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/user/my_user_info_viewmodel.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/post/list/post_list_viewmodel.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/user/my_info/my_user_info_viewmodel.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +31,8 @@ import 'data/networking/interceptor/token_interceptor.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'domain/usecase/auth/set_access_token_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
-import 'presentation/viewmodel/post/post_like_viewmodel.dart';
-import 'presentation/viewmodel/user/bookmark_viewmodel.dart';
+import 'presentation/viewmodel/post/like/post_like_viewmodel.dart';
+import 'presentation/viewmodel/user/bookmark/bookmark_viewmodel.dart';
 
 void main() async {
 

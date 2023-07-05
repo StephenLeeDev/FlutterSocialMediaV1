@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../data/model/comment/comment_model.dart';
+import '../../../../data/model/comment/item/comment_model.dart';
 import '../../../util/date/date_util.dart';
 import '../../../util/integer/integer_util.dart';
 

@@ -1,5 +1,6 @@
 class MyUserInfo {
   String? email;
+  String get getEmail => email ?? "Unknown";
   String? username;
   String get getUserName => username ?? "Unknown";
   String? thumbnail;

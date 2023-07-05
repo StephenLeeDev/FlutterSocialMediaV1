@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../data/model/common/common_state.dart';
-import '../../../domain/usecase/user/post_bookmark_usecase.dart';
+import '../../../../data/model/common/common_state.dart';
+import '../../../../domain/usecase/user/post_bookmark_usecase.dart';
 
 class BookmarkViewModel extends ChangeNotifier {
   final PostBookmarkUseCase _postBookmarkUseCase;

@@ -12,15 +12,25 @@ class MyUserInfoViewModel extends ChangeNotifier {
   MyUserInfoState _myUserInfoState = Ready();
   MyUserInfoState get myUserInfoState => _myUserInfoState;
 
-  setMyUserInfoState({required MyUserInfoState state}) {
+  _setMyUserInfoState({required MyUserInfoState state}) {
     _myUserInfoState = state;
+    if (state is Success) {
+      _setMyEmail(myEmail: state.getMyUserInfo.getEmail);
+    }
   }
 
   Future<void> getMyUserInfo() async {
-    setMyUserInfoState(state: Loading());
+    _setMyUserInfoState(state: Loading());
 
     final state = await _getMyUserInfoUseCase.execute();
-    setMyUserInfoState(state: state);
+    _setMyUserInfoState(state: state);
+  }
+
+  String _myEmail = "";
+  String get myEmail => _myEmail;
+
+  _setMyEmail({required String myEmail}) {
+    _myEmail = myEmail;
   }
 
 }

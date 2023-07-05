@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../data/model/comment/comment_list_state.dart';
-import '../../../data/model/comment/comment_model.dart';
-import '../../../domain/usecase/comment/get_comment_list_usecase.dart';
+import '../../../../data/model/comment/list/comment_list_state.dart';
+import '../../../../data/model/comment/item/comment_model.dart';
+import '../../../../domain/usecase/comment/get_comment_list_usecase.dart';
 
-class CommentListViewModel extends ChangeNotifier {
+class CommentListViewModel {
   final GetCommentListUseCase _getCommentListUseCase;
 
   CommentListViewModel({
@@ -21,12 +21,11 @@ class CommentListViewModel extends ChangeNotifier {
 
   /// Using to manage server communication state
   /// List UI rendering is through _currentList below
-  CommentListState _commentListState = Ready();
-  CommentListState get commentListState => _commentListState;
+  final ValueNotifier<CommentListState> _commentListState = ValueNotifier<CommentListState>(Ready());
+  ValueNotifier<CommentListState> get commentListState => _commentListState;
 
   setCommentListState({required CommentListState commentListState}) {
-    _commentListState = commentListState;
-    if (commentListState is Fail) notifyListeners();
+    _commentListState.value = commentListState;
   }
 
   /// Page number to fetch
@@ -54,12 +53,11 @@ class CommentListViewModel extends ChangeNotifier {
   }
 
   /// List of comments fetched so far (Using for UI rendering)
-  List<CommentModel> _currentList = [];
-  List<CommentModel> get currentList => _currentList;
+  final ValueNotifier<List<CommentModel>> _currentList = ValueNotifier<List<CommentModel>>([]);
+  List<CommentModel> get currentList => _currentList.value;
 
   setCurrentList({required List<CommentModel> list}) {
-    _currentList = list;
-    notifyListeners();
+    _currentList.value = list;
   }
 
   /// Add additional comments to the _currentList

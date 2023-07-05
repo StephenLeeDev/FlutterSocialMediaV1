@@ -1,4 +1,4 @@
-import '../comment_model.dart';
+import '../item/comment_model.dart';
 
 abstract class CreateCommentState {}
 

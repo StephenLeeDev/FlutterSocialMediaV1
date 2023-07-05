@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../data/model/common/single_integer_state.dart';
-import '../../../domain/usecase/post/post_like_usecase.dart';
+import '../../../../data/model/common/single_integer_state.dart';
+import '../../../../domain/usecase/post/post_like_usecase.dart';
 
 class PostLikeViewModel extends ChangeNotifier {
   final PostLikeUseCase _postLikeUseCase;
