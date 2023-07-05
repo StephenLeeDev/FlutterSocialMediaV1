@@ -64,7 +64,7 @@ void main() async {
   }
 
   /// Authentication
-  final authRepository = AuthRepositoryImpl();
+  final authRepository = AuthRepositoryImpl(dio);
   final postSignInUseCase = PostSignInUseCase(authRepository: authRepository);
   final authViewModel = AuthViewModel(
       postSignInUseCase: postSignInUseCase,

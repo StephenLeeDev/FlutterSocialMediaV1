@@ -9,7 +9,9 @@ import '../../model/auth/auth_state.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
 
-  final dio = Dio();
+  final Dio _dio;
+
+  AuthRepositoryImpl(this._dio);
 
   @override
   Future<AuthState> signIn({required AuthRequest authRequest}) async {
@@ -19,21 +21,26 @@ class AuthRepositoryImpl extends AuthRepository {
     debugPrint("url : $url");
     debugPrint("authRequest : ${authRequest.toString()}");
 
-    final response = await dio.post(
+    try {
+      final response = await _dio.post(
         url,
         data: authRequest.toJson(),
         options: Options(contentType: Headers.jsonContentType),
-    );
+      );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final authResponse = AuthResponse.fromJson(response.data);
-      final AuthState authState = Success(authResponse.accessToken);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final authResponse = AuthResponse.fromJson(response.data);
+        final AuthState authState = Success(authResponse.accessToken);
 
-      debugPrint("authResponse : ${authResponse.toString()}");
+        debugPrint("authResponse : ${authResponse.toString()}");
 
-      return authState;
+        return authState;
+      }
+      return Fail();
+    } catch (e) {
+      debugPrint("signIn Fail : ${e.toString()}");
+      return Fail();
     }
-    return Fail();
   }
 
 }
