@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void showTwoButtonBottomSheet({
+void showTwoButtonBottomSheetCupertino({
   required BuildContext context,
   String? title,
   /// First button
