@@ -13,8 +13,8 @@ import 'package:flutter_social_media_v1/data/repository/secure_storage/secure_st
 import 'package:flutter_social_media_v1/data/repository/user/user_repository_impl.dart';
 import 'package:flutter_social_media_v1/domain/usecase/auth/get_access_token_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/auth/post_sign_in_usecase.dart';
-import 'package:flutter_social_media_v1/domain/usecase/comment/create_comment_usecase.dart';
-import 'package:flutter_social_media_v1/domain/usecase/comment/get_comment_list_usecase.dart';
+import 'package:flutter_social_media_v1/domain/usecase/comment/create/create_comment_usecase.dart';
+import 'package:flutter_social_media_v1/domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/post/get_post_list_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/post/post_like_usecase.dart';
 import 'package:flutter_social_media_v1/domain/usecase/user/get_my_user_info_usecase.dart';
@@ -30,6 +30,7 @@ import 'data/networking/dio_singleton.dart';
 import 'data/networking/interceptor/token_interceptor.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'domain/usecase/auth/set_access_token_usecase.dart';
+import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
 import 'presentation/viewmodel/post/like/post_like_viewmodel.dart';
 import 'presentation/viewmodel/user/bookmark/bookmark_viewmodel.dart';
@@ -41,10 +42,13 @@ void main() async {
   // await dotenv.load(fileName: '.env.${kReleaseMode ? 'release' : 'debug'}');
   // await dotenv.load(fileName: '.env.debug');
 
+  final getIt = GetIt.instance;
+
   /// SecureStorage
   final secureStorageRepository = SecureStorageRepositoryImpl();
   final getAccessTokenUseCase = GetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
   final setAccessTokenUseCase = SetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
+  getIt.registerSingleton<GetAccessTokenUseCase>(getAccessTokenUseCase);
 
   /// Dio Singleton
   final Dio dio = DioSingleton.getInstance();
@@ -77,6 +81,7 @@ void main() async {
   final postBookmarkUseCase = PostBookmarkUseCase(userRepository: userRepository);
   final myUserInfoViewModel = MyUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
   final bookmarkViewModel = BookmarkViewModel(postBookmarkUseCase: postBookmarkUseCase);
+  getIt.registerSingleton<MyUserInfoViewModel>(myUserInfoViewModel);
 
   /// Feed(Post List)
   final postRepository = PostRepositoryImpl(dio);
@@ -84,17 +89,16 @@ void main() async {
   final postLikeUseCase = PostLikeUseCase(postRepository: postRepository);
   final postListViewModel = PostListViewModel(getPostListUseCase: getPostListUseCase);
   final postLikeViewModel = PostLikeViewModel(postLikeUseCase: postLikeUseCase);
+  getIt.registerSingleton<PostLikeViewModel>(postLikeViewModel);
 
   /// Comment/Reply
   final commentRepository = CommentRepositoryImpl(dio);
   final getCommentUseCase = GetCommentListUseCase(commentRepository: commentRepository);
   final createCommentUseCase = CreateCommentUseCase(commentRepository: commentRepository);
-
-  final getIt = GetIt.instance;
-  getIt.registerSingleton<GetAccessTokenUseCase>(getAccessTokenUseCase);
-  getIt.registerSingleton<PostLikeViewModel>(postLikeViewModel);
+  final deleteCommentUseCase = DeleteCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<GetCommentListUseCase>(getCommentUseCase);
   getIt.registerSingleton<CreateCommentUseCase>(createCommentUseCase);
+  getIt.registerSingleton<DeleteCommentUseCase>(deleteCommentUseCase);
 
   await Firebase.initializeApp();
   FirebaseMessaging fbMsg = FirebaseMessaging.instance;
@@ -107,9 +111,6 @@ void main() async {
       providers: [
         ChangeNotifierProvider<AuthViewModel>(
           create: (context) => authViewModel,
-        ),
-        ChangeNotifierProvider<MyUserInfoViewModel>(
-          create: (context) => myUserInfoViewModel,
         ),
         ChangeNotifierProvider<BookmarkViewModel>(
           create: (context) => bookmarkViewModel,
@@ -165,6 +166,8 @@ class App extends StatelessWidget {
             TargetPlatform.android: CupertinoPageTransitionsBuilder(),
           },
         ),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
       ),
     );
   }

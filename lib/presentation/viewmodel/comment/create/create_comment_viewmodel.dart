@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../data/model/comment/create/create_comment_model.dart';
 import '../../../../data/model/comment/create/create_comment_state.dart';
-import '../../../../domain/usecase/comment/create_comment_usecase.dart';
+import '../../../../domain/usecase/comment/create/create_comment_usecase.dart';
 
 /// This ViewModel is responsible for handling the creation of new comments/replies
 class CreateCommentViewModel {
@@ -72,13 +72,17 @@ class CreateCommentViewModel {
   }
 
   Future<CreateCommentState> createComment() async {
+    setCreateCommentState(createCommentState: Loading());
     final CreateCommentModel createCommentModel = CreateCommentModel(
       postId: postId,
       content: content,
       parentCommentId: parentCommentId,
       parentCommentAuthor: parentCommentAuthor,
     );
-    return await _createCommentUseCase.execute(createCommentModel: createCommentModel);
+
+    final state = await _createCommentUseCase.execute(createCommentModel: createCommentModel);
+    setCreateCommentState(createCommentState: state);
+    return state;
   }
 
 }

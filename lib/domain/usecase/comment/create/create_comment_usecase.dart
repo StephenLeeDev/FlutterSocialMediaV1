@@ -1,6 +1,6 @@
-import '../../../data/model/comment/create/create_comment_model.dart';
-import '../../../data/model/comment/create/create_comment_state.dart';
-import '../../repository/comment/comment_repository.dart';
+import '../../../../data/model/comment/create/create_comment_model.dart';
+import '../../../../data/model/comment/create/create_comment_state.dart';
+import '../../../repository/comment/comment_repository.dart';
 
 class CreateCommentUseCase {
   final CommentRepository _commentRepository;

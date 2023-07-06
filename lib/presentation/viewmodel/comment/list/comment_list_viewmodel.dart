@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../data/model/comment/list/comment_list_state.dart';
 import '../../../../data/model/comment/item/comment_model.dart';
-import '../../../../domain/usecase/comment/get_comment_list_usecase.dart';
+import '../../../../domain/usecase/comment/list/get_comment_list_usecase.dart';
 
 class CommentListViewModel {
   final GetCommentListUseCase _getCommentListUseCase;
@@ -17,6 +17,14 @@ class CommentListViewModel {
 
   setPostId({required int value}) {
     _postId = value;
+  }
+
+  /// My email address
+  String _myEmail = "";
+  String get myEmail => _myEmail;
+
+  setMyEmail({required String value}) {
+    _myEmail = value;
   }
 
   /// Using to manage server communication state
@@ -58,20 +66,20 @@ class CommentListViewModel {
   List<CommentModel> get currentList => _currentList.value;
 
   setCurrentList({required List<CommentModel> list}) {
-    _currentList.value = list;
+    _currentList.value = setIsMineStatusAndReturn(list: list);
   }
 
   /// Add additional comments to the _currentList
   addAdditionalList({required List<CommentModel> additionalList}) {
     List<CommentModel> copyList = List.from(currentListNotifier.value);
-    copyList.addAll(additionalList);
+    copyList.addAll(setIsMineStatusAndReturn(list: additionalList));
     setCurrentList(list: copyList);
   }
 
   /// Prepend a new comment to the _currentList
   prependNewCommentToList({required List<CommentModel> additionalList}) {
     List<CommentModel> copyList = List.from(currentListNotifier.value);
-    copyList.insertAll(0, additionalList);
+    copyList.insertAll(0, setIsMineStatusAndReturn(list: additionalList));
     setCurrentList(list: copyList);
   }
 
@@ -98,6 +106,23 @@ class CommentListViewModel {
     setHasNext(value: true);
 
     getCommentList();
+  }
+
+  /// Check is mine
+  List<CommentModel> setIsMineStatusAndReturn({required List<CommentModel> list}) {
+    final copyList = List.of(list);
+    for (int i = 0; i < copyList.length; i++) {
+      if (copyList[i].isMyComment(myEmail: myEmail)) copyList[i].isMine = true;
+    }
+    return copyList;
+  }
+
+  /// Remove delete comment from the list by comment ID
+  void removeDeletedCommentFromList({required int commentId}) {
+    List<CommentModel> copyList = List.of(currentList);
+    copyList.removeWhere((comment) => comment.id == commentId);
+
+    setCurrentList(list: copyList);
   }
 
 }

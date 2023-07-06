@@ -12,7 +12,7 @@ import '../../../../data/model/post/item/post_model.dart';
 import '../../../util/integer/integer_util.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/bookmark/bookmark_viewmodel.dart';
-import '../../screen/comment/comment/comment_screen_wrapper.dart';
+import '../../screen/comment/comment/comment_screen.dart';
 
 class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.postModel}) : super(key: key);
@@ -230,7 +230,7 @@ class _PostWidgetState extends State<PostWidget> {
         GestureDetector(
           onTap: () {
             final postId = widget.postModel.getId;
-            if (postId > 0) context.pushNamed(CommentScreenWrapper.routeName, pathParameters: {'postId': "$postId"});
+            if (postId > 0) context.pushNamed(CommentScreen.routeName, pathParameters: {'postId': "$postId"});
           },
           child: Padding(
             padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),

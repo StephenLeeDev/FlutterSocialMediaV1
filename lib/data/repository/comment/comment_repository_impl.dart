@@ -1,13 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_social_media_v1/data/model/comment/item/comment_model.dart';
 
 import '../../../domain/repository/comment/comment_repository.dart';
 import '../../constant/constant.dart';
+import '../../model/comment/item/comment_model.dart';
 import '../../model/comment/list/comment_list_model.dart';
 import '../../model/comment/list/comment_list_state.dart' as CommentListState;
 import '../../model/comment/create/create_comment_model.dart';
 import '../../model/comment/create/create_comment_state.dart' as CreateCommentState;
+import '../../model/common/common_state.dart' as CommonState;
 
 class CommentRepositoryImpl extends CommentRepository {
 
@@ -24,7 +25,6 @@ class CommentRepositoryImpl extends CommentRepository {
     try {
       final Response response = await _dio.get(url);
 
-      debugPrint("response.statusCode : ${response.statusCode}");
       if (response.statusCode == 200) {
         final model = CommentListModel.fromJson(response.data);
         final state = CommentListState.Success(total: model.getTotal, list: model.getCommentList);
@@ -61,4 +61,27 @@ class CommentRepositoryImpl extends CommentRepository {
       return CreateCommentState.Fail();
     }
   }
+
+  @override
+  Future<CommonState.CommonState> deleteComment({required int commentId}) async {
+
+    final api = 'comment/$commentId';
+    final url = '$baseUrl$api';
+
+    try {
+      final Response response = await _dio.delete(url);
+
+      if (response.statusCode == 200) {
+        final state = CommonState.Success();
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return CommonState.Fail();
+    } catch (e) {
+      return CommonState.Fail();
+    }
+  }
+
 }

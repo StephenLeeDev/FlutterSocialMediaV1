@@ -1,5 +1,5 @@
-import '../../../data/model/comment/list/comment_list_state.dart';
-import '../../repository/comment/comment_repository.dart';
+import '../../../../data/model/comment/list/comment_list_state.dart';
+import '../../../repository/comment/comment_repository.dart';
 
 class GetCommentListUseCase {
   final CommentRepository _commentRepository;
