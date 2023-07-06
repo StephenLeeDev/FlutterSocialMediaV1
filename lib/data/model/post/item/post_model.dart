@@ -1,4 +1,4 @@
-import '../user/user_model.dart';
+import '../../user/user_model.dart';
 
 class PostModel {
   int? id;

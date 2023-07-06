@@ -1,5 +1,4 @@
-import 'package:flutter_social_media_v1/data/model/post/post_list_state.dart';
-
+import '../../../data/model/post/list/post_list_state.dart';
 import '../../repository/post/post_repository.dart';
 
 class GetPostListUseCase {

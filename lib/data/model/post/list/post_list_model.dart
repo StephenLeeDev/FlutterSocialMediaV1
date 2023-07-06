@@ -1,4 +1,4 @@
-import 'package:flutter_social_media_v1/data/model/post/post_model.dart';
+import 'package:flutter_social_media_v1/data/model/post/item/post_model.dart';
 
 class PostListModel {
   List<PostModel> postList;

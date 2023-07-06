@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/post/post_list_viewmodel.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/user/my_user_info_viewmodel.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/post/list/post_list_viewmodel.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/user/my_info/my_user_info_viewmodel.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../data/model/post/post_model.dart';
+import '../../../../data/model/post/item/post_model.dart';
 import '../../widget/feed/post_widget.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -25,11 +26,15 @@ class _FeedScreenState extends State<FeedScreen> {
     super.initState();
     _scrollController.addListener(_scrollListener);
 
-    postListViewModel = context.read<PostListViewModel>();
-    postListViewModel.getPostList();
+    fetchData();
+  }
 
+  Future<void> fetchData() async {
     // TODO : Relocation to inside of the MainNavigation later
-    context.read<MyUserInfoViewModel>().getMyUserInfo();
+    await GetIt.instance<MyUserInfoViewModel>().getMyUserInfo();
+
+    if (context.mounted) postListViewModel = context.read<PostListViewModel>();
+    postListViewModel.getPostList();
   }
 
   @override
@@ -44,6 +49,7 @@ class _FeedScreenState extends State<FeedScreen> {
           selector: (_, viewModel) => viewModel.currentList,
           builder: (context, list, _) {
             return ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
               controller: _scrollController,
               itemCount: list.length,
               itemBuilder: (BuildContext context, int index) {

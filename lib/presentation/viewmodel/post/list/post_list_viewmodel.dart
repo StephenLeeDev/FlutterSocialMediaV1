@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../data/model/post/post_list_state.dart';
-import '../../../data/model/post/post_model.dart';
-import '../../../domain/usecase/post/get_post_list_usecase.dart';
+import '../../../../data/model/post/list/post_list_state.dart';
+import '../../../../data/model/post/item/post_model.dart';
+import '../../../../domain/usecase/post/get_post_list_usecase.dart';
 
 class PostListViewModel extends ChangeNotifier {
   final GetPostListUseCase _getPostListUseCase;
