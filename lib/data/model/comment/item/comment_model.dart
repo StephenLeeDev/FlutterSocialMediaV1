@@ -1,7 +1,8 @@
-import '../user/simple_user_info.dart';
+import '../../user/simple_user_info.dart';
 
 class CommentModel {
   int? id;
+  int get commentId => id ?? -1;
   String? content;
   String get getContent => content ?? "";
   CommentType? type;
@@ -10,10 +11,12 @@ class CommentModel {
   int? postId;
   SimpleUserInfo? user;
   String get getUserName => user?.username ?? "Unknown";
+  String get getUserEmail => user?.email ?? "Unknown";
   DateTime? createdAt;
   DateTime? updatedAt;
   int? childrenCount;
   int get getChildrenCount => childrenCount ?? 0;
+  bool isMine = false;
 
   CommentModel({
     this.id,
@@ -62,7 +65,7 @@ class CommentModel {
   String toString() {
     return 'CommentModel(id: $id, content: $content, type: $type, parentCommentId: $parentCommentId, '
         'parentCommentAuthor: $parentCommentAuthor, postId: $postId, user: $user, createdAt: $createdAt, '
-        'updatedAt: $updatedAt, childrenCount: $childrenCount)';
+        'updatedAt: $updatedAt, childrenCount: $childrenCount, isMine: $isMine)';
   }
 
   CommentModel copyWith({
@@ -90,6 +93,8 @@ class CommentModel {
       childrenCount: childrenCount ?? this.childrenCount,
     );
   }
+
+  bool isMyComment({required String myEmail}) => getUserEmail == myEmail;
 }
 
 enum CommentType {

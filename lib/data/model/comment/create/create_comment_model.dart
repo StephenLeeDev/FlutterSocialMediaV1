@@ -31,6 +31,6 @@ class CreateCommentModel {
 
   @override
   String toString() {
-    return 'CreateCommentDto(content: $content, postId: $postId, parentCommentId: $parentCommentId, parentCommentAuthor: $parentCommentAuthor)';
+    return 'CreateCommentModel(content: $content, postId: $postId, parentCommentId: $parentCommentId, parentCommentAuthor: $parentCommentAuthor)';
   }
 }

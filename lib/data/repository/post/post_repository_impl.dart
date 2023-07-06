@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import '../../../domain/repository/post/post_repository.dart';
 import '../../constant/constant.dart';
 import '../../model/common/single_integer_state.dart' as SingleIntegerState;
-import '../../model/post/post_list_model.dart';
-import '../../model/post/post_list_state.dart' as PostListState;
+import '../../model/post/list/post_list_model.dart';
+import '../../model/post/list/post_list_state.dart' as PostListState;
 
 class PostRepositoryImpl extends PostRepository {
 

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/usecase/auth/get_access_token_usecase.dart';
 import '../view/screen/auth/auth_screen.dart';
-import '../view/screen/comment/comment_screen_wrapper.dart';
+import '../view/screen/comment/comment/comment_screen.dart';
 import '../view/screen/feed/feed_screen.dart';
 
 final GoRouter router = GoRouter(
@@ -12,7 +12,7 @@ final GoRouter router = GoRouter(
 
   redirect: (context, state) async {
     String accessToken = await GetIt.instance<GetAccessTokenUseCase>().execute();
-    debugPrint("accessToken : $accessToken");
+    debugPrint("GoRouter accessToken : $accessToken");
 
     final isSignedIn = accessToken.isNotEmpty;
     if (!isSignedIn) {
@@ -34,11 +34,11 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const FeedScreen(),
     ),
     GoRoute(
-      name: CommentScreenWrapper.routeName,
-      path: CommentScreenWrapper.routeURL,
+      name: CommentScreen.routeName,
+      path: CommentScreen.routeURL,
       builder: (context, state) {
         final postId = state.pathParameters['postId'] ?? "-1";
-        return CommentScreenWrapper(postId: postId);
+        return CommentScreen(postId: postId);
       }
     ),
   ],

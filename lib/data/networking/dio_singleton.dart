@@ -5,17 +5,12 @@ class DioSingleton {
   static Dio? _instance;
 
   static Dio getInstance() {
-    if (_instance == null) {
-      _instance = Dio();
-
-      _instance?.interceptors.add(
-        InterceptorsWrapper(
-          onError: (DioException exception, handler) {
-            debugPrint('DioException: ${exception.toString()}');
-          },
+    _instance ??= Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 3),
+          receiveTimeout: const Duration(seconds: 3),
         ),
       );
-    }
     return _instance!;
   }
 }
