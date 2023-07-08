@@ -125,49 +125,25 @@ class _CommentScreenState extends State<CommentScreen> {
                       ),
                     ),
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _textEditingController,
-                          decoration: const InputDecoration(
-                            hintText: 'Add a comment...',
-                            border: OutlineInputBorder(),
+                  child: GestureDetector(
+                    onTap: () => showModalBottomKeyboard(),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _textEditingController,
+                            decoration: const InputDecoration(
+                              hintText: 'Add a comment...',
+                              border: OutlineInputBorder(),
+                            ),
+                            minLines: 1,
+                            maxLines: 4,
+                            enabled: false,
                           ),
-                          minLines: 1,
-                          maxLines: 4,
-                          maxLength: 200,
-                          onChanged: (value) {
-                            createCommentViewModel.setContent(value: value);
-                          },
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      ValueListenableBuilder<bool>(
-                          valueListenable: createCommentViewModel.isValidNotifier,
-                          builder: (context, isValid, _) {
-                            return InkWell(
-                              enableFeedback: false,
-                              child: IconButton(
-                                onPressed: () async {
-                                  if (isValid) {
-                                    final state = await createCommentViewModel.createComment();
-                                    if (state is CreateCommentState.Success) {
-                                      final CommentModel newComment = state.value;
-                                      newComment.isMine = true;
-                                      onNewComment(newComment: newComment);
-                                      _textEditingController.text = "";
-                                    }
-                                  }
-                                },
-                                icon: Icon(Icons.send,
-                                    color: isValid ? Colors.black : Colors.grey.shade400,
-                                ),
-                              ),
-                            );
-                          })
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -257,6 +233,83 @@ class _CommentScreenState extends State<CommentScreen> {
     commentListViewModel.prependNewCommentToList(additionalList: [newComment]);
     _scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
+  /// Shows a bottom sheet modal for keyboard input.
+  void showModalBottomKeyboard() {
+    final FocusNode focusNode = FocusNode();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext buildContext) {
+        Future.delayed(Duration.zero, () {
+          FocusScope.of(buildContext).requestFocus(focusNode);
+        });
+        return
+          Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(buildContext).viewInsets.bottom),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.grey,
+                    width: 1.0,
+                  ),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      focusNode: focusNode,
+                      controller: _textEditingController,
+                      decoration: const InputDecoration(
+                        hintText: 'Add a comment...',
+                        border: OutlineInputBorder(),
+                      ),
+                      minLines: 1,
+                      maxLines: 4,
+                      maxLength: 200,
+                      onChanged: (value) {
+                        createCommentViewModel.setContent(value: value);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ValueListenableBuilder<bool>(
+                      valueListenable: createCommentViewModel.isValidNotifier,
+                      builder: (context, isValid, _) {
+                        return InkWell(
+                          enableFeedback: false,
+                          child: IconButton(
+                            onPressed: () async {
+                              if (isValid) {
+                                final state = await createCommentViewModel.createComment();
+                                if (state is CreateCommentState.Success) {
+                                  final CommentModel newComment = state.value;
+                                  newComment.isMine = true;
+                                  onNewComment(newComment: newComment);
+                                  _textEditingController.text = "";
+
+                                  if (context.mounted) Navigator.pop(context);
+                                }
+                              }
+                            },
+                            icon: Icon(Icons.send,
+                              color: isValid ? Colors.black : Colors.grey.shade400,
+                            ),
+                          ),
+                        );
+                      },
+                  )
+                ],
+              ),
+            ),
+          );
+      },
+    );
   }
 
   @override
