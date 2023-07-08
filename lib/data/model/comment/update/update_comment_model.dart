@@ -1,28 +1,28 @@
 class UpdateCommentModel {
-  int postId;
+  int commentId;
   String content;
 
   UpdateCommentModel({
     required this.content,
-    required this.postId,
+    required this.commentId,
   });
 
   factory UpdateCommentModel.fromJson(Map<String, dynamic> json) {
     return UpdateCommentModel(
-      postId: json['postId'] as int,
+      commentId: json['commentId'] as int,
       content: json['content'] as String,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'postId': postId,
+      'commentId': commentId,
       'content': content,
     };
   }
 
   @override
   String toString() {
-    return 'UpdateCommentModel(postId: $postId, content: $content)';
+    return 'UpdateCommentModel(commentId: $commentId, content: $content)';
   }
 }
