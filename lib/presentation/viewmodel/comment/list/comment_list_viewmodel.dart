@@ -53,7 +53,7 @@ class CommentListViewModel {
   final int _limit = 10;
   int get limit => _limit;
 
-  /// Total comments count can fetch
+  /// It represents has next page
   bool _hasNext = true;
   bool get hasNext => _hasNext;
 

@@ -10,7 +10,6 @@ import '../../../util/bottom_sheet/bottom_sheet_util.dart';
 import '../../../util/custom_toast/custom_toast_util.dart';
 import '../../../util/date/date_util.dart';
 import '../../../util/dialog/dialog_util.dart';
-import '../../../util/integer/integer_util.dart';
 import '../../../viewmodel/comment/delete/delete_comment_viewmodel.dart';
 import '../../../viewmodel/comment/list/comment_list_viewmodel.dart';
 
@@ -111,7 +110,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                     ),
                     const SizedBox(height: constantPadding),
                     Text(
-                      "${widget.commentModel.getChildrenCount} comment${IntegerUtil().getPluralSuffix(count: widget.commentModel.getChildrenCount)}",
+                      "${widget.commentModel.getChildrenCount} ${(widget.commentModel.getChildrenCount == 1) ? "Reply" : "Replies"}",
                       style: const TextStyle(
                           fontSize: 15.0,
                           fontWeight: FontWeight.w800,
@@ -180,7 +179,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     /// Delete the comment
     final state = await deleteCommentViewModel.deleteComment(commentId: commentId);
     if (state is Success) {
-      if (context.mounted) showCustomToastWithTimer(context: context, message: "The comment has been deleted");
+      if (context.mounted) showCustomToastWithTimer(context: context, message: commentDeletedMessage);
       /// Remove the deleted comment from the list
       commentListViewModel.removeDeletedCommentFromList(commentId: commentId);
     }

@@ -6,19 +6,26 @@ import 'package:flutter/material.dart';
 void showCustomToastWithTimer({
   required BuildContext context,
   required String message,
-  int seconds = 2,
+  int seconds = 3,
 }) {
+
+  /// To prevent an occasional issue where the Timer triggers Navigator.pop after the onTap has already executed, resulting in an additional pop, an additional safety measure is implemented using the isClosed flag.
+  bool isClosed = false;
+
   showCupertinoModalPopup(
     context: context,
     builder: (BuildContext buildContext) {
 
       Timer(Duration(seconds: seconds), () {
-        if (buildContext.mounted) Navigator.pop(buildContext);
+        if (buildContext != null && buildContext.mounted && !isClosed) Navigator.pop(buildContext);
       });
 
       return GestureDetector(
         onTap: () {
-          if (buildContext.mounted) Navigator.pop(buildContext);
+          if (buildContext.mounted) {
+            isClosed = true;
+            Navigator.pop(buildContext);
+          }
         },
         child: SafeArea(
           child: Wrap(
@@ -52,5 +59,7 @@ void showCustomToastWithTimer({
         ),
       );
     },
-  );
+  ).then((value) {
+    isClosed = true;
+  });
 }
