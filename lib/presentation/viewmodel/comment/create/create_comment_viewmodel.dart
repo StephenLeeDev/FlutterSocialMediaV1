@@ -62,7 +62,7 @@ class CreateCommentViewModel {
     _isValid.value = value;
   }
 
-  /// Using to manage server communication state
+  /// It represents state
   final ValueNotifier<CommentItemState> _createCommentState = ValueNotifier<CommentItemState>(Ready());
   ValueNotifier<CommentItemState> get createCommentStateNotifier => _createCommentState;
   CommentItemState get createCommentState => _createCommentState.value;
@@ -71,6 +71,7 @@ class CreateCommentViewModel {
     _createCommentState.value = createCommentState;
   }
 
+  /// Execute create comment API
   Future<CommentItemState> createComment() async {
     setCommentItemState(createCommentState: Loading());
     final CreateCommentModel createCommentModel = CreateCommentModel(

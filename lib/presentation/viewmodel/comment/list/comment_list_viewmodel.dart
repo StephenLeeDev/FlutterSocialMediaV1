@@ -71,15 +71,22 @@ class CommentListViewModel {
 
   /// Add additional comments to the _currentList
   addAdditionalList({required List<CommentModel> additionalList}) {
-    List<CommentModel> copyList = List.from(currentListNotifier.value);
+    List<CommentModel> copyList = List.from(currentList);
     copyList.addAll(setIsMineStatusAndReturn(list: additionalList));
     setCurrentList(list: copyList);
   }
 
   /// Prepend a new comment to the _currentList
   prependNewCommentToList({required List<CommentModel> additionalList}) {
-    List<CommentModel> copyList = List.from(currentListNotifier.value);
+    List<CommentModel> copyList = List.from(currentList);
     copyList.insertAll(0, setIsMineStatusAndReturn(list: additionalList));
+    setCurrentList(list: copyList);
+  }
+
+  /// Replace updated comment item from the _currentList
+  replaceUpdatedCommentFromList({required CommentModel updatedComment, required int updatedIndex}) {
+    List<CommentModel> copyList = List.from(currentList);
+    copyList[updatedIndex] = updatedComment;
     setCurrentList(list: copyList);
   }
 
@@ -95,7 +102,7 @@ class CommentListViewModel {
       increasePage();
       addAdditionalList(additionalList: state.getList);
 
-      if (currentListNotifier.value.length >= state.total) setHasNext(value: false);
+      if (currentList.length >= state.total) setHasNext(value: false);
     }
   }
 
