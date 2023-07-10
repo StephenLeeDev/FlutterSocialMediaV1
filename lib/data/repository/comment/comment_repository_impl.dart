@@ -107,4 +107,27 @@ class CommentRepositoryImpl extends CommentRepository {
     }
   }
 
+  @override
+  Future<CommentListState.CommentListState> getReplyList({required int postId, required int parentCommentId, required int page, required int limit}) async {
+
+    const api = 'comment/reply';
+    final url = '$baseUrl$api?postId=$postId&page=$page&limit=$limit';
+
+    try {
+      final Response response = await _dio.get(url);
+
+      if (response.statusCode == 200) {
+        final model = CommentListModel.fromJson(response.data);
+        final state = CommentListState.Success(total: model.getTotal, list: model.getCommentList);
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return CommentListState.Fail();
+    } catch (e) {
+      return CommentListState.Fail();
+    }
+  }
+
 }

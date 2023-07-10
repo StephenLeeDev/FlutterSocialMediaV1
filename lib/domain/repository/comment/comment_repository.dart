@@ -9,4 +9,5 @@ abstract class CommentRepository {
   Future<CommentItemState> createComment({required CreateCommentModel createCommentModel});
   Future<CommonState> deleteComment({required int commentId});
   Future<CommentItemState> updateComment({required UpdateCommentModel updateCommentModel});
+  Future<CommentListState> getReplyList({required int postId, required int parentCommentId, required int page, required int limit});
 }
