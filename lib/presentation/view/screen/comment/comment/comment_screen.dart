@@ -10,6 +10,7 @@ import '../../../../../data/model/common/enum_create_update.dart';
 import '../../../../../domain/usecase/comment/create/create_comment_usecase.dart';
 import '../../../../../domain/usecase/comment/list/get_comment_list_usecase.dart';
 import '../../../../../domain/usecase/comment/update/update_comment_usecase.dart';
+import '../../../../util/custom_toast/custom_toast_util.dart';
 import '../../../../util/dialog/dialog_util.dart';
 import '../../../../util/keyboard/keyboard_util.dart';
 import '../../../../viewmodel/comment/list/comment_list_viewmodel.dart';
@@ -330,6 +331,7 @@ class _CommentScreenState extends State<CommentScreen> {
                           onPressed: () async {
                             if (isValid) {
                               final state = await createCommentViewModel.createComment();
+                              /// A new comment created successfully
                               if (state is CommentItemState.Success) {
                                 final CommentModel newComment = state.item;
                                 newComment.isMine = true;
@@ -337,6 +339,7 @@ class _CommentScreenState extends State<CommentScreen> {
                                 _textEditingController.text = "";
 
                                 if (buildContext.mounted) Navigator.pop(buildContext);
+                                if (context.mounted) showCustomToastWithTimer(context: context, message: commentCreatedMessage);
                               }
                             }
                           },
@@ -363,6 +366,7 @@ class _CommentScreenState extends State<CommentScreen> {
                               _textEditingController.text = "";
 
                               if (buildContext.mounted) Navigator.pop(buildContext);
+                              if (context.mounted) showCustomToastWithTimer(context: context, message: commentUpdatedMessage);
                             }
                           }
                         },
