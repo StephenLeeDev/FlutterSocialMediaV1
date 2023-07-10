@@ -4,6 +4,7 @@ import '../../../../data/model/comment/item/comment_item_state.dart';
 import '../../../../data/model/comment/update/update_comment_model.dart';
 import '../../../../domain/usecase/comment/update/update_comment_usecase.dart';
 
+/// This ViewModel is responsible for handling the updating of comments/replies
 class UpdateCommentViewModel {
   final UpdateCommentUseCase _updateCommentUseCase;
 

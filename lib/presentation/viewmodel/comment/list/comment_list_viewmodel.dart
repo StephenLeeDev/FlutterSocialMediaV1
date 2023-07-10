@@ -4,6 +4,7 @@ import '../../../../data/model/comment/list/comment_list_state.dart';
 import '../../../../data/model/comment/item/comment_model.dart';
 import '../../../../domain/usecase/comment/list/get_comment_list_usecase.dart';
 
+/// This ViewModel is responsible for handling the fetching of comments/replies
 class CommentListViewModel {
   final GetCommentListUseCase _getCommentListUseCase;
 
