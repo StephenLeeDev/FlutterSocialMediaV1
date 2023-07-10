@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../data/model/comment/item/comment_item_state.dart' as CommentItemState;
 import '../../../../../data/model/comment/list/comment_list_state.dart' as CommentListState;
 import '../../../../../data/model/comment/item/comment_model.dart';
-import '../../../../../data/model/comment/create/create_comment_state.dart' as CreateCommentState;
+import '../../../../../data/model/common/enum_create_update.dart';
 import '../../../../../domain/usecase/comment/create/create_comment_usecase.dart';
 import '../../../../../domain/usecase/comment/list/get_comment_list_usecase.dart';
 import '../../../../util/keyboard/keyboard_util.dart';
@@ -278,28 +279,27 @@ class _CommentScreenState extends State<CommentScreen> {
                     ),
                   ),
                   const SizedBox(width: 10),
+                  /// On create a new comment
+                  if (isCreateMode)
                   ValueListenableBuilder<bool>(
                       valueListenable: createCommentViewModel.isValidNotifier,
-                      builder: (context, isValid, _) {
-                        return InkWell(
-                          enableFeedback: false,
-                          child: IconButton(
-                            onPressed: () async {
-                              if (isValid) {
-                                final state = await createCommentViewModel.createComment();
-                                if (state is CreateCommentState.Success) {
-                                  final CommentModel newComment = state.value;
-                                  newComment.isMine = true;
-                                  onNewComment(newComment: newComment);
-                                  _textEditingController.text = "";
+                      builder: (buildContext, isValid, _) {
+                        return IconButton(
+                          onPressed: () async {
+                            if (isValid) {
+                              final state = await createCommentViewModel.createComment();
+                              if (state is CommentItemState.Success) {
+                                final CommentModel newComment = state.item;
+                                newComment.isMine = true;
+                                onNewComment(newComment: newComment);
+                                _textEditingController.text = "";
 
-                                  if (context.mounted) Navigator.pop(context);
-                                }
+                                if (buildContext.mounted) Navigator.pop(buildContext);
                               }
-                            },
-                            icon: Icon(Icons.send,
-                              color: isValid ? Colors.black : Colors.grey.shade400,
-                            ),
+                            }
+                          },
+                          icon: Icon(Icons.send,
+                            color: isValid ? Colors.black : Colors.grey.shade400,
                           ),
                         );
                       },
