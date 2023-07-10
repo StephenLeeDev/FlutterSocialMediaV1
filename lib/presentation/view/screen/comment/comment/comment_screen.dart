@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../data/constant/text.dart';
+import '../../../../../data/model/comment/item/comment_item_state.dart' as CommentItemState;
 import '../../../../../data/model/comment/list/comment_list_state.dart' as CommentListState;
 import '../../../../../data/model/comment/item/comment_model.dart';
-import '../../../../../data/model/comment/create/create_comment_state.dart' as CreateCommentState;
+import '../../../../../data/model/common/enum_create_update.dart';
 import '../../../../../domain/usecase/comment/create/create_comment_usecase.dart';
 import '../../../../../domain/usecase/comment/list/get_comment_list_usecase.dart';
+import '../../../../../domain/usecase/comment/update/update_comment_usecase.dart';
+import '../../../../util/dialog/dialog_util.dart';
 import '../../../../util/keyboard/keyboard_util.dart';
 import '../../../../viewmodel/comment/list/comment_list_viewmodel.dart';
 import '../../../../viewmodel/comment/create/create_comment_viewmodel.dart';
+import '../../../../viewmodel/comment/update/update_comment_viewmodel.dart';
 import '../../../../viewmodel/user/my_info/my_user_info_viewmodel.dart';
 import '../../../widget/comment/comment_widget.dart';
 import '../../../widget/common/empty/empty_widget.dart';
@@ -39,17 +44,28 @@ class _CommentScreenState extends State<CommentScreen> {
   final TextEditingController _textEditingController = TextEditingController();
   late CommentListViewModel commentListViewModel;
   late CreateCommentViewModel createCommentViewModel;
+  late UpdateCommentViewModel updateCommentViewModel;
 
   final myEmail = GetIt.instance<MyUserInfoViewModel>().myEmail;
+
+  /// It's used for branching the creation/update logic
+  CreateUpdateMode _mode = CreateUpdateMode.create;
+  bool get _isCreateMode => _mode == CreateUpdateMode.create; // true == create, false == update
 
   @override
   void initState() {
     super.initState();
 
+    initViewModels();
     initViews();
+    fetchCommentList();
+  }
+
+  /// ViewModels
+  void initViewModels() {
     initListViewModel();
     initCreateViewModel();
-    fetchCommentList();
+    initUpdateViewModel();
   }
 
   /// List
@@ -63,6 +79,11 @@ class _CommentScreenState extends State<CommentScreen> {
   void initCreateViewModel() {
     createCommentViewModel = CreateCommentViewModel(createCommentUseCase: GetIt.instance<CreateCommentUseCase>());
     createCommentViewModel.setPostId(value: widget.getPostId);
+  }
+
+  /// Update
+  void initUpdateViewModel() {
+    updateCommentViewModel = UpdateCommentViewModel(updateCommentUseCase: GetIt.instance<UpdateCommentUseCase>());
   }
 
   /// Views
@@ -125,49 +146,25 @@ class _CommentScreenState extends State<CommentScreen> {
                       ),
                     ),
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _textEditingController,
-                          decoration: const InputDecoration(
-                            hintText: 'Add a comment...',
-                            border: OutlineInputBorder(),
+                  child: GestureDetector(
+                    onTap: () => showModalBottomKeyboard(),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _textEditingController,
+                            decoration: const InputDecoration(
+                              hintText: 'Add a comment...',
+                              border: OutlineInputBorder(),
+                            ),
+                            minLines: 1,
+                            maxLines: 4,
+                            enabled: false,
                           ),
-                          minLines: 1,
-                          maxLines: 4,
-                          maxLength: 200,
-                          onChanged: (value) {
-                            createCommentViewModel.setContent(value: value);
-                          },
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      ValueListenableBuilder<bool>(
-                          valueListenable: createCommentViewModel.isValidNotifier,
-                          builder: (context, isValid, _) {
-                            return InkWell(
-                              enableFeedback: false,
-                              child: IconButton(
-                                onPressed: () async {
-                                  if (isValid) {
-                                    final state = await createCommentViewModel.createComment();
-                                    if (state is CreateCommentState.Success) {
-                                      final CommentModel newComment = state.value;
-                                      newComment.isMine = true;
-                                      onNewComment(newComment: newComment);
-                                      _textEditingController.text = "";
-                                    }
-                                  }
-                                },
-                                icon: Icon(Icons.send,
-                                    color: isValid ? Colors.black : Colors.grey.shade400,
-                                ),
-                              ),
-                            );
-                          })
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -223,6 +220,13 @@ class _CommentScreenState extends State<CommentScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 0),
                         child: CommentWidget(
                           commentModel: list[index],
+                          callback: () {
+                            final comment = list[index];
+                            updateCommentViewModel.setCommentId(value: comment.commentId);
+                            _mode = CreateUpdateMode.update;
+                            _textEditingController.text = comment.getContent;
+                            showModalBottomKeyboard(commentItemToUpdate: comment, updatedIndex: index);
+                          },
                         ),
                       );
                     },
@@ -255,8 +259,158 @@ class _CommentScreenState extends State<CommentScreen> {
     KeyboardUtil().dismissKeyboard(context);
     createCommentViewModel.setContent(value: "");
     commentListViewModel.prependNewCommentToList(additionalList: [newComment]);
-    _scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    _scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
+  /// When a comment is updated, replace it from the list
+  void onCommentUpdated({required CommentModel updatedComment, required int updatedIndex}) {
+    KeyboardUtil().dismissKeyboard(context);
+    updateCommentViewModel.setUpdatedContent(value: "");
+    commentListViewModel.replaceUpdatedCommentFromList(updatedComment: updatedComment, updatedIndex: updatedIndex);
+    _mode = CreateUpdateMode.create;
+    _textEditingController.text = "";
+  }
+
+  /// Shows a bottom sheet modal for keyboard input.
+  void showModalBottomKeyboard({CommentModel? commentItemToUpdate, int? updatedIndex}) {
+    final FocusNode focusNode = FocusNode();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext buildContext) {
+        Future.delayed(Duration.zero, () {
+          FocusScope.of(buildContext).requestFocus(focusNode);
+        });
+        return
+          Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(buildContext).viewInsets.bottom),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.grey,
+                    width: 1.0,
+                  ),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      focusNode: focusNode,
+                      controller: _textEditingController,
+                      decoration: const InputDecoration(
+                        hintText: 'Add a comment...',
+                        border: OutlineInputBorder(),
+                      ),
+                      minLines: 1,
+                      maxLines: 4,
+                      maxLength: 200,
+                      onChanged: (value) {
+                        /// On creating a new comment
+                        if (_isCreateMode) {
+                          createCommentViewModel.setContent(value: value);
+                        }
+                        /// On updating a comment
+                        else {
+                          updateCommentViewModel.setUpdatedContent(value: value);
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  /// On creating a new comment
+                  if (_isCreateMode)
+                  ValueListenableBuilder<bool>(
+                      valueListenable: createCommentViewModel.isValidNotifier,
+                      builder: (buildContext, isValid, _) {
+                        return IconButton(
+                          onPressed: () async {
+                            if (isValid) {
+                              final state = await createCommentViewModel.createComment();
+                              if (state is CommentItemState.Success) {
+                                final CommentModel newComment = state.item;
+                                newComment.isMine = true;
+                                onNewComment(newComment: newComment);
+                                _textEditingController.text = "";
+
+                                if (buildContext.mounted) Navigator.pop(buildContext);
+                              }
+                            }
+                          },
+                          icon: Icon(Icons.send,
+                            color: isValid ? Colors.black : Colors.grey.shade400,
+                          ),
+                        );
+                      },
+                  ),
+                  /// On updating a comment
+                  if (!_isCreateMode)
+                  ValueListenableBuilder<bool>(
+                    valueListenable: updateCommentViewModel.isValidNotifier,
+                    builder: (buildContext, isValid, _) {
+                      return IconButton(
+                        onPressed: () async {
+                          if (isValid) {
+                            final state = await updateCommentViewModel.updateComment();
+                            if (state is CommentItemState.Success) {
+                              _mode = CreateUpdateMode.create;
+                              final CommentModel updatedComment = state.item;
+                              updatedComment.isMine = true;
+                              if (updatedIndex != null) onCommentUpdated(updatedComment: updatedComment, updatedIndex: updatedIndex);
+                              _textEditingController.text = "";
+
+                              if (buildContext.mounted) Navigator.pop(buildContext);
+                            }
+                          }
+                        },
+                        icon: Icon(Icons.send,
+                          color: isValid ? Colors.black : Colors.grey.shade400,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+      },
+    ).then((value) {
+      /// It means, it was updating a comment
+      if (commentItemToUpdate != null && updatedIndex != null) {
+        /// Updating comment task has completed successfully
+        /// Proceed initializing
+        if (updateCommentViewModel.updateCommentState is CommentItemState.Success) {
+          updateCommentViewModel.setCommentItemState(updateCommentState: CommentItemState.Ready());
+        }
+        /// Updating comment task has not completed
+        /// Recommend continue updating
+        else if (updateCommentViewModel.updateCommentState is CommentItemState.Ready) {
+          showCancelUpdateDialog(commentItemToUpdate: commentItemToUpdate, updatedIndex: updatedIndex);
+        }
+      }
+    });
+  }
+
+  void showCancelUpdateDialog({required CommentModel commentItemToUpdate, required int updatedIndex}) {
+    showTwoButtonDialog(
+      context: context,
+      title: discardEdits,
+      /// Cancel updating and discard
+      firstButtonText: discard,
+      firstButtonListener: () {
+        _mode = CreateUpdateMode.create;
+        updateCommentViewModel.initUpdateStatus();
+        _textEditingController.text = "";
+      },
+      /// Keep writing
+      secondButtonText: keepWriting,
+      secondButtonListener: () {
+        showModalBottomKeyboard(commentItemToUpdate: commentItemToUpdate, updatedIndex: updatedIndex);
+      },
+    );
   }
 
   @override

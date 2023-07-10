@@ -95,6 +95,8 @@ class CommentModel {
   }
 
   bool isMyComment({required String myEmail}) => getUserEmail == myEmail;
+
+  bool isUpdated() => createdAt != null && updatedAt != null && createdAt != updatedAt;
 }
 
 enum CommentType {

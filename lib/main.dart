@@ -31,6 +31,7 @@ import 'data/networking/interceptor/token_interceptor.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'domain/usecase/auth/set_access_token_usecase.dart';
 import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
+import 'domain/usecase/comment/update/update_comment_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
 import 'presentation/viewmodel/post/like/post_like_viewmodel.dart';
 import 'presentation/viewmodel/user/bookmark/bookmark_viewmodel.dart';
@@ -96,9 +97,11 @@ void main() async {
   final getCommentUseCase = GetCommentListUseCase(commentRepository: commentRepository);
   final createCommentUseCase = CreateCommentUseCase(commentRepository: commentRepository);
   final deleteCommentUseCase = DeleteCommentUseCase(commentRepository: commentRepository);
+  final updateCommentUseCase = UpdateCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<GetCommentListUseCase>(getCommentUseCase);
   getIt.registerSingleton<CreateCommentUseCase>(createCommentUseCase);
   getIt.registerSingleton<DeleteCommentUseCase>(deleteCommentUseCase);
+  getIt.registerSingleton<UpdateCommentUseCase>(updateCommentUseCase);
 
   await Firebase.initializeApp();
   FirebaseMessaging fbMsg = FirebaseMessaging.instance;

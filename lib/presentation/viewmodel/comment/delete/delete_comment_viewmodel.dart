@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../data/model/common/common_state.dart';
 import '../../../../domain/usecase/comment/delete/delete_comment_usecase.dart';
 
+/// This ViewModel is responsible for handling the deletion of comments/replies
 class DeleteCommentViewModel {
   final DeleteCommentUseCase _deleteCommentUseCase;
 
