@@ -11,14 +11,14 @@ import '../../../util/custom_toast/custom_toast_util.dart';
 import '../../../util/date/date_util.dart';
 import '../../../util/dialog/dialog_util.dart';
 import '../../../util/integer/integer_util.dart';
-import '../../../util/keyboard/keyboard_util.dart';
 import '../../../viewmodel/comment/delete/delete_comment_viewmodel.dart';
 import '../../../viewmodel/comment/list/comment_list_viewmodel.dart';
 
 class CommentWidget extends StatefulWidget {
-  const CommentWidget({Key? key, required this.commentModel}) : super(key: key);
+  const CommentWidget({Key? key, required this.commentModel, required this.callback}) : super(key: key);
 
   final CommentModel commentModel;
+  final VoidCallback callback;
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -92,6 +92,14 @@ class _CommentWidgetState extends State<CommentWidget> {
                               fontWeight: FontWeight.w400,
                               color: Colors.black45),
                         ),
+                        if (widget.commentModel.isUpdated())
+                        const Text(
+                          " (edited)",
+                          style: TextStyle(
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black45),
+                        ),
                       ],
                     ),
                     Text(
@@ -121,7 +129,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                   ),
 
                   onPressed: () => {
-                    KeyboardUtil().dismissKeyboard(context),
                     /// Show Edit/Delete bottom sheet
                     showEditDeleteBottomModal()
                   },
@@ -147,8 +154,9 @@ class _CommentWidgetState extends State<CommentWidget> {
       /// Edit button
       secondButtonIcon: Icons.edit,
       secondButtonText: edit,
-      secondButtonListener:
-          () {}, // TODO : Edit comment feature implementation
+      secondButtonListener: () {
+        widget.callback();
+      },
     );
   }
 

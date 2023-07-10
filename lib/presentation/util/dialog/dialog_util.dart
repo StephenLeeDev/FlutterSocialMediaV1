@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 void showTwoButtonDialog({
   required BuildContext context,
   required String title,
-  required String content,
+  String? content,
   /// First button
   required String firstButtonText,
   required Function() firstButtonListener,
@@ -13,16 +13,16 @@ void showTwoButtonDialog({
 }) async {
   return showDialog<void>(
     context: context,
-    builder: (BuildContext context) {
+    builder: (BuildContext buildContext) {
       return AlertDialog(
         title: Text(title),
-        content: Text(content),
+        content: (content != null && content != "") ? Text(content) : null,
         actions: [
           /// Second button
           if (secondButtonText != null)
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(buildContext);
                 if (secondButtonListener != null) secondButtonListener();
               },
               style: ButtonStyle(
@@ -35,7 +35,7 @@ void showTwoButtonDialog({
           /// First button
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(buildContext);
               firstButtonListener();
             },
             style: ButtonStyle(

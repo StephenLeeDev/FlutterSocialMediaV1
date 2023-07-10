@@ -10,15 +10,15 @@ void showCustomToastWithTimer({
 }) {
   showCupertinoModalPopup(
     context: context,
-    builder: (BuildContext context) {
+    builder: (BuildContext buildContext) {
 
       Timer(Duration(seconds: seconds), () {
-        if (context.mounted) Navigator.pop(context);
+        if (buildContext.mounted) Navigator.pop(buildContext);
       });
 
       return GestureDetector(
         onTap: () {
-          if (context.mounted) Navigator.pop(context);
+          if (buildContext.mounted) Navigator.pop(buildContext);
         },
         child: SafeArea(
           child: Wrap(
