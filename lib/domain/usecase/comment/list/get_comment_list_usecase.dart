@@ -7,7 +7,7 @@ class GetCommentListUseCase {
   GetCommentListUseCase({required CommentRepository commentRepository})
       : _commentRepository = commentRepository;
 
-  Future<CommentListState> execute({required int postId, required int page, required int limit}) async {
-    return await _commentRepository.getCommentList(postId: postId, page: page, limit: limit);
+  Future<CommentListState> execute({required int postId, int? parentCommentId, required int page, required int limit}) async {
+    return await _commentRepository.getCommentList(postId: postId, parentCommentId: parentCommentId, page: page, limit: limit);
   }
 }

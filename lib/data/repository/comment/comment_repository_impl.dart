@@ -18,10 +18,10 @@ class CommentRepositoryImpl extends CommentRepository {
   CommentRepositoryImpl(this._dio);
 
   @override
-  Future<CommentListState.CommentListState> getCommentList({required int postId, required int page, required int limit}) async {
+  Future<CommentListState.CommentListState> getCommentList({required int postId, int? parentCommentId, required int page, required int limit}) async {
 
-    const api = 'comment';
-    final url = '$baseUrl$api?postId=$postId&page=$page&limit=$limit';
+    final api = parentCommentId == null ? 'comment?' : 'comment/reply?parentCommentId=$parentCommentId&';
+    final url = '$baseUrl${api}postId=$postId&page=$page&limit=$limit';
 
     try {
       final Response response = await _dio.get(url);
@@ -104,29 +104,6 @@ class CommentRepositoryImpl extends CommentRepository {
       return CommentItemState.Fail();
     } catch (e) {
       return CommentItemState.Fail();
-    }
-  }
-
-  @override
-  Future<CommentListState.CommentListState> getReplyList({required int postId, required int parentCommentId, required int page, required int limit}) async {
-
-    const api = 'comment/reply';
-    final url = '$baseUrl$api?postId=$postId&page=$page&limit=$limit';
-
-    try {
-      final Response response = await _dio.get(url);
-
-      if (response.statusCode == 200) {
-        final model = CommentListModel.fromJson(response.data);
-        final state = CommentListState.Success(total: model.getTotal, list: model.getCommentList);
-
-        debugPrint("state : ${state.toString()}");
-
-        return state;
-      }
-      return CommentListState.Fail();
-    } catch (e) {
-      return CommentListState.Fail();
     }
   }
 

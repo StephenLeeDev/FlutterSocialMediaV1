@@ -29,6 +29,7 @@ class CommentModel {
     this.createdAt,
     this.updatedAt,
     this.childrenCount,
+    this.isMine = false,
   });
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +44,7 @@ class CommentModel {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       childrenCount: json['childrenCount'],
+      isMine: json['isMine'] ?? false,
     );
   }
 
@@ -58,6 +60,7 @@ class CommentModel {
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'childrenCount': childrenCount,
+      'isMine': isMine,
     };
   }
 
@@ -79,6 +82,7 @@ class CommentModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     int? childrenCount,
+    bool isMine = false,
   }) {
     return CommentModel(
       id: id ?? this.id,
@@ -91,12 +95,18 @@ class CommentModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       childrenCount: childrenCount ?? this.childrenCount,
+      isMine: this.isMine,
     );
   }
 
   bool isMyComment({required String myEmail}) => getUserEmail == myEmail;
 
   bool isUpdated() => createdAt != null && updatedAt != null && createdAt != updatedAt;
+
+  String getSimpleName() {
+    return runtimeType.toString();
+  }
+
 }
 
 enum CommentType {

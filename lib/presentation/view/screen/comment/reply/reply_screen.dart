@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +23,11 @@ import '../../../widget/comment/comment_widget.dart';
 import '../../../widget/common/empty/empty_widget.dart';
 import '../../../widget/common/error/error_widget.dart';
 
-class CommentScreen extends StatefulWidget {
-  const CommentScreen({Key? key, required this.postId}) : super(key: key);
+class ReplyScreen extends StatefulWidget {
+  const ReplyScreen({Key? key, required this.postId, required this.commentString}) : super(key: key);
 
-  static const String routeName = "postComment";
-  static const String routeURL = "/comment";
+  static const String routeName = "postCommentReply";
+  static const String routeURL = "/comment/reply";
 
   final String postId;
   int get getPostId {
@@ -35,12 +37,13 @@ class CommentScreen extends StatefulWidget {
       return -1;
     }
   }
+  final String commentString;
 
   @override
-  State<CommentScreen> createState() => _CommentScreenState();
+  State<ReplyScreen> createState() => _ReplyScreenState();
 }
 
-class _CommentScreenState extends State<CommentScreen> {
+class _ReplyScreenState extends State<ReplyScreen> {
   final _scrollController = ScrollController();
   final TextEditingController _textEditingController = TextEditingController();
   late CommentListViewModel commentListViewModel;
@@ -48,6 +51,7 @@ class _CommentScreenState extends State<CommentScreen> {
   late UpdateCommentViewModel updateCommentViewModel;
 
   final myEmail = GetIt.instance<MyUserInfoViewModel>().myEmail;
+  late final CommentModel? _commentModel;
 
   /// It's used for branching the creation/update logic
   CreateUpdateMode _mode = CreateUpdateMode.create;
@@ -58,8 +62,20 @@ class _CommentScreenState extends State<CommentScreen> {
     super.initState();
 
     initViewModels();
+    initData();
     initViews();
     fetchCommentList();
+  }
+
+  /// Basic data
+  void initData() {
+    if (widget.commentString.isNotEmpty) {
+      _commentModel = CommentModel.fromJson(jsonDecode(widget.commentString));
+      commentListViewModel.setParentComment(commentModel: _commentModel);
+      commentListViewModel.prependNewCommentToList(additionalList: [_commentModel!]);
+      createCommentViewModel.setParentCommentId(value: _commentModel?.id);
+      createCommentViewModel.setParentCommentAuthor(value: _commentModel?.user?.email);
+    }
   }
 
   /// ViewModels
@@ -110,7 +126,7 @@ class _CommentScreenState extends State<CommentScreen> {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black87,
           title: const Text(
-            "Comments",
+            "Replies",
             style: TextStyle(
               fontSize: 24,
             ),
@@ -127,8 +143,7 @@ class _CommentScreenState extends State<CommentScreen> {
                     valueListenable: commentListViewModel.commentListStateNotifier,
                     builder: (context, state, _) {
                       /// Loading UI
-                      if (state is CommentListState.Loading &&
-                          commentListViewModel.currentList.isEmpty) {
+                      if (state is CommentListState.Loading && commentListViewModel.currentList.length == 1) {
                         return buildLoadingStateUI();
                       }
                       /// Fail UI
@@ -161,7 +176,7 @@ class _CommentScreenState extends State<CommentScreen> {
                           child: TextField(
                             controller: _textEditingController,
                             decoration: const InputDecoration(
-                              hintText: addAComment,
+                              hintText: addAReply,
                               border: OutlineInputBorder(),
                             ),
                             minLines: 1,
@@ -219,23 +234,27 @@ class _CommentScreenState extends State<CommentScreen> {
                 controller: _scrollController,
                 itemCount: list.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return CommentWidget(
-                    commentModel: list[index],
-                    updateCallback: () {
-                      final comment = list[index];
-                      updateCommentViewModel.setCommentId(value: comment.commentId);
-                      _mode = CreateUpdateMode.update;
-                      _textEditingController.text = comment.getContent;
-                      showModalBottomKeyboard(commentItemToUpdate: comment, updatedIndex: index);
-                    },
+                  return Padding(
+                    padding: EdgeInsets.only(left: index == 0 ? 0 : 30),
+                    child: CommentWidget(
+                      isComment: false,
+                      isWhiteBackground: index == 0 ? false : true,
+                      commentModel: list[index],
+                      updateCallback: () {
+                        final comment = list[index];
+                        updateCommentViewModel.setCommentId(value: comment.commentId);
+                        _mode = CreateUpdateMode.update;
+                        _textEditingController.text = comment.getContent;
+                        showModalBottomKeyboard(commentItemToUpdate: comment, updatedIndex: index);
+                      },
+                    ),
                   );
                 },
-                separatorBuilder: (BuildContext context, int index) =>
-                    const SizedBox(width: 20),
+                separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
               ),
             ),
             /// Empty message UI
-            if (list.isEmpty) const EmptyWidget(message: noCommentsYet),
+            if (list.length == 1) const EmptyWidget(message: noRepliesYet),
           ],
         );
       },
@@ -256,8 +275,8 @@ class _CommentScreenState extends State<CommentScreen> {
   void onNewComment({required CommentModel newComment}) {
     KeyboardUtil().dismissKeyboard(context);
     createCommentViewModel.setContent(value: "");
-    commentListViewModel.prependNewCommentToList(additionalList: [newComment]);
-    _scrollController.animateTo(0, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    commentListViewModel.prependNewCommentToList(index: 1, additionalList: [newComment]);
+    _scrollController.animateTo(1, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   /// When a comment is updated, replace it from the list
@@ -300,7 +319,7 @@ class _CommentScreenState extends State<CommentScreen> {
                       focusNode: focusNode,
                       controller: _textEditingController,
                       decoration: const InputDecoration(
-                        hintText: addAComment,
+                        hintText: addAReply,
                         border: OutlineInputBorder(),
                       ),
                       minLines: 1,
@@ -321,7 +340,7 @@ class _CommentScreenState extends State<CommentScreen> {
                   const SizedBox(width: 10),
                   /// On creating a new comment
                   if (_isCreateMode)
-                  ValueListenableBuilder<bool>(
+                    ValueListenableBuilder<bool>(
                       valueListenable: createCommentViewModel.isValidNotifier,
                       builder: (buildContext, isValid, _) {
                         return IconButton(
@@ -345,34 +364,34 @@ class _CommentScreenState extends State<CommentScreen> {
                           ),
                         );
                       },
-                  ),
+                    ),
                   /// On updating a comment
                   if (!_isCreateMode)
-                  ValueListenableBuilder<bool>(
-                    valueListenable: updateCommentViewModel.isValidNotifier,
-                    builder: (buildContext, isValid, _) {
-                      return IconButton(
-                        onPressed: () async {
-                          if (isValid) {
-                            final state = await updateCommentViewModel.updateComment();
-                            if (state is CommentItemState.Success) {
-                              _mode = CreateUpdateMode.create;
-                              final CommentModel updatedComment = state.item;
-                              updatedComment.isMine = true;
-                              if (updatedIndex != null) onCommentUpdated(updatedComment: updatedComment, updatedIndex: updatedIndex);
-                              _textEditingController.text = "";
+                    ValueListenableBuilder<bool>(
+                      valueListenable: updateCommentViewModel.isValidNotifier,
+                      builder: (buildContext, isValid, _) {
+                        return IconButton(
+                          onPressed: () async {
+                            if (isValid) {
+                              final state = await updateCommentViewModel.updateComment();
+                              if (state is CommentItemState.Success) {
+                                _mode = CreateUpdateMode.create;
+                                final CommentModel updatedComment = state.item;
+                                updatedComment.isMine = true;
+                                if (updatedIndex != null) onCommentUpdated(updatedComment: updatedComment, updatedIndex: updatedIndex);
+                                _textEditingController.text = "";
 
-                              if (buildContext.mounted) Navigator.pop(buildContext);
-                              if (context.mounted) showCustomToastWithTimer(context: context, message: commentUpdatedMessage);
+                                if (buildContext.mounted) Navigator.pop(buildContext);
+                                if (context.mounted) showCustomToastWithTimer(context: context, message: commentUpdatedMessage);
+                              }
                             }
-                          }
-                        },
-                        icon: Icon(Icons.send,
-                          color: isValid ? Colors.black : Colors.grey.shade400,
-                        ),
-                      );
-                    },
-                  ),
+                          },
+                          icon: Icon(Icons.send,
+                            color: isValid ? Colors.black : Colors.grey.shade400,
+                          ),
+                        );
+                      },
+                    ),
                 ],
               ),
             ),
