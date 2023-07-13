@@ -18,10 +18,10 @@ class CommentRepositoryImpl extends CommentRepository {
   CommentRepositoryImpl(this._dio);
 
   @override
-  Future<CommentListState.CommentListState> getCommentList({required int postId, required int page, required int limit}) async {
+  Future<CommentListState.CommentListState> getCommentList({required int postId, int? parentCommentId, required int page, required int limit}) async {
 
-    const api = 'comment';
-    final url = '$baseUrl$api?postId=$postId&page=$page&limit=$limit';
+    final api = parentCommentId == null ? 'comment?' : 'comment/reply?parentCommentId=$parentCommentId&';
+    final url = '$baseUrl${api}postId=$postId&page=$page&limit=$limit';
 
     try {
       final Response response = await _dio.get(url);

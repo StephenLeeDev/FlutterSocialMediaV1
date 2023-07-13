@@ -230,7 +230,7 @@ class _PostWidgetState extends State<PostWidget> {
         GestureDetector(
           onTap: () {
             final postId = widget.postModel.getId;
-            if (postId > 0) context.pushNamed(CommentScreen.routeName, pathParameters: {'postId': "$postId"});
+            if (postId > 0) context.pushNamed(CommentScreen.routeName, queryParameters: {'postId': "$postId"});
           },
           child: Padding(
             padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),

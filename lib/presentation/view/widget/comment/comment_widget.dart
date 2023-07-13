@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data/constant/text.dart';
@@ -12,12 +15,15 @@ import '../../../util/date/date_util.dart';
 import '../../../util/dialog/dialog_util.dart';
 import '../../../viewmodel/comment/delete/delete_comment_viewmodel.dart';
 import '../../../viewmodel/comment/list/comment_list_viewmodel.dart';
+import '../../screen/comment/reply/reply_screen.dart';
 
 class CommentWidget extends StatefulWidget {
-  const CommentWidget({Key? key, required this.commentModel, required this.callback}) : super(key: key);
+  const CommentWidget({Key? key, required this.commentModel, required this.updateCallback, this.isComment = true, this.isWhiteBackground = true}) : super(key: key);
 
   final CommentModel commentModel;
-  final VoidCallback callback;
+  final VoidCallback updateCallback;
+  final bool isComment; /// true == comment, false == reply
+  final bool isWhiteBackground; /// true == white, false == grey
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -52,6 +58,7 @@ class _CommentWidgetState extends State<CommentWidget> {
         ),
       ],
       child: Container(
+        color: widget.isWhiteBackground ? Colors.white : Colors.grey.shade100,
         padding: const EdgeInsets.all(constantPadding),
         child: SizedBox(
           child: Row(
@@ -109,12 +116,33 @@ class _CommentWidgetState extends State<CommentWidget> {
                           color: Colors.black),
                     ),
                     const SizedBox(height: constantPadding),
-                    Text(
-                      "${widget.commentModel.getChildrenCount} ${(widget.commentModel.getChildrenCount == 1) ? "Reply" : "Replies"}",
-                      style: const TextStyle(
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.blueAccent),
+                    /// 'Replies count shows when only on comment item, not reply
+                    if (widget.isComment)
+                    GestureDetector(
+                      onTap: () async {
+                        final postId = widget.commentModel.postId ?? -1;
+                        if (postId > 0) {
+                          int? deletedCommentId = await context.pushNamed(
+                            ReplyScreen.routeName,
+                            queryParameters: {
+                              'postId': "$postId",
+                              CommentModel().getSimpleName(): jsonEncode(widget.commentModel),
+                            },
+                          );
+                          /// If deleted comment exists, remove it from the list
+                          if (deletedCommentId != null) {
+                            commentListViewModel.removeDeletedCommentFromList(commentId: deletedCommentId);
+                          }
+                        }
+                      },
+                      child: Text(
+                        "${widget.commentModel.getChildrenCount} ${(widget.commentModel.getChildrenCount == 1) ? "Reply" : "Replies"}",
+                        style: const TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.blueAccent,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -154,7 +182,7 @@ class _CommentWidgetState extends State<CommentWidget> {
       secondButtonIcon: Icons.edit,
       secondButtonText: edit,
       secondButtonListener: () {
-        widget.callback();
+        widget.updateCallback();
       },
     );
   }
@@ -179,6 +207,9 @@ class _CommentWidgetState extends State<CommentWidget> {
     /// Delete the comment
     final state = await deleteCommentViewModel.deleteComment(commentId: commentId);
     if (state is Success) {
+      /// Close the current screen, when it's replies screen
+      if (!widget.isWhiteBackground && context.mounted) Navigator.pop(context, commentId);
+
       if (context.mounted) showCustomToastWithTimer(context: context, message: commentDeletedMessage);
       /// Remove the deleted comment from the list
       commentListViewModel.removeDeletedCommentFromList(commentId: commentId);
