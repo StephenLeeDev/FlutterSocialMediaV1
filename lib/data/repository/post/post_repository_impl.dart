@@ -19,17 +19,21 @@ class PostRepositoryImpl extends PostRepository {
     const api = 'post';
     final url = '$baseUrl$api?page=$page&limit=$limit';
 
-    final Response response = await _dio.get(url);
+    try {
+      final Response response = await _dio.get(url);
 
-    if (response.statusCode == 200) {
-      final postListModel = PostListModel.fromJson(response.data);
-      final state = PostListState.Success(total: postListModel.total, list: postListModel.postList);
+      if (response.statusCode == 200) {
+        final postListModel = PostListModel.fromJson(response.data);
+        final state = PostListState.Success(total: postListModel.total, list: postListModel.postList);
 
-      debugPrint("state : ${state.toString()}");
+        debugPrint("state : ${state.toString()}");
 
-      return state;
+        return state;
+      }
+      return PostListState.Fail();
+    } catch (e) {
+      return PostListState.Fail();
     }
-    return PostListState.Fail();
   }
 
   @override
@@ -38,17 +42,21 @@ class PostRepositoryImpl extends PostRepository {
     const api = 'post/{postId}/like';
     const url = '$baseUrl$api';
 
-    final Response response = await _dio.post(url, queryParameters: {'postId': postId});
+    try {
+      final Response response = await _dio.post(url, queryParameters: {'postId': postId});
 
-    if (response.statusCode == 201) {
-      final value = response.data['likeCount'];
-      final state = SingleIntegerState.Success(value);
+      if (response.statusCode == 201) {
+        final value = response.data['likeCount'];
+        final state = SingleIntegerState.Success(value);
 
-      debugPrint("state : ${state.toString()}");
+        debugPrint("state : ${state.toString()}");
 
-      return state;
+        return state;
+      }
+      return SingleIntegerState.Fail();
+    } catch (e) {
+      return SingleIntegerState.Fail();
     }
-    return SingleIntegerState.Fail();
   }
 
 }

@@ -181,10 +181,6 @@ class _CommentScreenState extends State<CommentScreen> {
     );
   }
 
-  Widget buildReadyStateUI() {
-    return Container();
-  }
-
   Widget buildLoadingStateUI() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {

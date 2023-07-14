@@ -7,21 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_social_media_v1/data/repository/comment/comment_repository_impl.dart';
-import 'package:flutter_social_media_v1/data/repository/post/post_repository_impl.dart';
-import 'package:flutter_social_media_v1/data/repository/secure_storage/secure_storage_repository_impl.dart';
-import 'package:flutter_social_media_v1/data/repository/user/user_repository_impl.dart';
-import 'package:flutter_social_media_v1/domain/usecase/auth/get_access_token_usecase.dart';
-import 'package:flutter_social_media_v1/domain/usecase/auth/post_sign_in_usecase.dart';
-import 'package:flutter_social_media_v1/domain/usecase/comment/create/create_comment_usecase.dart';
-import 'package:flutter_social_media_v1/domain/usecase/comment/list/get_comment_list_usecase.dart';
-import 'package:flutter_social_media_v1/domain/usecase/post/get_post_list_usecase.dart';
-import 'package:flutter_social_media_v1/domain/usecase/post/post_like_usecase.dart';
-import 'package:flutter_social_media_v1/domain/usecase/user/get_my_user_info_usecase.dart';
-import 'package:flutter_social_media_v1/presentation/router/router.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/auth/auth_viewmodel.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/post/list/post_list_viewmodel.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/user/my_info/my_user_info_viewmodel.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
@@ -29,12 +14,27 @@ import 'package:provider/provider.dart';
 import 'data/networking/dio_singleton.dart';
 import 'data/networking/interceptor/token_interceptor.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
+import 'data/repository/comment/comment_repository_impl.dart';
+import 'data/repository/post/post_repository_impl.dart';
+import 'data/repository/secure_storage/secure_storage_repository_impl.dart';
+import 'data/repository/user/user_repository_impl.dart';
+import 'domain/usecase/auth/get_access_token_usecase.dart';
+import 'domain/usecase/auth/post_sign_in_usecase.dart';
 import 'domain/usecase/auth/set_access_token_usecase.dart';
+import 'domain/usecase/comment/create/create_comment_usecase.dart';
 import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
+import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
+import 'domain/usecase/post/get_post_list_usecase.dart';
+import 'domain/usecase/post/post_like_usecase.dart';
+import 'domain/usecase/user/get_my_user_info_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
+import 'presentation/router/router.dart';
+import 'presentation/viewmodel/auth/auth_viewmodel.dart';
 import 'presentation/viewmodel/post/like/post_like_viewmodel.dart';
+import 'presentation/viewmodel/post/list/post_list_viewmodel.dart';
 import 'presentation/viewmodel/user/bookmark/bookmark_viewmodel.dart';
+import 'presentation/viewmodel/user/my_info/my_user_info_viewmodel.dart';
 
 void main() async {
 
@@ -48,8 +48,8 @@ void main() async {
   /// SecureStorage
   final secureStorageRepository = SecureStorageRepositoryImpl();
   final getAccessTokenUseCase = GetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
-  final setAccessTokenUseCase = SetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
   getIt.registerSingleton<GetAccessTokenUseCase>(getAccessTokenUseCase);
+  final setAccessTokenUseCase = SetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
 
   /// Dio Singleton
   final Dio dio = DioSingleton.getInstance();
@@ -71,36 +71,33 @@ void main() async {
   /// Authentication
   final authRepository = AuthRepositoryImpl(dio);
   final postSignInUseCase = PostSignInUseCase(authRepository: authRepository);
-  final authViewModel = AuthViewModel(
-      postSignInUseCase: postSignInUseCase,
-      setAccessTokenUseCase: setAccessTokenUseCase
-  );
+  final authViewModel = AuthViewModel(postSignInUseCase: postSignInUseCase, setAccessTokenUseCase: setAccessTokenUseCase);
 
   /// User
   final userRepository = UserRepositoryImpl(dio);
   final getMyUserInfoUseCase = GetMyUserInfoUseCase(userRepository: userRepository);
   final postBookmarkUseCase = PostBookmarkUseCase(userRepository: userRepository);
   final myUserInfoViewModel = MyUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
-  final bookmarkViewModel = BookmarkViewModel(postBookmarkUseCase: postBookmarkUseCase);
   getIt.registerSingleton<MyUserInfoViewModel>(myUserInfoViewModel);
+  final bookmarkViewModel = BookmarkViewModel(postBookmarkUseCase: postBookmarkUseCase);
 
   /// Feed(Post List)
   final postRepository = PostRepositoryImpl(dio);
   final getPostListUseCase = GetPostListUseCase(postRepository: postRepository);
+  getIt.registerSingleton<GetPostListUseCase>(getPostListUseCase);
   final postLikeUseCase = PostLikeUseCase(postRepository: postRepository);
-  final postListViewModel = PostListViewModel(getPostListUseCase: getPostListUseCase);
   final postLikeViewModel = PostLikeViewModel(postLikeUseCase: postLikeUseCase);
   getIt.registerSingleton<PostLikeViewModel>(postLikeViewModel);
 
   /// Comment/Reply
   final commentRepository = CommentRepositoryImpl(dio);
   final getCommentUseCase = GetCommentListUseCase(commentRepository: commentRepository);
-  final createCommentUseCase = CreateCommentUseCase(commentRepository: commentRepository);
-  final deleteCommentUseCase = DeleteCommentUseCase(commentRepository: commentRepository);
-  final updateCommentUseCase = UpdateCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<GetCommentListUseCase>(getCommentUseCase);
+  final createCommentUseCase = CreateCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<CreateCommentUseCase>(createCommentUseCase);
+  final deleteCommentUseCase = DeleteCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<DeleteCommentUseCase>(deleteCommentUseCase);
+  final updateCommentUseCase = UpdateCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<UpdateCommentUseCase>(updateCommentUseCase);
 
   await Firebase.initializeApp();
@@ -117,9 +114,6 @@ void main() async {
         ),
         ChangeNotifierProvider<BookmarkViewModel>(
           create: (context) => bookmarkViewModel,
-        ),
-        ChangeNotifierProvider<PostListViewModel>(
-          create: (context) => postListViewModel,
         ),
       ],
       child: const App(),
@@ -190,19 +184,19 @@ Future reqIOSPermission(FirebaseMessaging fbMsg) async {
 }
 
 Future<void> fbMsgBackgroundHandler(RemoteMessage message) async {
-  print("[FCM - Background] MESSAGE : ${message.messageId}");
+  debugPrint("[FCM - Background] MESSAGE : ${message.messageId}");
 }
 
 Future<void> fbMsgForegroundHandler(
     RemoteMessage message,
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
     AndroidNotificationChannel? channel) async {
-  print('[FCM - Foreground] MESSAGE : ${message.data}');
+  debugPrint('[FCM - Foreground] MESSAGE : ${message.data}');
 
   if (message.notification != null) {
-    print('Message also contained a notification: ${message.notification}');
-    print('message title : ${message.notification?.title}');
-    print('message body : ${message.notification?.body}');
+    debugPrint('Message also contained a notification: ${message.notification}');
+    debugPrint('message title : ${message.notification?.title}');
+    debugPrint('message body : ${message.notification?.body}');
     flutterLocalNotificationsPlugin.show(
         message.hashCode,
         message.notification?.title,
@@ -231,6 +225,6 @@ Future<void> setupInteractedMessage(FirebaseMessaging fbMsg) async {
 }
 
 void clickMessageEvent(RemoteMessage message) {
-  print('message : ${message.notification!.title}');
+  debugPrint('message : ${message.notification!.title}');
   // Get.toNamed('/');
 }
