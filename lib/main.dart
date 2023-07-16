@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
@@ -32,7 +33,6 @@ import 'domain/usecase/user/post_bookmark_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
 import 'presentation/viewmodel/post/like/post_like_viewmodel.dart';
-import 'presentation/viewmodel/post/list/post_list_viewmodel.dart';
 import 'presentation/viewmodel/user/bookmark/bookmark_viewmodel.dart';
 import 'presentation/viewmodel/user/my_info/my_user_info_viewmodel.dart';
 
@@ -42,6 +42,12 @@ void main() async {
 
   // await dotenv.load(fileName: '.env.${kReleaseMode ? 'release' : 'debug'}');
   // await dotenv.load(fileName: '.env.debug');
+
+  /// Lock the screen orientation to portrait mode.
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   final getIt = GetIt.instance;
 
@@ -53,6 +59,7 @@ void main() async {
 
   /// Dio Singleton
   final Dio dio = DioSingleton.getInstance();
+  dio.options.connectTimeout = const Duration(seconds: 10);
   dio.interceptors.add(TokenInterceptor(getAccessTokenUseCase: getAccessTokenUseCase));
 
   /// Log output only in debug mode
@@ -155,7 +162,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-        routerConfig: router,
+      routerConfig: router,
       theme: ThemeData(
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
