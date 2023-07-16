@@ -44,10 +44,12 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Future<void> fetchData() async {
-    // TODO : Relocation to inside of the MainNavigation later
-    await GetIt.instance<MyUserInfoViewModel>().getMyUserInfo();
-
+    fetchMyUserInfo();
     fetchPostList();
+  }
+
+  Future<void> fetchMyUserInfo() async {
+    await GetIt.instance<MyUserInfoViewModel>().getMyUserInfo();
   }
 
   void fetchPostList() {

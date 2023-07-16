@@ -8,6 +8,11 @@ import '../view/screen/auth/auth_screen.dart';
 import '../view/screen/comment/comment/comment_screen.dart';
 import '../view/screen/comment/reply/reply_screen.dart';
 import '../view/screen/feed/feed_screen.dart';
+import '../view/screen/main_navigation/main_navigation_screen.dart';
+import '../view/screen/my/my_page_screen.dart';
+import '../view/screen/notification/notification_screen.dart';
+import '../view/screen/post/create_post_screen.dart';
+import '../view/screen/search/search_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: FeedScreen.routeURL,
@@ -31,9 +36,17 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const AuthScreen(),
     ),
     GoRoute(
-      name: FeedScreen.routeName,
-      path: FeedScreen.routeURL,
-      builder: (context, state) => const FeedScreen(),
+      path: "/:tab(${FeedScreen.routeName}|${SearchScreen.routeName}|${NotificationScreen.routeName}|${MyPageScreen.routeName})",
+      name: MainNavigationScreen.routeName,
+      builder: (context, state) {
+        final tab = state.pathParameters["tab"] ?? FeedScreen.routeName;
+        return MainNavigationScreen(tab: tab);
+      },
+    ),
+    GoRoute(
+        name: CreatePostScreen.routeName,
+        path: CreatePostScreen.routeURL,
+        builder: (context, state) => const CreatePostScreen(),
     ),
     GoRoute(
       name: CommentScreen.routeName,
