@@ -6,6 +6,7 @@ import '../../constant/constant.dart';
 import '../../model/common/single_integer_state.dart' as SingleIntegerState;
 import '../../model/post/list/post_list_model.dart';
 import '../../model/post/list/post_list_state.dart' as PostListState;
+import '../../model/common/common_state.dart' as CommonState;
 
 class PostRepositoryImpl extends PostRepository {
 
@@ -56,6 +57,28 @@ class PostRepositoryImpl extends PostRepository {
       return SingleIntegerState.Fail();
     } catch (e) {
       return SingleIntegerState.Fail();
+    }
+  }
+
+  @override
+  Future<CommonState.CommonState> deletePost({required int postId}) async {
+
+    final api = 'post/$postId';
+    final url = '$baseUrl$api';
+
+    try {
+      final Response response = await _dio.delete(url);
+
+      if (response.statusCode == 200) {
+        final state = CommonState.Success();
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return CommonState.Fail();
+    } catch (e) {
+      return CommonState.Fail();
     }
   }
 

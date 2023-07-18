@@ -6,6 +6,14 @@ const discardEdits = "Discard edits?";
 const keepWriting = "Keep writing";
 const discard = "Discard";
 
+/// Post
+const post = "Post";
+const deletePost = "Delete Post";
+const deletePostConfirm = "Are you sure you want to delete the post?";
+const postCreatedMessage = "The post has been created";
+const postDeletedMessage = "The post has been deleted";
+const postUpdatedMessage = "The post has been updated";
+
 /// Comment
 const comment = "Comment";
 const addAComment = "Add a comment...";

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../../data/model/post/list/post_list_state.dart';
-import '../../../../domain/usecase/post/get_post_list_usecase.dart';
+import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/my_info/my_user_info_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
@@ -22,6 +22,8 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   final _scrollController = ScrollController();
+
+  late final MyUserInfoViewModel _myUserInfoViewModel;
   late final PostListViewModel _postListViewModel;
 
   @override
@@ -35,7 +37,13 @@ class _FeedScreenState extends State<FeedScreen> {
 
   /// ViewModels
   void initViewModels() {
+    initMyUserInfoViewModel();
     initListViewModel();
+  }
+
+  /// My User Info
+  void initMyUserInfoViewModel() {
+    _myUserInfoViewModel = GetIt.instance<MyUserInfoViewModel>();
   }
 
   /// List
@@ -43,17 +51,18 @@ class _FeedScreenState extends State<FeedScreen> {
     _postListViewModel = PostListViewModel(getPostListUseCase: GetIt.instance<GetPostListUseCase>());
   }
 
-  Future<void> fetchData() async {
-    fetchMyUserInfo();
-    fetchPostList();
+  void fetchData() async {
+    await fetchMyUserInfo();
+    await fetchPostList();
   }
 
   Future<void> fetchMyUserInfo() async {
-    await GetIt.instance<MyUserInfoViewModel>().getMyUserInfo();
+    await _myUserInfoViewModel.getMyUserInfo();
+    _postListViewModel.setMyEmail(value: _myUserInfoViewModel.myEmail);
   }
 
-  void fetchPostList() {
-    _postListViewModel.getPostList();
+  Future<void> fetchPostList() async {
+    await _postListViewModel.getPostList();
   }
 
   @override
