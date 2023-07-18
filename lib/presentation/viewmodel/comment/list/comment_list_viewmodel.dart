@@ -84,14 +84,14 @@ class CommentListViewModel {
   /// Add additional comments to the _currentList
   addAdditionalList({required List<CommentModel> additionalList}) {
     List<CommentModel> copyList = List.from(currentList);
-    copyList.addAll(setIsMineStatusAndReturn(list: additionalList));
+    copyList.addAll(additionalList);
     setCurrentList(list: copyList);
   }
 
   /// Prepend a new comment to the _currentList
   prependNewCommentToList({int index = 0, required List<CommentModel> additionalList}) {
     List<CommentModel> copyList = List.from(currentList);
-    copyList.insertAll(index, setIsMineStatusAndReturn(list: additionalList));
+    copyList.insertAll(index, additionalList);
     setCurrentList(list: copyList);
   }
 

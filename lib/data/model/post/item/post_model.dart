@@ -6,12 +6,14 @@ class PostModel {
   String? description;
   String? status;
   UserModel? user;
+  String get getUserEmail => user?.email ?? "Unknown";
   DateTime? createdAt;
   List<String>? imageUrls;
   int? likeCount;
   bool? isLiked;
   bool? isBookmarked;
   int? commentCount;
+  bool isMine = false;
 
   PostModel({
     this.id,
@@ -24,6 +26,7 @@ class PostModel {
     this.isLiked,
     this.isBookmarked,
     this.commentCount,
+    this.isMine = false,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +44,7 @@ class PostModel {
       isLiked: json['isLiked'],
       isBookmarked: json['isBookmarked'],
       commentCount: json['commentCount'],
+      isMine: json['isMine'] ?? false,
     );
   }
 
@@ -56,12 +60,13 @@ class PostModel {
       'isLiked': isLiked,
       'isBookmarked': isBookmarked,
       'commentCount': commentCount,
+      'isMine': isMine,
     };
   }
 
   @override
   String toString() {
-    return 'PostModel(id: $id, description: $description, status: $status, user: $user, createdAt: $createdAt, imageUrls: $imageUrls, likeCount: $likeCount, isLiked: $isLiked, isBookmarked: $isBookmarked, commentCount: $commentCount)';
+    return 'PostModel(id: $id, description: $description, status: $status, user: $user, createdAt: $createdAt, imageUrls: $imageUrls, likeCount: $likeCount, isLiked: $isLiked, isBookmarked: $isBookmarked, commentCount: $commentCount, isMine: $isMine))';
   }
 
   PostModel copyWith({
@@ -75,6 +80,7 @@ class PostModel {
     bool? isLiked,
     bool? isBookmarked,
     int? commentCount,
+    bool isMine = false,
   }) {
     return PostModel(
       id: id ?? this.id,
@@ -87,6 +93,7 @@ class PostModel {
       isLiked: isLiked ?? this.isLiked,
       isBookmarked: isBookmarked ?? this.isBookmarked,
       commentCount: commentCount ?? this.commentCount,
+      isMine: this.isMine,
     );
   }
 
@@ -105,4 +112,7 @@ class PostModel {
   setLikeCount({required int value}) {
     likeCount = value;
   }
+
+  bool isMyPost({required String myEmail}) => getUserEmail == myEmail;
+
 }

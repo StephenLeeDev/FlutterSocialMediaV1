@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../data/model/post/list/post_list_state.dart';
 import '../../../../data/model/post/item/post_model.dart';
-import '../../../../domain/usecase/post/get_post_list_usecase.dart';
+import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
 
 class PostListViewModel {
   final GetPostListUseCase _getPostListUseCase;
@@ -19,6 +19,14 @@ class PostListViewModel {
 
   setPostListState({required PostListState postListState}) {
     _postListState.value = postListState;
+  }
+
+  /// My email address
+  String _myEmail = "";
+  String get myEmail => _myEmail;
+
+  setMyEmail({required String value}) {
+    _myEmail = value;
   }
 
   /// Page number to fetch
@@ -51,7 +59,7 @@ class PostListViewModel {
   List<PostModel> get currentList => _currentList.value;
 
   setCurrentList({required List<PostModel> list}) {
-    _currentList.value = list;
+    _currentList.value = setIsMineStatusAndReturn(list: list);
   }
 
   /// Add additional posts to the _currentList
@@ -108,6 +116,23 @@ class PostListViewModel {
 
       setCurrentList(list: list);
     }
+  }
+
+  /// Check is mine
+  List<PostModel> setIsMineStatusAndReturn({required List<PostModel> list}) {
+    final copyList = List.of(list);
+    for (int i = 0; i < copyList.length; i++) {
+      if (copyList[i].isMyPost(myEmail: myEmail)) copyList[i].isMine = true;
+    }
+    return copyList;
+  }
+
+  /// Remove delete post from the list by post ID
+  void removeDeletedPostFromList({required int postId}) {
+    List<PostModel> copyList = List.of(currentList);
+    copyList.removeWhere((post) => post.id == postId);
+
+    setCurrentList(list: copyList);
   }
 
 }

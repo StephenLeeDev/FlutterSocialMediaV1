@@ -31,8 +31,8 @@ class CommentWidget extends StatefulWidget {
 
 class _CommentWidgetState extends State<CommentWidget> {
 
-  late CommentListViewModel commentListViewModel;
-  late DeleteCommentViewModel deleteCommentViewModel;
+  late final CommentListViewModel _commentListViewModel;
+  late final DeleteCommentViewModel _deleteCommentViewModel;
 
   @override
   void initState() {
@@ -42,8 +42,18 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 
   initViewModels() {
-    commentListViewModel = context.read<CommentListViewModel>();
-    deleteCommentViewModel = DeleteCommentViewModel(deleteCommentUseCase: GetIt.instance<DeleteCommentUseCase>());
+    initListViewModel();
+    initDeleteViewModel();
+  }
+
+  /// List
+  initListViewModel() {
+    _commentListViewModel = context.read<CommentListViewModel>();
+  }
+
+  /// Delete
+  initDeleteViewModel() {
+    _deleteCommentViewModel = DeleteCommentViewModel(deleteCommentUseCase: GetIt.instance<DeleteCommentUseCase>());
   }
 
   @override
@@ -54,7 +64,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     return MultiProvider(
       providers: [
         Provider<DeleteCommentViewModel>(
-          create: (context) => deleteCommentViewModel,
+          create: (context) => _deleteCommentViewModel,
         ),
       ],
       child: Container(
@@ -116,7 +126,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           color: Colors.black),
                     ),
                     const SizedBox(height: constantPadding),
-                    /// 'Replies count shows when only on comment item, not reply
+                    /// 'Replies' count shows when only on comment item, not reply
                     if (widget.isComment)
                     GestureDetector(
                       onTap: () async {
@@ -131,7 +141,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           );
                           /// If deleted comment exists, remove it from the list
                           if (deletedCommentId != null) {
-                            commentListViewModel.removeDeletedCommentFromList(commentId: deletedCommentId);
+                            _commentListViewModel.removeDeletedCommentFromList(commentId: deletedCommentId);
                           }
                         }
                       },
@@ -205,14 +215,14 @@ class _CommentWidgetState extends State<CommentWidget> {
   void deleteCommentFeature() async {
     final commentId = widget.commentModel.commentId;
     /// Delete the comment
-    final state = await deleteCommentViewModel.deleteComment(commentId: commentId);
+    final state = await _deleteCommentViewModel.deleteComment(commentId: commentId);
     if (state is Success) {
       /// Close the current screen, when it's replies screen
       if (!widget.isWhiteBackground && context.mounted) Navigator.pop(context, commentId);
 
       if (context.mounted) showCustomToastWithTimer(context: context, message: commentDeletedMessage);
       /// Remove the deleted comment from the list
-      commentListViewModel.removeDeletedCommentFromList(commentId: commentId);
+      _commentListViewModel.removeDeletedCommentFromList(commentId: commentId);
     }
   }
 }

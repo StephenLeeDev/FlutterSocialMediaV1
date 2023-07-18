@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../viewmodel/user/my_info/my_user_info_viewmodel.dart';
 import '../../widget/navigation/navigation_tab.dart';
 import '../feed/feed_screen.dart';
 import '../my/my_page_screen.dart';
@@ -24,8 +22,6 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
-  late final MyUserInfoViewModel _myUserInfoViewModel;
-
   final List<String> _tabs = [
     FeedScreen.routeName,
     SearchScreen.routeName,
@@ -45,31 +41,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   void _onCameraButtonTap() {
     context.pushNamed(CreatePostScreen.routeName);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    fetchData();
-  }
-
-  /// ViewModels
-  void initViewModels() {
-    initListViewModel();
-  }
-
-  /// My User Info
-  void initListViewModel() {
-    _myUserInfoViewModel = GetIt.instance<MyUserInfoViewModel>();
-  }
-
-  Future<void> fetchData() async {
-    fetchMyUserInfo();
-  }
-
-  Future<void> fetchMyUserInfo() async {
-    await _myUserInfoViewModel.getMyUserInfo();
   }
 
   @override
@@ -134,6 +105,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 onTap: () => _onCameraButtonTap(),
                 selectedIndex: _selectedIndex,
               ),
+              // TODO : Replace it to DirectMessage screen
               NavigationTab(
                 isSelected: _selectedIndex == 3,
                 icon: Icons.notifications,
