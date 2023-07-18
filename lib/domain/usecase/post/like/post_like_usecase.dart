@@ -1,5 +1,5 @@
-import '../../../data/model/common/single_integer_state.dart';
-import '../../repository/post/post_repository.dart';
+import '../../../../data/model/common/single_integer_state.dart';
+import '../../../repository/post/post_repository.dart';
 
 class PostLikeUseCase {
   final PostRepository _postRepository;
