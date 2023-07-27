@@ -23,6 +23,7 @@ import 'domain/usecase/comment/create/create_comment_usecase.dart';
 import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
 import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
+import 'domain/usecase/post/create/create_post_usecase.dart';
 import 'domain/usecase/post/delete/delete_post_usecase.dart';
 import 'domain/usecase/post/list/get_post_list_usecase.dart';
 import 'domain/usecase/post/like/post_like_usecase.dart';
@@ -30,7 +31,6 @@ import 'domain/usecase/user/get_my_user_info_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
-import 'presentation/viewmodel/user/bookmark/bookmark_viewmodel.dart';
 import 'presentation/viewmodel/user/my_info/my_user_info_viewmodel.dart';
 
 void main() async {
@@ -89,6 +89,8 @@ void main() async {
   final postRepository = PostRepositoryImpl(dio);
   final getPostListUseCase = GetPostListUseCase(postRepository: postRepository);
   getIt.registerSingleton<GetPostListUseCase>(getPostListUseCase);
+  final createPostUseCase = CreatePostUseCase(postRepository: postRepository);
+  getIt.registerSingleton<CreatePostUseCase>(createPostUseCase);
   final postLikeUseCase = PostLikeUseCase(postRepository: postRepository);
   getIt.registerSingleton<PostLikeUseCase>(postLikeUseCase);
   final deletePostUseCase = DeletePostUseCase(postRepository: postRepository);

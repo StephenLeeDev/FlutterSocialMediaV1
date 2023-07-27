@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_social_media_v1/data/model/post/create/create_post_model.dart';
 
 import '../../../domain/repository/post/post_repository.dart';
 import '../../constant/constant.dart';
 import '../../model/common/single_integer_state.dart' as SingleIntegerState;
+import '../../model/post/create/create_post_model.dart';
 import '../../model/post/item/post_item_state.dart' as PostItemState;
 import '../../model/post/item/post_model.dart';
 import '../../model/post/list/post_list_model.dart';
@@ -24,12 +24,9 @@ class PostRepositoryImpl extends PostRepository {
 
     _dio.options.contentType = 'multipart/form-data';
 
-    List<Future<MultipartFile>>? imageFiles = createPostModel.images?.map((image) => MultipartFile.fromFile(image.path)).toList();
-    final List<MultipartFile> images = await Future.wait(imageFiles ?? []);
-
     final formData = FormData.fromMap({
       'description': createPostModel.description,
-      'files': images,
+      'files': createPostModel.images,
     });
 
     try {
