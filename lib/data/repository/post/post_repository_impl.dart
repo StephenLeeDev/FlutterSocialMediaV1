@@ -40,13 +40,12 @@ class PostRepositoryImpl extends PostRepository {
 
         return state;
       }
-      /// Initialize the Dio instance with default options
-      _dio.options.contentType = 'application/json';
       return PostItemState.Fail();
     } catch (e) {
+      return PostItemState.Fail();
+    } finally {
       /// Initialize the Dio instance with default options
       _dio.options.contentType = 'application/json';
-      return PostItemState.Fail();
     }
   }
 

@@ -56,7 +56,7 @@ void main() async {
 
   /// Dio Singleton
   final Dio dio = DioSingleton.getInstance();
-  dio.options.connectTimeout = const Duration(seconds: 10);
+  dio.options.connectTimeout = const Duration(seconds: 5);
   dio.interceptors.add(TokenInterceptor(getAccessTokenUseCase: getAccessTokenUseCase));
 
   /// Log output only in debug mode
@@ -73,20 +73,28 @@ void main() async {
   }
 
   /// Authentication
+  // Repository
   final authRepository = AuthRepositoryImpl(dio);
+  // UseCases
   final postSignInUseCase = PostSignInUseCase(authRepository: authRepository);
+  // ViewModels
   final authViewModel = AuthViewModel(postSignInUseCase: postSignInUseCase, setAccessTokenUseCase: setAccessTokenUseCase);
 
   /// User
+  // Repository
   final userRepository = UserRepositoryImpl(dio);
+  // UseCases
   final getMyUserInfoUseCase = GetMyUserInfoUseCase(userRepository: userRepository);
   final postBookmarkUseCase = PostBookmarkUseCase(userRepository: userRepository);
   getIt.registerSingleton<PostBookmarkUseCase>(postBookmarkUseCase);
+  // ViewModels
   final myUserInfoViewModel = MyUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
   getIt.registerSingleton<MyUserInfoViewModel>(myUserInfoViewModel);
 
   /// Feed(Post List)
+  // Repository
   final postRepository = PostRepositoryImpl(dio);
+  // UseCases
   final getPostListUseCase = GetPostListUseCase(postRepository: postRepository);
   getIt.registerSingleton<GetPostListUseCase>(getPostListUseCase);
   final createPostUseCase = CreatePostUseCase(postRepository: postRepository);
@@ -97,7 +105,9 @@ void main() async {
   getIt.registerSingleton<DeletePostUseCase>(deletePostUseCase);
 
   /// Comment/Reply
+  // Repository
   final commentRepository = CommentRepositoryImpl(dio);
+  // UseCases
   final getCommentUseCase = GetCommentListUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<GetCommentListUseCase>(getCommentUseCase);
   final createCommentUseCase = CreateCommentUseCase(commentRepository: commentRepository);
