@@ -5,14 +5,23 @@ const cancel = "Cancel";
 const discardEdits = "Discard edits?";
 const keepWriting = "Keep writing";
 const discard = "Discard";
+const selectOption = "Select option";
 
 /// Post
 const post = "Post";
+const createPost = "Create Post";
+const maxQuantityMessage = "You can select a minimum of 1 and a maximum of 4 images";
+const selectPictures = "Select pictures";
 const deletePost = "Delete Post";
 const deletePostConfirm = "Are you sure you want to delete the post?";
 const postCreatedMessage = "The post has been created";
 const postDeletedMessage = "The post has been deleted";
 const postUpdatedMessage = "The post has been updated";
+
+/// Image
+const selectImageSource = "Select image source";
+const gallery = "Gallery";
+const camera = "Camera";
 
 /// Comment
 const comment = "Comment";

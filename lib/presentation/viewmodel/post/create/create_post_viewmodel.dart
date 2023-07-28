@@ -1,9 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/model/post/create/create_post_model.dart';
 import '../../../../data/model/post/item/post_item_state.dart';
 import '../../../../domain/usecase/post/create/create_post_usecase.dart';
+import '../../../util/converter/file_converter_util.dart';
 
 /// This ViewModel is responsible for handling the creation of new post
 class CreatePostViewModel {
@@ -23,13 +24,13 @@ class CreatePostViewModel {
   }
 
   /// Images
-  final ValueNotifier<List<MultipartFile>> _imageList = ValueNotifier<List<MultipartFile>>(List.empty());
-  ValueNotifier<List<MultipartFile>> get imageListNotifier => _imageList;
-  List<MultipartFile> get imageList => _imageList.value;
+  final ValueNotifier<List<XFile>> _imageList = ValueNotifier<List<XFile>>(List.empty());
+  ValueNotifier<List<XFile>> get imageListNotifier => _imageList;
+  List<XFile> get imageList => _imageList.value;
 
-  setImageList({required List<MultipartFile> list}) {
+  setImageList({required List<XFile> list}) {
     _imageList.value = list;
-    checkIsValid();
+    _checkIsValid();
   }
 
   /// Description
@@ -39,7 +40,7 @@ class CreatePostViewModel {
 
   setDescription({required String value}) {
     _description.value = value;
-    checkIsValid();
+    _checkIsValid();
   }
 
   /// It represents whether a post can be created
@@ -47,13 +48,13 @@ class CreatePostViewModel {
   ValueNotifier<bool> get isValidNotifier => _isValid;
   bool get isValid => _isValid.value;
 
-  setIsValid({required bool value}) {
+  _setIsValid({required bool value}) {
     _isValid.value = value;
   }
 
-  checkIsValid() {
+  _checkIsValid() {
     final valid = description.isNotEmpty && createPostState is! Loading;
-    setIsValid(value: valid);
+    _setIsValid(value: valid);
   }
 
   /// Execute create a post API
@@ -61,7 +62,7 @@ class CreatePostViewModel {
     setPostItemState(createPostState: Loading());
     final CreatePostModel createPostModel = CreatePostModel(
       description: description,
-      images: imageList,
+      images: await convertXFilesToMultipart(files: imageList),
     );
 
     final state = await _createPostUseCase.execute(createPostModel: createPostModel);
