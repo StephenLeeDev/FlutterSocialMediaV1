@@ -10,16 +10,17 @@ const selectOption = "Select option";
 /// Post
 const post = "Post";
 const createPost = "Create Post";
-const maxQuantityMessage = "You can select a minimum of 1 and a maximum of 4 images";
+const maxQuantityMessage = "You can select a minimum of 1 and a maximum of 4 pictures";
 const selectPictures = "Select pictures";
+const pleaseSelectPictures = "Please select pictures";
 const deletePost = "Delete Post";
 const deletePostConfirm = "Are you sure you want to delete the post?";
 const postCreatedMessage = "The post has been created";
 const postDeletedMessage = "The post has been deleted";
 const postUpdatedMessage = "The post has been updated";
 
-/// Image
-const selectImageSource = "Select image source";
+/// Picture
+const selectPictureSource = "Select picture source";
 const gallery = "Gallery";
 const camera = "Camera";
 
