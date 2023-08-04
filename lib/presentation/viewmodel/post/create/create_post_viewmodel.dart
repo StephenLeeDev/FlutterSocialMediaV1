@@ -23,7 +23,7 @@ class CreatePostViewModel {
     _createPostState.value = createPostState;
   }
 
-  /// Images
+  /// Image list
   final ValueNotifier<List<XFile>> _imageList = ValueNotifier<List<XFile>>(List.empty());
   ValueNotifier<List<XFile>> get imageListNotifier => _imageList;
   List<XFile> get imageList => _imageList.value;

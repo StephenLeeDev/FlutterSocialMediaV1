@@ -2,150 +2,155 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../data/constant/text.dart';
-import '../../../../../../domain/usecase/post/create/create_post_usecase.dart';
 import '../../../../../util/dialog/dialog_util.dart';
 import '../../../../../util/logger/image_file_logger_util.dart';
 import '../../../../../viewmodel/post/create/create_post_viewmodel.dart';
+import '../../../../widget/button/custom_elevated_button.dart';
 
 class PostImagePickerFragment extends StatefulWidget {
   const PostImagePickerFragment({Key? key}) : super(key: key);
 
   @override
-  State<PostImagePickerFragment> createState() =>
-      _PostImagePickerFragmentState();
+  State<PostImagePickerFragment> createState() => _PostImagePickerFragmentState();
 }
 
 class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
   static const double maxImageLength = 1000;
 
   late final CreatePostViewModel _createPostViewModel;
+
   final ImagePicker imagePicker = ImagePicker();
+  late final PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    _createPostViewModel = CreatePostViewModel(createPostUseCase: GetIt.instance<CreatePostUseCase>());
+
+    initCreateViewModel();
+    initPageController();
+  }
+
+  /// Create
+  void initCreateViewModel() {
+    _createPostViewModel = context.read<CreatePostViewModel>();
+  }
+
+  /// PageController
+  void initPageController() {
+    _pageController = context.read<PageController>();
   }
 
   @override
   Widget build(BuildContext context) {
     const double constantPadding = 12;
 
-    /// Provider
-    return MultiProvider(
-      providers: [
-        Provider<CreatePostViewModel>(
-          create: (context) => _createPostViewModel,
-        ),
-      ],
-
-      /// Screen
-      child: Padding(
-        padding: const EdgeInsets.all(constantPadding),
-        child: Column(
-          children: [
-            /// Guide message
-            const Text(
-              maxQuantityMessage,
-              style: TextStyle(
-                fontSize: 18,
-              ),
+    return Padding(
+      padding: const EdgeInsets.all(constantPadding),
+      child: Column(
+        children: [
+          /// Guide message
+          const Text(
+            maxQuantityMessage,
+            style: TextStyle(
+              fontSize: 18,
             ),
-            const SizedBox(height: 20),
+          ),
+          const SizedBox(height: 20),
 
-            /// image picker button
-            GestureDetector(
-              onTap: () {
-                showSelectionGalleryCameraDialog();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                width: double.infinity,
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
+          /// image picker button
+          GestureDetector(
+            onTap: () {
+              showSelectionGalleryCameraDialog();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              width: double.infinity,
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(
+                    Icons.photo_camera,
                     color: Colors.black,
-                    width: 1,
                   ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(
-                      Icons.photo_camera,
-                      color: Colors.black,
+                  SizedBox(width: 4),
+                  Text(
+                    selectPictures,
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
-                    SizedBox(width: 4),
-                    Text(
-                      selectPictures,
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: constantPadding),
+          ),
+          const SizedBox(height: constantPadding),
 
-            /// Image list view
-            Expanded(
-              child: ValueListenableBuilder<List<XFile>>(
-                  valueListenable: _createPostViewModel.imageListNotifier,
-                  builder: (context, list, _) {
-                    /// List view
-                    if (list.isNotEmpty) {
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: constantPadding,
-                          mainAxisSpacing: constantPadding,
-                        ),
-                        itemCount: list.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          /// Image item view
-                          return AspectRatio(
-                            aspectRatio: 1,
-                            child: Container(
-                              clipBehavior: Clip.hardEdge,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Image.file(
-                                File(list[index].path),
-                                fit: BoxFit.cover,
-                              ),
+          /// Image list view
+          Expanded(
+            child: ValueListenableBuilder<List<XFile>>(
+                valueListenable: _createPostViewModel.imageListNotifier,
+                builder: (context, list, _) {
+                  /// List view
+                  if (list.isNotEmpty) {
+                    return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: constantPadding,
+                        mainAxisSpacing: constantPadding,
+                      ),
+                      itemCount: list.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        /// Image item view
+                        return AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          );
-                        },
-                      );
-                    } else {
-                      /// Empty list message
-                      return const Center(
-                        child: Text(
-                          pleaseSelectPictures,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 18,
+                            child: Image.file(
+                              File(list[index].path),
+                              fit: BoxFit.cover,
+                            ),
                           ),
+                        );
+                      },
+                    );
+                  } else {
+                    /// Empty list message
+                    return const Center(
+                      child: Text(
+                        pleaseSelectPictures,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 18,
                         ),
-                      );
-                    }
-                  }),
+                      ),
+                    );
+                  }
+                },
             ),
+          ),
 
-            // TODO : Implement next button UI & feature
+          const SizedBox(height: 12),
 
-          ],
-        ),
+          /// Bottom buttons
+          bottomButtons(),
+        ],
       ),
     );
   }
@@ -204,4 +209,25 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
 
     return images;
   }
+
+  Widget bottomButtons() {
+    return ValueListenableBuilder<List<XFile>>(
+      valueListenable: _createPostViewModel.imageListNotifier,
+      builder: (context, list, _) {
+        final isEnabled = list.isNotEmpty;
+        return CustomElevatedButton(
+          text: next,
+          isEnabled: isEnabled,
+          onPressed: () {
+            /// Move to the next page
+            _pageController.nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          },
+        );
+      },
+    );
+  }
+
 }

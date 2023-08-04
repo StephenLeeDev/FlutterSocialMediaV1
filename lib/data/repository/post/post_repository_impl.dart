@@ -20,7 +20,8 @@ class PostRepositoryImpl extends PostRepository {
   @override
   Future<PostItemState.PostItemState> createPost({required CreatePostModel createPostModel}) async {
 
-    const url = 'post';
+    const api = 'post';
+    const url = '$baseUrl$api';
 
     _dio.options.contentType = 'multipart/form-data';
 

@@ -6,6 +6,13 @@ const discardEdits = "Discard edits?";
 const keepWriting = "Keep writing";
 const discard = "Discard";
 const selectOption = "Select option";
+const previous = "Previous";
+const next = "Next";
+const create = "Create";
+const yes = "Yes";
+const no = "No";
+const confirm = "Confirm";
+const areYouSure = "Are you sure?";
 
 /// Post
 const post = "Post";
@@ -13,8 +20,11 @@ const createPost = "Create Post";
 const maxQuantityMessage = "You can select a minimum of 1 and a maximum of 4 pictures";
 const selectPictures = "Select pictures";
 const pleaseSelectPictures = "Please select pictures";
+const pleaseWriteDescription = "Please write a description for your new post";
+const writeDescription = "Write a description";
 const deletePost = "Delete Post";
 const deletePostConfirm = "Are you sure you want to delete the post?";
+const quitPostWritingConfirm = "Are you sure you want to quit a new post writing?";
 const postCreatedMessage = "The post has been created";
 const postDeletedMessage = "The post has been deleted";
 const postUpdatedMessage = "The post has been updated";
