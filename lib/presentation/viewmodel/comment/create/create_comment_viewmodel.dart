@@ -25,7 +25,7 @@ class CreateCommentViewModel {
   int? _parentCommentId;
   int? get parentCommentId => _parentCommentId;
 
-  setParentCommentId({required int value}) {
+  setParentCommentId({required int? value}) {
     _parentCommentId = value;
   }
 
@@ -34,7 +34,7 @@ class CreateCommentViewModel {
   String? _parentCommentAuthor;
   String? get parentCommentAuthor => _parentCommentAuthor;
 
-  setParentCommentAuthor({required String value}) {
+  setParentCommentAuthor({required String? value}) {
     _parentCommentAuthor = value;
   }
 

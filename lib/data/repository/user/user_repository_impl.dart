@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_social_media_v1/data/model/user/my_user_info.dart';
 
 import '../../../domain/repository/user/user_repository.dart';
 import '../../constant/constant.dart';
 import '../../model/common/common_state.dart' as CommonState;
+import '../../model/user/my_user_info.dart';
 import '../../model/user/my_user_info_state.dart' as MyUserInfoState;
 
 class UserRepositoryImpl extends UserRepository {
@@ -18,21 +18,25 @@ class UserRepositoryImpl extends UserRepository {
     const api = 'user';
     const url = '$baseUrl$api';
 
-    final Response response = await _dio.get(url);
+    try {
+      final Response response = await _dio.get(url);
 
-    final code = response.statusCode;
+      final code = response.statusCode;
 
-    if (code == 200) {
-      final state = MyUserInfoState.Success(MyUserInfo.fromJson(response.data));
+      if (code == 200) {
+        final state = MyUserInfoState.Success(MyUserInfo.fromJson(response.data));
 
-      debugPrint("state : ${state.toString()}");
+        debugPrint("state : ${state.toString()}");
 
-      return state;
+        return state;
+      }
+      else if (code == 401) {
+        return MyUserInfoState.Unauthorized();
+      }
+      return MyUserInfoState.Fail();
+    } catch (e) {
+      return MyUserInfoState.Fail();
     }
-    else if (code == 401) {
-      return MyUserInfoState.Unauthorized();
-    }
-    return MyUserInfoState.Fail();
   }
 
   @override
@@ -42,19 +46,23 @@ class UserRepositoryImpl extends UserRepository {
 
     final Response response = await _dio.post(url, queryParameters: {'postId': postId});
 
-    final code = response.statusCode;
+    try {
+      final code = response.statusCode;
 
-    if (code == 201) {
-      final state = CommonState.Success();
+      if (code == 201) {
+        final state = CommonState.Success();
 
-      debugPrint("state : ${state.toString()}");
+        debugPrint("state : ${state.toString()}");
 
-      return state;
+        return state;
+      }
+      else if (code == 401) {
+        return CommonState.Unauthorized();
+      }
+      return CommonState.Fail();
+    } catch (e) {
+      return CommonState.Fail();
     }
-    else if (code == 401) {
-      return CommonState.Unauthorized();
-    }
-    return CommonState.Fail();
   }
 
 }

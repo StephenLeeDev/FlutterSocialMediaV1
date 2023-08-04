@@ -20,6 +20,16 @@ class CommentListViewModel {
     _postId = value;
   }
 
+  /// Replies' parent comment
+  /// It's null on comment screen
+  /// It's not null on reply screen
+  CommentModel? _parentComment;
+  CommentModel? get parentComment => _parentComment;
+
+  setParentComment({required CommentModel? commentModel}) {
+    _parentComment = commentModel;
+  }
+
   /// My email address
   String _myEmail = "";
   String get myEmail => _myEmail;
@@ -32,6 +42,7 @@ class CommentListViewModel {
   /// List UI rendering is through _currentList below
   final ValueNotifier<CommentListState> _commentListState = ValueNotifier<CommentListState>(Ready());
   ValueNotifier<CommentListState> get commentListStateNotifier => _commentListState;
+  CommentListState get commentListState => commentListStateNotifier.value;
 
   setCommentListState({required CommentListState commentListState}) {
     _commentListState.value = commentListState;
@@ -53,7 +64,7 @@ class CommentListViewModel {
   final int _limit = 10;
   int get limit => _limit;
 
-  /// Total comments count can fetch
+  /// It represents has next page
   bool _hasNext = true;
   bool get hasNext => _hasNext;
 
@@ -73,14 +84,14 @@ class CommentListViewModel {
   /// Add additional comments to the _currentList
   addAdditionalList({required List<CommentModel> additionalList}) {
     List<CommentModel> copyList = List.from(currentList);
-    copyList.addAll(setIsMineStatusAndReturn(list: additionalList));
+    copyList.addAll(additionalList);
     setCurrentList(list: copyList);
   }
 
   /// Prepend a new comment to the _currentList
-  prependNewCommentToList({required List<CommentModel> additionalList}) {
+  prependNewCommentToList({int index = 0, required List<CommentModel> additionalList}) {
     List<CommentModel> copyList = List.from(currentList);
-    copyList.insertAll(0, setIsMineStatusAndReturn(list: additionalList));
+    copyList.insertAll(index, additionalList);
     setCurrentList(list: copyList);
   }
 
@@ -93,10 +104,10 @@ class CommentListViewModel {
 
   /// Fetch additional paginated comments from the application server
   Future<void> getCommentList() async {
-    if (commentListStateNotifier is Loading || !hasNext) return;
+    if (commentListState is Loading || !hasNext) return;
     setCommentListState(commentListState: Loading());
 
-    final state = await _getCommentListUseCase.execute(postId: postId, page: page, limit: limit);
+    final state = await _getCommentListUseCase.execute(postId: postId, parentCommentId: parentComment?.id, page: page, limit: limit);
     setCommentListState(commentListState: state);
 
     if (state is Success) {
@@ -113,6 +124,7 @@ class CommentListViewModel {
     setPage(value: 1);
     setHasNext(value: true);
 
+    if (parentComment != null) prependNewCommentToList(additionalList: [parentComment!]);
     getCommentList();
   }
 

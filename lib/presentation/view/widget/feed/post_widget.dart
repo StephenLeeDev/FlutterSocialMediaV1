@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
-import 'package:flutter_social_media_v1/presentation/util/date/date_util.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/post/like/post_like_viewmodel.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../data/constant/text.dart';
 import '../../../../data/model/common/common_state.dart';
 import '../../../../data/model/common/single_integer_state.dart' as SingleIntegerState;
 import '../../../../data/model/post/item/post_model.dart';
+import '../../../../domain/usecase/post/delete/delete_post_usecase.dart';
+import '../../../../domain/usecase/post/like/post_like_usecase.dart';
+import '../../../../domain/usecase/user/post_bookmark_usecase.dart';
+import '../../../util/bottom_sheet/bottom_sheet_util.dart';
+import '../../../util/custom_toast/custom_toast_util.dart';
+import '../../../util/date/date_util.dart';
+import '../../../util/dialog/dialog_util.dart';
 import '../../../util/integer/integer_util.dart';
+import '../../../viewmodel/post/delete/delete_post_viewmodel.dart';
+import '../../../viewmodel/post/like/post_like_viewmodel.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/bookmark/bookmark_viewmodel.dart';
 import '../../screen/comment/comment/comment_screen.dart';
@@ -23,15 +31,43 @@ class PostWidget extends StatefulWidget {
 }
 
 class _PostWidgetState extends State<PostWidget> {
-  late final BookmarkViewModel bookmarkViewModel;
-  late final PostListViewModel postListViewModel;
-  final PostLikeViewModel postLikeViewModel = GetIt.instance<PostLikeViewModel>();
+  late final BookmarkViewModel _bookmarkViewModel;
+  late final PostListViewModel _postListViewModel;
+  late final DeletePostViewModel _deletePostViewModel;
+  late final PostLikeViewModel _postLikeViewModel;
 
   @override
   void initState() {
     super.initState();
-    bookmarkViewModel = context.read<BookmarkViewModel>();
-    postListViewModel = context.read<PostListViewModel>();
+
+    initViewModels();
+  }
+
+  void initViewModels() {
+    initListViewModel();
+    initBookmarkViewModel();
+    initLikeViewModel();
+    initDeleteViewModel();
+  }
+
+  /// List
+  void initListViewModel() {
+    _postListViewModel = context.read<PostListViewModel>();
+  }
+
+  /// Bookmark
+  void initBookmarkViewModel() {
+    _bookmarkViewModel = BookmarkViewModel(postBookmarkUseCase: GetIt.instance<PostBookmarkUseCase>());
+  }
+
+  /// Like/Unlike
+  void initLikeViewModel() {
+    _postLikeViewModel = PostLikeViewModel(postLikeUseCase: GetIt.instance<PostLikeUseCase>());
+  }
+
+  /// Delete
+  void initDeleteViewModel() {
+    _deletePostViewModel = DeletePostViewModel(deletePostUseCase: GetIt.instance<DeletePostUseCase>());
   }
 
   @override
@@ -83,10 +119,15 @@ class _PostWidgetState extends State<PostWidget> {
             ),
             const Spacer(),
             // TODO : Implement follow/unfollow feature
-            // TODO : This icon button should be invisible on the user's own post
+            /// It is visible when it's the user's own post
+            if (widget.postModel.isMine)
             IconButton(
-                onPressed: null,
-                icon: const Icon(Icons.more_vert_rounded, color: Colors.black))
+                onPressed: () => {
+                  /// Show Edit/Delete bottom sheet
+                  showEditDeleteBottomModal()
+                },
+                icon: const Icon(Icons.more_vert_rounded, color: Colors.black),
+            ),
           ],
         ),
         Container(
@@ -124,10 +165,10 @@ class _PostWidgetState extends State<PostWidget> {
                 if (postId == null || isLiked == null) return;
 
                 /// Request update the like/unlike to the app server
-                final result = await postLikeViewModel.postLike(postId: postId);
+                final result = await _postLikeViewModel.postLike(postId: postId);
                 if (result is SingleIntegerState.Success) {
                   final newLikeCount = result.getValue;
-                  postListViewModel.setUpdatedLike(
+                  _postListViewModel.setUpdatedLike(
                       postId: postId, likeCount: newLikeCount);
 
                   /// Update current post widget
@@ -163,9 +204,9 @@ class _PostWidgetState extends State<PostWidget> {
 
                 /// Request update the bookmark/unbookmark to the app server
                 final result =
-                    await bookmarkViewModel.postBookmark(postId: postId);
+                    await _bookmarkViewModel.postBookmark(postId: postId);
                 if (result is Success) {
-                  postListViewModel.setUpdatedBookmark(postId: postId);
+                  _postListViewModel.setUpdatedBookmark(postId: postId);
 
                   /// Update current post widget
                   setState(() {
@@ -230,7 +271,7 @@ class _PostWidgetState extends State<PostWidget> {
         GestureDetector(
           onTap: () {
             final postId = widget.postModel.getId;
-            if (postId > 0) context.pushNamed(CommentScreen.routeName, pathParameters: {'postId': "$postId"});
+            if (postId > 0) context.pushNamed(CommentScreen.routeName, queryParameters: {'postId': "$postId"});
           },
           child: Padding(
             padding: const EdgeInsets.only(left: constantPadding, bottom: constantPadding),
@@ -255,4 +296,52 @@ class _PostWidgetState extends State<PostWidget> {
       ],
     );
   }
+
+  void showEditDeleteBottomModal() {
+    showTwoButtonBottomSheetCupertino(
+      context: context,
+      title: post,
+
+      /// Delete button
+      firstButtonIcon: Icons.delete_forever,
+      firstButtonText: delete,
+      firstButtonListener: () {
+        deletePostConfirmModal();
+      },
+      /// Edit button
+      secondButtonIcon: Icons.edit,
+      secondButtonText: edit,
+      secondButtonListener: () {
+        // TODO : Edit post feature implementation
+      },
+    );
+  }
+
+  void deletePostConfirmModal() {
+    showTwoButtonDialog(
+      context: context,
+      title: deletePost,
+      content: deletePostConfirm,
+      /// Delete button
+      firstButtonText: delete,
+      firstButtonListener: () {
+        deletePostFeature();
+      },
+      /// Cancel button
+      secondButtonText: cancel,
+    );
+  }
+
+
+  void deletePostFeature() async {
+    final postId = widget.postModel.id ?? -1;
+    /// Delete the post
+    final state = await _deletePostViewModel.deletePost(postId: postId);
+    if (state is Success) {
+      if (context.mounted) showCustomToastWithTimer(context: context, message: postDeletedMessage);
+      /// Remove the deleted post from the list
+      _postListViewModel.removeDeletedPostFromList(postId: postId);
+    }
+  }
+
 }

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
 class DioSingleton {
   static Dio? _instance;
@@ -7,8 +6,8 @@ class DioSingleton {
   static Dio getInstance() {
     _instance ??= Dio(
         BaseOptions(
-          connectTimeout: const Duration(seconds: 3),
-          receiveTimeout: const Duration(seconds: 3),
+          connectTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
         ),
       );
     return _instance!;
