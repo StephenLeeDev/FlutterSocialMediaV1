@@ -28,9 +28,23 @@ class CreatePostViewModel {
   ValueNotifier<List<XFile>> get imageListNotifier => _imageList;
   List<XFile> get imageList => _imageList.value;
 
-  setImageList({required List<XFile> list}) {
+  _setImageList({required List<XFile> list}) {
     _imageList.value = list;
     _checkIsValid();
+  }
+
+  /// Add additional images to the _imageList
+  addAdditionalImagesToList({required List<XFile> list}) {
+    List<XFile> copyList = List.from(imageList);
+    copyList.addAll(list);
+    _setImageList(list: copyList);
+  }
+
+  /// remove the certain image from the _imageList by index
+  removeImageFromListByIndex({required int index}) {
+    List<XFile> copyList = List.from(imageList);
+    copyList.removeAt(index);
+    _setImageList(list: copyList);
   }
 
   /// Description

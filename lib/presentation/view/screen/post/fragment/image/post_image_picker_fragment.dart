@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../data/constant/text.dart';
 import '../../../../../util/dialog/dialog_util.dart';
+import '../../../../../util/integer/integer_util.dart';
 import '../../../../../util/logger/image_file_logger_util.dart';
 import '../../../../../viewmodel/post/create/create_post_viewmodel.dart';
 import '../../../../widget/button/custom_elevated_button.dart';
@@ -20,6 +21,7 @@ class PostImagePickerFragment extends StatefulWidget {
 
 class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
   static const double maxImageLength = 1000;
+  static const int maxImageCount = 4;
 
   late final CreatePostViewModel _createPostViewModel;
 
@@ -61,10 +63,15 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
           ),
           const SizedBox(height: 20),
 
-          /// image picker button
+          /// Image picker button
           GestureDetector(
             onTap: () {
-              showSelectionGalleryCameraDialog();
+              /// Can add up to 4 images
+              if (_createPostViewModel.imageList.length < maxImageCount) {
+                showSelectionGalleryCameraDialog();
+              } else {
+                showMaxWarningDialog();
+              }
             },
             child: Container(
               padding: const EdgeInsets.all(8),
@@ -115,23 +122,45 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
                       itemCount: list.length,
                       itemBuilder: (BuildContext context, int index) {
                         /// Image item view
-                        return AspectRatio(
-                          aspectRatio: 1,
-                          child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
+                        return Stack(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 1,
+                              child: Container(
+                                clipBehavior: Clip.hardEdge,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Image.file(
+                                  File(list[index].path),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                            child: Image.file(
-                              File(list[index].path),
-                              fit: BoxFit.cover,
+                            /// Remove image button
+                            Positioned(
+                              right: 0,
+                              child: Container(
+                                margin: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withOpacity(0.5),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.delete_forever_rounded),
+                                  onPressed: () {
+                                    /// Remove this image
+                                    _createPostViewModel.removeImageFromListByIndex(index: index);
+                                  },
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         );
                       },
                     );
                   } else {
-                    /// Empty list message
+                    /// Empty list message view
                     return const Center(
                       child: Text(
                         pleaseSelectPictures,
@@ -164,17 +193,27 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
       content: selectPictureSource,
       firstButtonText: gallery,
 
-      /// Pick image from gallery
+      /// Pick a image from gallery
       firstButtonListener: () async {
         var images = await pickImagesFromGallery();
-        _createPostViewModel.setImageList(list: images);
+
+        final currentImages = _createPostViewModel.imageList.length;
+        final additionalImages = images.length;
+
+        if (currentImages + additionalImages > maxImageCount) {
+          final availableCountToAdd = maxImageCount - currentImages;
+
+          images = images.sublist(0, availableCountToAdd);
+          showExceedWarningDialog(count: availableCountToAdd);
+        }
+        _createPostViewModel.addAdditionalImagesToList(list: images);
       },
 
-      /// Pick image from camera
+      /// Pick images from camera
       secondButtonText: camera,
       secondButtonListener: () async {
         var images = await pickImageFromCamera();
-        _createPostViewModel.setImageList(list: images);
+        _createPostViewModel.addAdditionalImagesToList(list: images);
       },
     );
   }
@@ -210,6 +249,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
     return images;
   }
 
+  /// Next button
   Widget bottomButtons() {
     return ValueListenableBuilder<List<XFile>>(
       valueListenable: _createPostViewModel.imageListNotifier,
@@ -227,6 +267,30 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
           },
         );
       },
+    );
+  }
+
+  /// Warning : Already picked maximum pictures
+  void showMaxWarningDialog() {
+    showTwoButtonDialog(
+      context: context,
+      title: warning,
+      content: canAddUpToFourPictures,
+
+      firstButtonText: ok,
+      firstButtonListener: () {},
+    );
+  }
+
+  /// Warning : Picked exceeds pictures
+  void showExceedWarningDialog({required int count}) {
+    showTwoButtonDialog(
+      context: context,
+      title: warning,
+      content: "$canAddUpToFourPictures\n\nAdded only $count picture${IntegerUtil().getPluralSuffix(count: count)} from your select",
+
+      firstButtonText: ok,
+      firstButtonListener: () {},
     );
   }
 

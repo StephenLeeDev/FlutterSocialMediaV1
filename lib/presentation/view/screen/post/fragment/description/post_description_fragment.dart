@@ -113,6 +113,7 @@ class _PostDescriptionFragmentState extends State<PostDescriptionFragment> {
                 isEnabled: isValid,
                 onPressed: () {
                   /// Create a new post
+                  // TODO : Implement moving to my feed screen feature later (my feed screen doesn't created yet)
                   _createPostViewModel.createPost();
                 },
               );

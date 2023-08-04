@@ -72,7 +72,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              showConfirmDialog();
+              showConfirmCancelDialog();
             },
           ),
         ),
@@ -90,7 +90,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  void showConfirmDialog() {
+  void showConfirmCancelDialog() {
     showTwoButtonDialog(
       context: context,
       title: areYouSure,
