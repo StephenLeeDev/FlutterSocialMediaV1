@@ -23,6 +23,7 @@ import 'domain/usecase/comment/create/create_comment_usecase.dart';
 import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
 import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
+import 'domain/usecase/post/create/create_post_usecase.dart';
 import 'domain/usecase/post/delete/delete_post_usecase.dart';
 import 'domain/usecase/post/list/get_post_list_usecase.dart';
 import 'domain/usecase/post/like/post_like_usecase.dart';
@@ -30,7 +31,6 @@ import 'domain/usecase/user/get_my_user_info_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
-import 'presentation/viewmodel/user/bookmark/bookmark_viewmodel.dart';
 import 'presentation/viewmodel/user/my_info/my_user_info_viewmodel.dart';
 
 void main() async {
@@ -56,7 +56,7 @@ void main() async {
 
   /// Dio Singleton
   final Dio dio = DioSingleton.getInstance();
-  dio.options.connectTimeout = const Duration(seconds: 10);
+  dio.options.connectTimeout = const Duration(seconds: 5);
   dio.interceptors.add(TokenInterceptor(getAccessTokenUseCase: getAccessTokenUseCase));
 
   /// Log output only in debug mode
@@ -73,29 +73,41 @@ void main() async {
   }
 
   /// Authentication
+  // Repository
   final authRepository = AuthRepositoryImpl(dio);
+  // UseCases
   final postSignInUseCase = PostSignInUseCase(authRepository: authRepository);
+  // ViewModels
   final authViewModel = AuthViewModel(postSignInUseCase: postSignInUseCase, setAccessTokenUseCase: setAccessTokenUseCase);
 
   /// User
+  // Repository
   final userRepository = UserRepositoryImpl(dio);
+  // UseCases
   final getMyUserInfoUseCase = GetMyUserInfoUseCase(userRepository: userRepository);
   final postBookmarkUseCase = PostBookmarkUseCase(userRepository: userRepository);
   getIt.registerSingleton<PostBookmarkUseCase>(postBookmarkUseCase);
+  // ViewModels
   final myUserInfoViewModel = MyUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
   getIt.registerSingleton<MyUserInfoViewModel>(myUserInfoViewModel);
 
   /// Feed(Post List)
+  // Repository
   final postRepository = PostRepositoryImpl(dio);
+  // UseCases
   final getPostListUseCase = GetPostListUseCase(postRepository: postRepository);
   getIt.registerSingleton<GetPostListUseCase>(getPostListUseCase);
+  final createPostUseCase = CreatePostUseCase(postRepository: postRepository);
+  getIt.registerSingleton<CreatePostUseCase>(createPostUseCase);
   final postLikeUseCase = PostLikeUseCase(postRepository: postRepository);
   getIt.registerSingleton<PostLikeUseCase>(postLikeUseCase);
   final deletePostUseCase = DeletePostUseCase(postRepository: postRepository);
   getIt.registerSingleton<DeletePostUseCase>(deletePostUseCase);
 
   /// Comment/Reply
+  // Repository
   final commentRepository = CommentRepositoryImpl(dio);
+  // UseCases
   final getCommentUseCase = GetCommentListUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<GetCommentListUseCase>(getCommentUseCase);
   final createCommentUseCase = CreateCommentUseCase(commentRepository: commentRepository);

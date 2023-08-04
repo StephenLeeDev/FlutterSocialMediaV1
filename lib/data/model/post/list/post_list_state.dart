@@ -1,4 +1,4 @@
-import 'package:flutter_social_media_v1/data/model/post/item/post_model.dart';
+import '../item/post_model.dart';
 
 abstract class PostListState {}
 
