@@ -6,7 +6,7 @@ import '../../widget/navigation/navigation_tab.dart';
 import '../feed/feed_screen.dart';
 import '../my/my_page_screen.dart';
 import '../notification/notification_screen.dart';
-import '../post/create_post_screen.dart';
+import '../post/create/create_post_screen.dart';
 import '../search/search_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../data/constant/text.dart';
-import '../../../../../viewmodel/post/create/create_post_viewmodel.dart';
-import '../../../../widget/button/custom_elevated_button.dart';
-import '../../../../widget/button/rounded_elevated_button.dart';
+import '../../../../../../../data/constant/text.dart';
+import '../../../../../../viewmodel/post/create/create_post_viewmodel.dart';
+import '../../../../../widget/button/custom_elevated_button.dart';
+import '../../../../../widget/button/rounded_elevated_button.dart';
 
 class PostDescriptionFragment extends StatefulWidget {
   const PostDescriptionFragment({Key? key}) : super(key: key);
