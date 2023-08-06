@@ -4,6 +4,7 @@ class PostModel {
   int? id;
   int get getId => id ?? -1;
   String? description;
+  String get getDescription => description ?? "";
   String? status;
   UserModel? user;
   String get getUserEmail => user?.email ?? "Unknown";
@@ -114,5 +115,9 @@ class PostModel {
   }
 
   bool isMyPost({required String myEmail}) => getUserEmail == myEmail;
+
+  String getSimpleName() {
+    return runtimeType.toString();
+  }
 
 }

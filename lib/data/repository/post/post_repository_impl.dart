@@ -10,6 +10,7 @@ import '../../model/post/item/post_model.dart';
 import '../../model/post/list/post_list_model.dart';
 import '../../model/post/list/post_list_state.dart' as PostListState;
 import '../../model/common/common_state.dart' as CommonState;
+import '../../model/post/update/update_post_description_model.dart';
 
 class PostRepositoryImpl extends PostRepository {
 
@@ -70,6 +71,28 @@ class PostRepositoryImpl extends PostRepository {
       return PostListState.Fail();
     } catch (e) {
       return PostListState.Fail();
+    }
+  }
+
+  @override
+  Future<PostItemState.PostItemState> updatePostDescription({required UpdatePostDescriptionModel updatePostDescriptionModel}) async {
+
+    const api = "post/description";
+    const url = "$baseUrl$api";
+
+    try {
+      final Response response = await _dio.patch(url, data: updatePostDescriptionModel.toJson());
+
+      if (response.statusCode == 200) {
+        final state = PostItemState.Success(item: PostModel.fromJson(response.data));
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return PostItemState.Fail();
+    } catch (e) {
+      return PostItemState.Fail();
     }
   }
 

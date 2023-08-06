@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:get_it/get_it.dart';
@@ -16,11 +18,13 @@ import '../../../util/custom_toast/custom_toast_util.dart';
 import '../../../util/date/date_util.dart';
 import '../../../util/dialog/dialog_util.dart';
 import '../../../util/integer/integer_util.dart';
+import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/delete/delete_post_viewmodel.dart';
 import '../../../viewmodel/post/like/post_like_viewmodel.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/bookmark/bookmark_viewmodel.dart';
 import '../../screen/comment/comment/comment_screen.dart';
+import '../../screen/post/update/update_post_description_screen.dart';
 
 class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.postModel}) : super(key: key);
@@ -308,11 +312,11 @@ class _PostWidgetState extends State<PostWidget> {
       firstButtonListener: () {
         deletePostConfirmModal();
       },
-      /// Edit button
+      /// Edit description button
       secondButtonIcon: Icons.edit,
       secondButtonText: edit,
       secondButtonListener: () {
-        // TODO : Edit post feature implementation
+        updatePostDescription();
       },
     );
   }
@@ -332,7 +336,6 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
-
   void deletePostFeature() async {
     final postId = widget.postModel.id ?? -1;
     /// Delete the post
@@ -341,6 +344,20 @@ class _PostWidgetState extends State<PostWidget> {
       if (context.mounted) showCustomToastWithTimer(context: context, message: postDeletedMessage);
       /// Remove the deleted post from the list
       _postListViewModel.removeDeletedPostFromList(postId: postId);
+    }
+  }
+
+  void updatePostDescription() async {
+    String? updatedPost = await context.pushNamed(
+      UpdatePostDescriptionScreen.routeName,
+      queryParameters: {
+        PostModel().getSimpleName(): jsonEncode(widget.postModel),
+      },
+    );
+    /// If updated post exists, replace the item from the list
+    if (updatedPost != null) {
+      _postListViewModel.replaceUpdatedCommentFromList(updatedPost: PostModel.fromJson(jsonDecode(updatedPost)));
+      if (context.mounted) showSnackBar(context: context, text: postUpdatedMessage);
     }
   }
 

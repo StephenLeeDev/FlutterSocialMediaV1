@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/model/comment/item/comment_model.dart';
+import '../../data/model/post/item/post_model.dart';
 import '../../domain/usecase/auth/get_access_token_usecase.dart';
 import '../view/screen/auth/auth_screen.dart';
 import '../view/screen/comment/comment/comment_screen.dart';
@@ -12,11 +13,13 @@ import '../view/screen/main_navigation/main_navigation_screen.dart';
 import '../view/screen/my/my_page_screen.dart';
 import '../view/screen/notification/notification_screen.dart';
 import '../view/screen/post/create/create_post_screen.dart';
+import '../view/screen/post/update/update_post_description_screen.dart';
 import '../view/screen/search/search_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: FeedScreen.routeURL,
 
+  /// Default
   redirect: (context, state) async {
     String accessToken = await GetIt.instance<GetAccessTokenUseCase>().execute();
     debugPrint("GoRouter accessToken : $accessToken");
@@ -30,11 +33,15 @@ final GoRouter router = GoRouter(
     return null;
   },
   routes: <RouteBase>[
+
+    /// Authentication
     GoRoute(
       name: AuthScreen.routeName,
       path: AuthScreen.routeURL,
       builder: (context, state) => const AuthScreen(),
     ),
+
+    /// Main tab
     GoRoute(
       path: "/:tab(${FeedScreen.routeName}|${SearchScreen.routeName}|${NotificationScreen.routeName}|${MyPageScreen.routeName})",
       name: MainNavigationScreen.routeName,
@@ -43,11 +50,25 @@ final GoRouter router = GoRouter(
         return MainNavigationScreen(tab: tab);
       },
     ),
+
+    /// Create post
     GoRoute(
         name: CreatePostScreen.routeName,
         path: CreatePostScreen.routeURL,
         builder: (context, state) => const CreatePostScreen(),
     ),
+
+    /// Update post description
+    GoRoute(
+      name: UpdatePostDescriptionScreen.routeName,
+      path: UpdatePostDescriptionScreen.routeURL,
+      builder: (context, state) {
+        final postString = state.queryParameters[PostModel().getSimpleName()] ?? "";
+        return UpdatePostDescriptionScreen(postString: postString);
+      }
+    ),
+
+    /// Comment
     GoRoute(
       name: CommentScreen.routeName,
       path: CommentScreen.routeURL,
@@ -56,6 +77,8 @@ final GoRouter router = GoRouter(
         return CommentScreen(postId: postId);
       }
     ),
+
+    /// Reply
     GoRoute(
         name: ReplyScreen.routeName,
         path: ReplyScreen.routeURL,
@@ -65,5 +88,6 @@ final GoRouter router = GoRouter(
           return ReplyScreen(postId: postId, commentString: commentString);
         }
     ),
+
   ],
 );
