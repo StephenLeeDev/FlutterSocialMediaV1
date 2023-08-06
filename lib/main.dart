@@ -27,6 +27,7 @@ import 'domain/usecase/post/create/create_post_usecase.dart';
 import 'domain/usecase/post/delete/delete_post_usecase.dart';
 import 'domain/usecase/post/list/get_post_list_usecase.dart';
 import 'domain/usecase/post/like/post_like_usecase.dart';
+import 'domain/usecase/post/update/update_post_description_usecase.dart';
 import 'domain/usecase/user/get_my_user_info_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
 import 'presentation/router/router.dart';
@@ -97,6 +98,8 @@ void main() async {
   // UseCases
   final getPostListUseCase = GetPostListUseCase(postRepository: postRepository);
   getIt.registerSingleton<GetPostListUseCase>(getPostListUseCase);
+  final updatePostDescriptionUseCase = UpdatePostDescriptionUseCase(postRepository: postRepository);
+  getIt.registerSingleton<UpdatePostDescriptionUseCase>(updatePostDescriptionUseCase);
   final createPostUseCase = CreatePostUseCase(postRepository: postRepository);
   getIt.registerSingleton<CreatePostUseCase>(createPostUseCase);
   final postLikeUseCase = PostLikeUseCase(postRepository: postRepository);

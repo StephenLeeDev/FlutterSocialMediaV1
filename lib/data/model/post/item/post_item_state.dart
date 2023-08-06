@@ -9,8 +9,8 @@ class Loading extends PostItemState {}
 class Fail extends PostItemState {}
 
 class Success extends PostItemState {
-  late PostModel item;
-  Success({required this.item});
+  late final PostModel _item;
+  Success({required PostModel item}) : _item = item;
 
-  PostModel get getItem => item;
+  PostModel get getItem => _item;
 }

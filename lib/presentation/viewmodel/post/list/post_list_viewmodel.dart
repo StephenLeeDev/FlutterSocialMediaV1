@@ -86,6 +86,16 @@ class PostListViewModel {
     }
   }
 
+  /// Replace updated item from the _currentList
+  replaceUpdatedCommentFromList({required PostModel updatedPost}) {
+    int updatedIndex = currentList.indexWhere((post) => post.getId == updatedPost.getId);
+    if (updatedIndex != -1) {
+      List<PostModel> copyList = List.from(currentList);
+      copyList[updatedIndex] = updatedPost;
+      setCurrentList(list: copyList);
+    }
+  }
+
   /// Refresh the post list
   Future<void> refresh() async {
     setCurrentList(list: []);

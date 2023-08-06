@@ -350,7 +350,9 @@ class _CommentScreenState extends State<CommentScreen> {
                       return IconButton(
                         onPressed: () async {
                           if (isValid) {
+                            /// Execute
                             final state = await updateCommentViewModel.updateComment();
+
                             if (state is CommentItemState.Success) {
                               _mode = CreateUpdateMode.create;
                               final CommentModel updatedComment = state.item;
