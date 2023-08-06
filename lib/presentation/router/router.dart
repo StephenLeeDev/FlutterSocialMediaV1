@@ -11,7 +11,7 @@ import '../view/screen/feed/feed_screen.dart';
 import '../view/screen/main_navigation/main_navigation_screen.dart';
 import '../view/screen/my/my_page_screen.dart';
 import '../view/screen/notification/notification_screen.dart';
-import '../view/screen/post/create_post_screen.dart';
+import '../view/screen/post/create/create_post_screen.dart';
 import '../view/screen/search/search_screen.dart';
 
 final GoRouter router = GoRouter(
