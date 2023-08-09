@@ -47,6 +47,7 @@ class _PostWidgetState extends State<PostWidget> {
     initViewModels();
   }
 
+  /// ViewModels
   void initViewModels() {
     initListViewModel();
     initBookmarkViewModel();

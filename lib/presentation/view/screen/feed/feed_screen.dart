@@ -8,6 +8,7 @@ import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/my_info/my_user_info_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
+import '../../widget/feed/post_loading_widget.dart';
 import '../../widget/feed/post_widget.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -56,11 +57,14 @@ class _FeedScreenState extends State<FeedScreen> {
     await fetchPostList();
   }
 
+  /// Fetch my user information first before the list
   Future<void> fetchMyUserInfo() async {
+    _postListViewModel.setPostListState(postListState: MyUserInfoLoading());
     await _myUserInfoViewModel.getMyUserInfo();
     _postListViewModel.setMyEmail(value: _myUserInfoViewModel.myEmail);
   }
 
+  /// Fetch feed
   Future<void> fetchPostList() async {
     await _postListViewModel.getPostList();
   }
@@ -79,7 +83,7 @@ class _FeedScreenState extends State<FeedScreen> {
           valueListenable: _postListViewModel.postListStateNotifier,
           builder: (context, state, _) {
             /// Loading UI
-            if (state is Loading && _postListViewModel.currentList.isEmpty) {
+            if ((state is MyUserInfoLoading) || (state is Loading && _postListViewModel.currentList.isEmpty)) {
               return buildLoadingStateUI();
             }
             /// Fail UI
@@ -99,11 +103,13 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget buildLoadingStateUI() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return const Center(
-          child: SizedBox(
-            width: 36,
-            height: 36,
-            child: CircularProgressIndicator(),
+        return SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            children: const [
+              PostLoadingWidget(),
+              PostLoadingWidget(),
+            ],
           ),
         );
       },
