@@ -71,12 +71,14 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    /// Provider
     return MultiProvider(
       providers: [
         Provider<PostListViewModel>(
           create: (context) => _postListViewModel,
         ),
       ],
+      /// Screen
       child: Scaffold(
         backgroundColor: Colors.white,
         body: ValueListenableBuilder<PostListState>(
@@ -137,11 +139,8 @@ class _FeedScreenState extends State<FeedScreen> {
               controller: _scrollController,
               itemCount: list.length,
               itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0),
-                  child: PostWidget(
-                    postModel: list[index],
-                  ),
+                return PostWidget(
+                  postModel: list[index],
                 );
               }, separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
             );

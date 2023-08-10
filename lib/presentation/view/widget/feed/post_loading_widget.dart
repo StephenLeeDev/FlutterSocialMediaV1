@@ -94,7 +94,7 @@ class PostLoadingWidget extends StatelessWidget {
               bottom: constantPadding,
             ),
             child: Container(
-              width: 200,
+              width: 250,
               height: 15,
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(

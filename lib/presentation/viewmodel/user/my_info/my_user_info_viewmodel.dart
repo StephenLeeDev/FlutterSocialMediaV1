@@ -9,11 +9,12 @@ class MyUserInfoViewModel extends ChangeNotifier {
     required GetMyUserInfoUseCase getMyUserInfoUseCase,
   }) : _getMyUserInfoUseCase = getMyUserInfoUseCase;
 
-  MyUserInfoState _myUserInfoState = Ready();
-  MyUserInfoState get myUserInfoState => _myUserInfoState;
+  final ValueNotifier<MyUserInfoState> _myUserInfoState = ValueNotifier<MyUserInfoState>(Ready());
+  ValueNotifier<MyUserInfoState> get myUserInfoStateNotifier => _myUserInfoState;
+  MyUserInfoState get myUserInfoState => myUserInfoStateNotifier.value;
 
   _setMyUserInfoState({required MyUserInfoState state}) {
-    _myUserInfoState = state;
+    _myUserInfoState.value = state;
     if (state is Success) {
       _setMyEmail(myEmail: state.getMyUserInfo.getEmail);
     }
