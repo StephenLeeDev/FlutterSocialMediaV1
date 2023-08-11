@@ -6,8 +6,10 @@ import '../../../../data/model/post/item/post_model.dart';
 import '../../../../data/model/post/list/post_list_state.dart' as PostListState;
 import '../../../../data/model/user/my_user_info.dart';
 import '../../../../data/model/user/my_user_info_state.dart' as MyUserInfoState;
+import '../../../../domain/usecase/post/list/get_my_post_list_usecase.dart';
 import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
 import '../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
+import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/my_info/my_user_info_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
@@ -26,7 +28,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   final _scrollController = ScrollController();
 
   late final MyUserInfoViewModel _myUserInfoViewModel;
-  late final PostGridListViewModel _postListViewModel;
+  late final MyPostGridListViewModel _postListViewModel;
 
   @override
   void initState() {
@@ -49,7 +51,10 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   /// List
   void initListViewModel() {
-    _postListViewModel = PostGridListViewModel(getPostListUseCase: GetIt.instance<GetPostListUseCase>());
+    _postListViewModel = MyPostGridListViewModel(
+        getPostListUseCase: GetIt.instance<GetPostListUseCase>(),
+        getMyPostListUseCase: GetIt.instance<GetMyPostListUseCase>()
+    );
     _postListViewModel.setLimit(value: 18);
   }
 
@@ -67,7 +72,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     /// Provider
     return MultiProvider(
       providers: [
-        Provider<PostGridListViewModel>(
+        Provider<PostListViewModel>(
           create: (context) => _postListViewModel,
         ),
         Provider<MyUserInfoViewModel>(
@@ -77,44 +82,49 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
       /// Screen
       child: SafeArea(
-        child: ListView(
-          physics: const ScrollPhysics(),
-          controller: _scrollController,
-          children: [
-            /// User profile
-            ValueListenableBuilder<MyUserInfoState.MyUserInfoState>(
-              valueListenable: _myUserInfoViewModel.myUserInfoStateNotifier,
-              builder: (context, state, _) {
-                if (state is MyUserInfoState.Success) {
-                  fetchData();
-                  return buildUserProfileUI(myUserInfo: state.getMyUserInfo);
-                } else {
-                  return Container();
-                }
-              },
-            ),
+        child: RefreshIndicator(
+          onRefresh: () {
+            return _refresh();
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: _scrollController,
+            children: [
+              /// User profile
+              ValueListenableBuilder<MyUserInfoState.MyUserInfoState>(
+                valueListenable: _myUserInfoViewModel.myUserInfoStateNotifier,
+                builder: (context, state, _) {
+                  if (state is MyUserInfoState.Success) {
+                    fetchData();
+                    return buildUserProfileUI(myUserInfo: state.getMyUserInfo);
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
 
-            /// Grid feed
-            ValueListenableBuilder<PostListState.PostListState>(
-              valueListenable: _postListViewModel.postListStateNotifier,
-              builder: (context, state, _) {
-                /// Loading UI
-                if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
-                  return buildLoadingStateUI();
-                }
+              /// Grid feed
+              ValueListenableBuilder<PostListState.PostListState>(
+                valueListenable: _postListViewModel.postListStateNotifier,
+                builder: (context, state, _) {
+                  /// Loading UI
+                  if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
+                    return buildLoadingStateUI();
+                  }
 
-                /// Fail UI
-                else if (state is PostListState.Fail) {
-                  return buildFailStateUI();
-                }
+                  /// Fail UI
+                  else if (state is PostListState.Fail) {
+                    return buildFailStateUI();
+                  }
 
-                /// Success UI (default)
-                else {
-                  return buildSuccessStateUI();
-                }
-              },
-            ),
-          ],
+                  /// Success UI (default)
+                  else {
+                    return buildSuccessStateUI();
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -320,4 +330,11 @@ class _MyPageScreenState extends State<MyPageScreen> {
     _scrollController.dispose();
     super.dispose();
   }
+
+  Future<void> _refresh() async {
+    _postListViewModel.refresh();
+    _postListViewModel.setLimit(value: 15);
+    await _myUserInfoViewModel.getMyUserInfo();
+  }
+
 }

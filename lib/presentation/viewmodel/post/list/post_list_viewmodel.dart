@@ -33,7 +33,7 @@ class PostListViewModel {
   int _page = 1;
   int get page => _page;
 
-  _increasePage() {
+  increasePage() {
     _setPage(value: page + 1);
   }
 
@@ -53,7 +53,7 @@ class PostListViewModel {
   bool _hasNext = true;
   bool get hasNext => _hasNext;
 
-  _setHasNext({required bool value}) {
+  setHasNext({required bool value}) {
     _hasNext = value;
   }
 
@@ -73,7 +73,7 @@ class PostListViewModel {
     _setCurrentList(list: copyList);
   }
 
-  /// Fetch additional paginated posts from the application server
+  /// Fetch additional paginated posts for all users
   Future<void> getPostList() async {
     if (postListState is Loading || !hasNext) return;
     setPostListState(postListState: Loading());
@@ -82,11 +82,11 @@ class PostListViewModel {
     setPostListState(postListState: state);
 
     if (state is Success) {
-      _increasePage();
+      increasePage();
 
       addAdditionalList(additionalList: state.list);
 
-      if (currentList.length >= state.total) _setHasNext(value: false);
+      if (currentList.length >= state.total) setHasNext(value: false);
     }
   }
 
@@ -104,7 +104,7 @@ class PostListViewModel {
   Future<void> refresh() async {
     _setCurrentList(list: []);
     _setPage(value: 1);
-    _setHasNext(value: true);
+    setHasNext(value: true);
 
     getPostList();
   }
