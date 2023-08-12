@@ -34,16 +34,20 @@ class PostListViewModel {
   int get page => _page;
 
   increasePage() {
-    setPage(value: page + 1);
+    _setPage(value: page + 1);
   }
 
-  setPage({required int value}) {
+  _setPage({required int value}) {
     _page = value;
   }
 
   /// The number of items to fetch at once
-  final int _limit = 3;
+  int _limit = 3;
   int get limit => _limit;
+
+  setLimit({required int value}) {
+    _limit = value;
+  }
 
   /// Total posts count can fetch
   bool _hasNext = true;
@@ -58,18 +62,18 @@ class PostListViewModel {
   ValueNotifier<List<PostModel>> get currentListNotifier => _currentList;
   List<PostModel> get currentList => _currentList.value;
 
-  setCurrentList({required List<PostModel> list}) {
-    _currentList.value = setIsMineStatusAndReturn(list: list);
+  _setCurrentList({required List<PostModel> list}) {
+    _currentList.value = _setIsMineStatusAndReturn(list: list);
   }
 
   /// Add additional posts to the _currentList
   addAdditionalList({required List<PostModel> additionalList}) {
     List<PostModel> copyList = List.from(currentList);
     copyList.addAll(additionalList);
-    setCurrentList(list: copyList);
+    _setCurrentList(list: copyList);
   }
 
-  /// Fetch additional paginated posts from the application server
+  /// Fetch additional paginated posts for all users
   Future<void> getPostList() async {
     if (postListState is Loading || !hasNext) return;
     setPostListState(postListState: Loading());
@@ -92,14 +96,14 @@ class PostListViewModel {
     if (updatedIndex != -1) {
       List<PostModel> copyList = List.from(currentList);
       copyList[updatedIndex] = updatedPost;
-      setCurrentList(list: copyList);
+      _setCurrentList(list: copyList);
     }
   }
 
   /// Refresh the post list
   Future<void> refresh() async {
-    setCurrentList(list: []);
-    setPage(value: 1);
+    _setCurrentList(list: []);
+    _setPage(value: 1);
     setHasNext(value: true);
 
     getPostList();
@@ -112,7 +116,7 @@ class PostListViewModel {
       final list = currentList.toList();
       list[index].setBookmark();
 
-      setCurrentList(list: list);
+      _setCurrentList(list: list);
     }
   }
 
@@ -124,12 +128,12 @@ class PostListViewModel {
       list[index].setLike();
       list[index].setLikeCount(value: likeCount);
 
-      setCurrentList(list: list);
+      _setCurrentList(list: list);
     }
   }
 
   /// Check is mine
-  List<PostModel> setIsMineStatusAndReturn({required List<PostModel> list}) {
+  List<PostModel> _setIsMineStatusAndReturn({required List<PostModel> list}) {
     final copyList = List.of(list);
     for (int i = 0; i < copyList.length; i++) {
       if (copyList[i].isMyPost(myEmail: myEmail)) copyList[i].isMine = true;
@@ -142,7 +146,7 @@ class PostListViewModel {
     List<PostModel> copyList = List.of(currentList);
     copyList.removeWhere((post) => post.id == postId);
 
-    setCurrentList(list: copyList);
+    _setCurrentList(list: copyList);
   }
 
 }

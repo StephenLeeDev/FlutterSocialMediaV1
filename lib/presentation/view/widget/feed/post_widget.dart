@@ -47,6 +47,7 @@ class _PostWidgetState extends State<PostWidget> {
     initViewModels();
   }
 
+  /// ViewModels
   void initViewModels() {
     initListViewModel();
     initBookmarkViewModel();
@@ -98,6 +99,7 @@ class _PostWidgetState extends State<PostWidget> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  /// User thumbnail
                   Container(
                     margin: const EdgeInsets.all(constantPadding),
                     width: 30,
@@ -107,10 +109,11 @@ class _PostWidgetState extends State<PostWidget> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Image.network(
-                      widget.postModel.user?.thumbnail ?? "",
+                      widget.postModel.getUserThumbnail,
                       fit: BoxFit.cover,
                     ),
                   ),
+                  /// User name
                   Text(
                     widget.postModel.getUserName(),
                     style: const TextStyle(

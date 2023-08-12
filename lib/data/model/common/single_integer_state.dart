@@ -1,4 +1,4 @@
-/// Common single integer state used for APIs with an empty response
+/// Common single integer state used for API response
 
 abstract class SingleIntegerState {}
 

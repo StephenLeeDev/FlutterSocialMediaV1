@@ -7,3 +7,9 @@ Future<List<MultipartFile>> convertXFilesToMultipart({required List<XFile> files
   final List<MultipartFile> images = await Future.wait(imageFiles);
   return images;
 }
+
+/// It returns XFile input as MultipartFile format
+Future<MultipartFile> convertXFileToMultipart({required XFile file}) async {
+  Future<MultipartFile> imageFile = MultipartFile.fromFile(file.path);
+  return imageFile;
+}

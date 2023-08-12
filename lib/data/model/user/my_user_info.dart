@@ -4,6 +4,7 @@ class MyUserInfo {
   String? username;
   String get getUserName => username ?? "Unknown";
   String? thumbnail;
+  String get getUserThumbnail => thumbnail ?? "";
   List<int>? bookMarks;
 
   MyUserInfo({
@@ -31,6 +32,20 @@ class MyUserInfo {
       'thumbnail': thumbnail,
       'bookMarks': bookMarks,
     };
+  }
+
+  MyUserInfo copyWith({
+    String? email,
+    String? username,
+    String? thumbnail,
+    List<int>? bookMarks,
+  }) {
+    return MyUserInfo(
+      email: email ?? this.email,
+      username: username ?? this.username,
+      thumbnail: thumbnail ?? this.thumbnail,
+      bookMarks: bookMarks ?? this.bookMarks,
+    );
   }
 
   @override

@@ -7,9 +7,11 @@ class PostModel {
   String get getDescription => description ?? "";
   String? status;
   UserModel? user;
+  String get getUserThumbnail => user?.thumbnail ?? "";
   String get getUserEmail => user?.email ?? "Unknown";
   DateTime? createdAt;
   List<String>? imageUrls;
+  String get getFirstImage => imageUrls?.first ?? "";
   int? likeCount;
   bool? isLiked;
   bool? isBookmarked;
