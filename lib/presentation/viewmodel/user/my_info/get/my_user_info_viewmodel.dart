@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_social_media_v1/data/model/user/my_user_info_state.dart';
-import 'package:flutter_social_media_v1/domain/usecase/user/get_my_user_info_usecase.dart';
+
+import '../../../../../data/model/user/my_user_info.dart';
+import '../../../../../data/model/user/my_user_info_state.dart';
+import '../../../../../domain/usecase/user/get_my_user_info_usecase.dart';
 
 class MyUserInfoViewModel {
   final GetMyUserInfoUseCase _getMyUserInfoUseCase;
@@ -32,6 +34,15 @@ class MyUserInfoViewModel {
 
   _setMyEmail({required String myEmail}) {
     _myEmail = myEmail;
+  }
+
+  updateMyUserInfoWithNewThumbnail({required String newThumbnail}) async {
+    if (myUserInfoState is Success) {
+      MyUserInfo myUserInfo = (myUserInfoStateNotifier.value as Success).getMyUserInfo.copyWith();
+      myUserInfo.thumbnail = newThumbnail;
+
+      _setMyUserInfoState(state: Success(myUserInfo));
+    }
   }
 
 }

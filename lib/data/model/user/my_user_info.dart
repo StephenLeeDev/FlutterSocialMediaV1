@@ -34,6 +34,20 @@ class MyUserInfo {
     };
   }
 
+  MyUserInfo copyWith({
+    String? email,
+    String? username,
+    String? thumbnail,
+    List<int>? bookMarks,
+  }) {
+    return MyUserInfo(
+      email: email ?? this.email,
+      username: username ?? this.username,
+      thumbnail: thumbnail ?? this.thumbnail,
+      bookMarks: bookMarks ?? this.bookMarks,
+    );
+  }
+
   @override
   String toString() {
     return 'MyUserInfo(email: $email, username: $username, thumbnail: $thumbnail, bookMarks: $bookMarks)';

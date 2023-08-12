@@ -16,6 +16,7 @@ const no = "No";
 const warning = "Warning";
 const confirm = "Confirm";
 const areYouSure = "Are you sure?";
+const wentSomethingWrong = "Something went wrong.\nPlease try again.";
 
 /// Post
 const post = "Post";
@@ -51,3 +52,7 @@ const deleteCommentConfirm = "Are you sure you want to delete the comment?";
 const commentCreatedMessage = "The comment has been created";
 const commentDeletedMessage = "The comment has been deleted";
 const commentUpdatedMessage = "The comment has been updated";
+
+/// User
+const updateThumbnail = "Update thumbnail";
+const thumbnailUpdated = "Thumbnail updated successfully";
