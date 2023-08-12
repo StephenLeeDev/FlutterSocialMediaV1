@@ -6,7 +6,7 @@ import '../../../../data/model/post/item/post_model.dart';
 import '../../../../data/model/post/list/post_list_state.dart';
 import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
-import '../../../viewmodel/user/my_info/my_user_info_viewmodel.dart';
+import '../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_loading_widget.dart';
 import '../../widget/feed/post_widget.dart';

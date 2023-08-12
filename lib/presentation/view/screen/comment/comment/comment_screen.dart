@@ -16,7 +16,7 @@ import '../../../../util/keyboard/keyboard_util.dart';
 import '../../../../viewmodel/comment/list/comment_list_viewmodel.dart';
 import '../../../../viewmodel/comment/create/create_comment_viewmodel.dart';
 import '../../../../viewmodel/comment/update/update_comment_viewmodel.dart';
-import '../../../../viewmodel/user/my_info/my_user_info_viewmodel.dart';
+import '../../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
 import '../../../widget/comment/comment_widget.dart';
 import '../../../widget/common/empty/empty_widget.dart';
 import '../../../widget/common/error/error_widget.dart';

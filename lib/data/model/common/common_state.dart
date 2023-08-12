@@ -1,4 +1,4 @@
-/// Common empty state used for APIs with an empty response
+/// Common empty state used for empty API response
 
 abstract class CommonState {}
 

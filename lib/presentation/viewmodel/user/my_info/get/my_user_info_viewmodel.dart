@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_social_media_v1/data/model/user/my_user_info_state.dart';
 import 'package:flutter_social_media_v1/domain/usecase/user/get_my_user_info_usecase.dart';
 
-class MyUserInfoViewModel extends ChangeNotifier {
+class MyUserInfoViewModel {
   final GetMyUserInfoUseCase _getMyUserInfoUseCase;
 
   MyUserInfoViewModel({
