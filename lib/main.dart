@@ -31,6 +31,7 @@ import 'domain/usecase/post/like/post_like_usecase.dart';
 import 'domain/usecase/post/update/update_post_description_usecase.dart';
 import 'domain/usecase/user/get_my_user_info_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
+import 'domain/usecase/user/update_user_status_message_usecase.dart';
 import 'domain/usecase/user/update_user_thumbnail_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
@@ -92,6 +93,8 @@ void main() async {
   getIt.registerSingleton<PostBookmarkUseCase>(postBookmarkUseCase);
   final updateUserThumbnailUseCase = UpdateUserThumbnailUseCase(userRepository: userRepository);
   getIt.registerSingleton<UpdateUserThumbnailUseCase>(updateUserThumbnailUseCase);
+  final updateUserStatusMessageUseCase = UpdateUserStatusMessageUseCase(userRepository: userRepository);
+  getIt.registerSingleton<UpdateUserStatusMessageUseCase>(updateUserStatusMessageUseCase);
   // ViewModels
   final myUserInfoViewModel = MyUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
   getIt.registerSingleton<MyUserInfoViewModel>(myUserInfoViewModel);

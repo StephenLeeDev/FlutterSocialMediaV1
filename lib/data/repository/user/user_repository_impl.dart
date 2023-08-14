@@ -96,4 +96,26 @@ class UserRepositoryImpl extends UserRepository {
     }
   }
 
+  @override
+  Future<CommonState.CommonState> updateUserStatusMessage({required String newStatusMessage}) async {
+
+    const api = 'user/statusMessage';
+    const url = '$baseUrl$api';
+
+    try {
+      final response = await _dio.patch(url, queryParameters: {'newStatusMessage': newStatusMessage});
+
+      if (response.statusCode == 200) {
+        final state = CommonState.Success();
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return CommonState.Fail();
+    } catch (e) {
+      return CommonState.Fail();
+    }
+  }
+
 }

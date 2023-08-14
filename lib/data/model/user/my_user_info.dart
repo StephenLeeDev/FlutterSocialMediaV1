@@ -6,12 +6,15 @@ class MyUserInfo {
   String? thumbnail;
   String get getUserThumbnail => thumbnail ?? "";
   List<int>? bookMarks;
+  String? statusMessage;
+  String get getStatusMessage => statusMessage ?? "";
 
   MyUserInfo({
     this.email,
     this.username,
     this.thumbnail,
     this.bookMarks,
+    this.statusMessage,
   });
 
   factory MyUserInfo.fromJson(Map<String, dynamic> json) {
@@ -22,6 +25,7 @@ class MyUserInfo {
       username: json['username'],
       thumbnail: json['thumbnail'],
       bookMarks: bookMarks,
+      statusMessage: json['statusMessage'],
     );
   }
 
@@ -31,6 +35,7 @@ class MyUserInfo {
       'username': username,
       'thumbnail': thumbnail,
       'bookMarks': bookMarks,
+      'statusMessage': statusMessage,
     };
   }
 
@@ -39,17 +44,19 @@ class MyUserInfo {
     String? username,
     String? thumbnail,
     List<int>? bookMarks,
+    String? statusMessage,
   }) {
     return MyUserInfo(
       email: email ?? this.email,
       username: username ?? this.username,
       thumbnail: thumbnail ?? this.thumbnail,
       bookMarks: bookMarks ?? this.bookMarks,
+      statusMessage: statusMessage ?? this.statusMessage,
     );
   }
 
   @override
   String toString() {
-    return 'MyUserInfo(email: $email, username: $username, thumbnail: $thumbnail, bookMarks: $bookMarks)';
+    return 'MyUserInfo(email: $email, username: $username, thumbnail: $thumbnail, bookMarks: $bookMarks, statusMessage: $statusMessage)';
   }
 }

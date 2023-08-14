@@ -19,6 +19,7 @@ class MyUserInfoViewModel {
     _myUserInfoState.value = state;
     if (state is Success) {
       _setMyEmail(myEmail: state.getMyUserInfo.getEmail);
+      setStatusMessage(statusMessage: state.getMyUserInfo.getStatusMessage);
     }
   }
 
@@ -36,10 +37,30 @@ class MyUserInfoViewModel {
     _myEmail = myEmail;
   }
 
+  /// Update thumbnail
   updateMyUserInfoWithNewThumbnail({required String newThumbnail}) async {
     if (myUserInfoState is Success) {
       MyUserInfo myUserInfo = (myUserInfoStateNotifier.value as Success).getMyUserInfo.copyWith();
       myUserInfo.thumbnail = newThumbnail;
+
+      _setMyUserInfoState(state: Success(myUserInfo));
+    }
+  }
+
+  /// Status message
+  final ValueNotifier<String> _statusMessage = ValueNotifier<String>("");
+  ValueNotifier<String> get statusMessageNotifier => _statusMessage;
+  String get statusMessage => _statusMessage.value;
+
+  setStatusMessage({required String statusMessage}) {
+    _statusMessage.value = statusMessage;
+  }
+
+  /// Update status message
+  updateMyUserInfoWithNewStatusMessage({required String newStatusMessage}) async {
+    if (myUserInfoState is Success) {
+      MyUserInfo myUserInfo = (myUserInfoStateNotifier.value as Success).getMyUserInfo.copyWith();
+      myUserInfo.statusMessage = newStatusMessage;
 
       _setMyUserInfoState(state: Success(myUserInfo));
     }
