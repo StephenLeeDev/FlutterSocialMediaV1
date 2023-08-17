@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
@@ -40,9 +39,6 @@ import 'presentation/viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
-
-  // await dotenv.load(fileName: '.env.${kReleaseMode ? 'release' : 'debug'}');
-  // await dotenv.load(fileName: '.env.debug');
 
   /// Lock the screen orientation to portrait mode.
   await SystemChrome.setPreferredOrientations([

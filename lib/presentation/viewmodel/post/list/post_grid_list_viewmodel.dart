@@ -12,8 +12,7 @@ class MyPostGridListViewModel extends PostListViewModel {
 
   /// Fetch additional paginated my posts
   @override
-  Future<void> getPostList() async {
-    if (postListState is PostListState.Loading || !hasNext) return;
+  Future<PostListState.PostListState> getPostList() async {
     setPostListState(postListState: PostListState.Loading());
 
     final state = await _getMyPostListUseCase.execute(page: page, limit: limit);
@@ -27,5 +26,6 @@ class MyPostGridListViewModel extends PostListViewModel {
 
       if (currentList.length >= state.total) setHasNext(value: false);
     }
+    return state;
   }
 }

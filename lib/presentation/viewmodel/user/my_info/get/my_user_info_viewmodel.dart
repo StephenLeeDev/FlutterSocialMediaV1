@@ -47,6 +47,15 @@ class MyUserInfoViewModel {
     }
   }
 
+  /// Total posts count
+  final ValueNotifier<int> _totalPostCount = ValueNotifier<int>(0);
+  ValueNotifier<int> get totalPostCountNotifier => _totalPostCount;
+  int get totalPostCount => totalPostCountNotifier.value;
+
+  setTotalPostCount({required int totalPostCount}) {
+    _totalPostCount.value = totalPostCount;
+  }
+
   /// Status message
   final ValueNotifier<String> _statusMessage = ValueNotifier<String>("");
   ValueNotifier<String> get statusMessageNotifier => _statusMessage;

@@ -8,6 +8,7 @@ class MyUserInfo {
   List<int>? bookMarks;
   String? statusMessage;
   String get getStatusMessage => statusMessage ?? "";
+  int totalPostCount = 0;
 
   MyUserInfo({
     this.email,

@@ -99,7 +99,12 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   /// Fetch feed
   Future<void> fetchPostList() async {
-    await _postListViewModel.getPostList();
+    if (_postListViewModel.postListState is PostListState.Loading || !_postListViewModel.hasNext) return;
+    final state = await _postListViewModel.getPostList();
+
+    if (state is PostListState.Success) {
+      _myUserInfoViewModel.setTotalPostCount(totalPostCount: state.total);
+    }
   }
 
   @override
@@ -227,16 +232,22 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         /// Posts
                         Expanded(
                           child: Column(
-                            children: const [
-                              Text(
-                                // TODO : Replace with actual state later
-                                "0",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            children: [
+                              /// Total posts count
+                              ValueListenableBuilder<int>(
+                                valueListenable: _myUserInfoViewModel.totalPostCountNotifier,
+                                builder: (context, posts, _) {
+                                  /// Status message exists
+                                  return Text(
+                                    "$posts",
+                                    style: const TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  );
+                                },
                               ),
-                              Text(
+                              const Text(
                                 "Posts",
                                 style: TextStyle(
                                   fontSize: 15.0,
