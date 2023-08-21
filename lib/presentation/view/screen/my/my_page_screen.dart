@@ -55,6 +55,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     _scrollController.addListener(_scrollListener);
 
     initViewModels();
+    fetchData(); // TODO : Move MyPostGridListViewModel to MainNavigationScreen, and synchronize it with getPostList() between MyPostGridListViewModel and PostListViewModel.
   }
 
   /// ViewModels
@@ -99,12 +100,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   /// Fetch feed
   Future<void> fetchPostList() async {
-    if (_postListViewModel.postListState is PostListState.Loading || !_postListViewModel.hasNext) return;
-    final state = await _postListViewModel.getPostList();
+    await _postListViewModel.getPostList();
 
-    if (state is PostListState.Success) {
-      _myUserInfoViewModel.setTotalPostCount(totalPostCount: state.total);
-    }
+    _myUserInfoViewModel.setTotalPostCount(totalPostCount: _postListViewModel.totalPostCount);
   }
 
   @override
@@ -135,7 +133,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 valueListenable: _myUserInfoViewModel.myUserInfoStateNotifier,
                 builder: (context, state, _) {
                   if (state is MyUserInfoState.Success) {
-                    fetchData();
                     return buildUserProfileUI(myUserInfo: state.getMyUserInfo);
                   } else {
                     // TODO : Implement Loading UI
@@ -148,9 +145,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
               ValueListenableBuilder<PostListState.PostListState>(
                 valueListenable: _postListViewModel.postListStateNotifier,
                 builder: (context, state, _) {
+
                   /// Loading UI
-                  if ((state is PostListState.Loading &&
-                      _postListViewModel.currentList.isEmpty)) {
+                  if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
                     return buildLoadingStateUI();
                   }
 
@@ -163,6 +160,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   else {
                     return buildSuccessStateUI();
                   }
+
                 },
               ),
             ],
