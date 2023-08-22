@@ -73,11 +73,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   /// List
   void initListViewModel() {
-    _postListViewModel = MyPostGridListViewModel(
-        getPostListUseCase: GetIt.instance<GetPostListUseCase>(),
-        getMyPostListUseCase: GetIt.instance<GetMyPostListUseCase>(),
-    );
-    _postListViewModel.setLimit(value: 18);
+    _postListViewModel = context.read<MyPostGridListViewModel>();
   }
 
   /// Update user thumbnail

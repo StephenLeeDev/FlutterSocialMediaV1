@@ -1,7 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../data/constant/text.dart';
+import '../../../../data/model/post/item/post_model.dart';
+import '../../../../domain/usecase/post/list/get_my_post_list_usecase.dart';
+import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
+import '../../../util/snackbar/snackbar_util.dart';
+import '../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
 import '../../widget/navigation/navigation_tab.dart';
 import '../feed/feed_screen.dart';
 import '../my/my_page_screen.dart';
@@ -22,6 +32,9 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
+  late final MyPostGridListViewModel _postGridListViewModel;
+
+  /// Tab items
   final List<String> _tabs = [
     FeedScreen.routeName,
     SearchScreen.routeName,
@@ -30,8 +43,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     MyPageScreen.routeName,
   ];
 
+  /// Selected tap index
   late int _selectedIndex = _tabs.indexOf(widget.tab);
 
+  /// On bottom navigation tab clicked
   void _onTap(int index) {
     context.go("/${_tabs[index]}");
     setState(() {
@@ -39,8 +54,38 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     });
   }
 
-  void _onCameraButtonTap() {
-    context.pushNamed(CreatePostScreen.routeName);
+  /// On create a new post tab
+  void _onCreatePostTap() async {
+    String? createdPostString = await context.pushNamed(CreatePostScreen.routeName);
+
+    /// If created post exists, prepend it to the grid list and move to the my page screen
+    if (createdPostString != null) {
+      final createdPost = PostModel.fromJson(jsonDecode(createdPostString));
+      _postGridListViewModel.prependNewCommentToList(additionalList: [createdPost]);
+      if (context.mounted) showSnackBar(context: context, text: postCreatedMessage);
+      _onTap(4);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    initViewModels();
+  }
+
+  /// ViewModels
+  void initViewModels() {
+    initGridListViewModel();
+  }
+
+  /// List
+  void initGridListViewModel() {
+    _postGridListViewModel = MyPostGridListViewModel(
+      getPostListUseCase: GetIt.instance<GetPostListUseCase>(),
+      getMyPostListUseCase: GetIt.instance<GetMyPostListUseCase>(),
+    );
+    _postGridListViewModel.setLimit(value: 18);
   }
 
   @override
@@ -66,9 +111,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             offstage: _selectedIndex != 3,
             child: const NotificationScreen(),
           ),
-          Offstage(
-            offstage: _selectedIndex != 4,
-            child: const MyPageScreen(),
+          MultiProvider(
+            providers: [
+              Provider<MyPostGridListViewModel>(
+                create: (context) => _postGridListViewModel,
+              ),
+            ],
+            child: Offstage(
+              offstage: _selectedIndex != 4,
+              child: const MyPageScreen(),
+            ),
           ),
         ],
       ),
@@ -102,7 +154,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               NavigationTab(
                 isSelected: false,
                 icon: Icons.add_box_outlined,
-                onTap: () => _onCameraButtonTap(),
+                onTap: () => _onCreatePostTap(),
                 selectedIndex: _selectedIndex,
               ),
               // TODO : Replace it to DirectMessage screen
