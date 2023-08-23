@@ -2,14 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data/constant/text.dart';
 import '../../../../data/model/post/item/post_model.dart';
-import '../../../../domain/usecase/post/list/get_my_post_list_usecase.dart';
-import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
 import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
 import '../../widget/navigation/navigation_tab.dart';
@@ -81,10 +78,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   /// List
   void initGridListViewModel() {
-    _postGridListViewModel = MyPostGridListViewModel(
-      getPostListUseCase: GetIt.instance<GetPostListUseCase>(),
-      getMyPostListUseCase: GetIt.instance<GetMyPostListUseCase>(),
-    );
+    _postGridListViewModel = context.read<MyPostGridListViewModel>();
     _postGridListViewModel.setLimit(value: 18);
   }
 
@@ -111,16 +105,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             offstage: _selectedIndex != 3,
             child: const NotificationScreen(),
           ),
-          MultiProvider(
-            providers: [
-              Provider<MyPostGridListViewModel>(
-                create: (context) => _postGridListViewModel,
-              ),
-            ],
-            child: Offstage(
-              offstage: _selectedIndex != 4,
-              child: const MyPageScreen(),
-            ),
+          Offstage(
+            offstage: _selectedIndex != 4,
+            child: const MyPageScreen(),
           ),
         ],
       ),

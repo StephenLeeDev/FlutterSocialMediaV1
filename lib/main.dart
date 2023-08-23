@@ -34,6 +34,7 @@ import 'domain/usecase/user/update_user_status_message_usecase.dart';
 import 'domain/usecase/user/update_user_thumbnail_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
+import 'presentation/viewmodel/post/list/post_grid_list_viewmodel.dart';
 import 'presentation/viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
 
 void main() async {
@@ -93,6 +94,7 @@ void main() async {
   getIt.registerSingleton<UpdateUserStatusMessageUseCase>(updateUserStatusMessageUseCase);
   // ViewModels
   final myUserInfoViewModel = MyUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
+  // TODO : Replace GetIt to Provider later
   getIt.registerSingleton<MyUserInfoViewModel>(myUserInfoViewModel);
 
   /// Feed(Post List)
@@ -111,6 +113,11 @@ void main() async {
   getIt.registerSingleton<PostLikeUseCase>(postLikeUseCase);
   final deletePostUseCase = DeletePostUseCase(postRepository: postRepository);
   getIt.registerSingleton<DeletePostUseCase>(deletePostUseCase);
+  // ViewModels
+  final myPostGridListViewModel = MyPostGridListViewModel(
+      getPostListUseCase: getPostListUseCase,
+      getMyPostListUseCase: getMyPostListUseCase,
+  );
 
   /// Comment/Reply
   // Repository
@@ -135,6 +142,14 @@ void main() async {
       providers: [
         ChangeNotifierProvider<AuthViewModel>(
           create: (context) => authViewModel,
+        ),
+        /// My user information
+        Provider<MyUserInfoViewModel>(
+          create: (context) => myUserInfoViewModel,
+        ),
+        /// My grid feed
+        Provider<MyPostGridListViewModel>(
+          create: (context) => myPostGridListViewModel,
         ),
       ],
       child: const App(),
