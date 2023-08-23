@@ -382,6 +382,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: PostGridWidget(
                 postModel: list[index],
+                isFromMyPage: true,
               ),
             );
           },

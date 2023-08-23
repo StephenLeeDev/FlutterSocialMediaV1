@@ -9,6 +9,7 @@ import '../view/screen/auth/auth_screen.dart';
 import '../view/screen/comment/comment/comment_screen.dart';
 import '../view/screen/comment/reply/reply_screen.dart';
 import '../view/screen/feed/feed_screen.dart';
+import '../view/screen/feed/feed_screen_from_grid.dart';
 import '../view/screen/main_navigation/main_navigation_screen.dart';
 import '../view/screen/my/my_page_screen.dart';
 import '../view/screen/notification/notification_screen.dart';
@@ -49,6 +50,20 @@ final GoRouter router = GoRouter(
         final tab = state.pathParameters["tab"] ?? FeedScreen.routeName;
         return MainNavigationScreen(tab: tab);
       },
+    ),
+
+    /// It's another feed screen called from grid list screen, just like Instagram's
+    /// I separated it because it has little different features between FeedScreen
+    // TODO : Might integrate both, but low priority
+    GoRoute(
+      name: FeedScreenFromGrid.routeName,
+      path: FeedScreenFromGrid.routeURL,
+      builder: (context, state) {
+        final selectedPostIdString = state.queryParameters['postId'];
+        final selectedPostId = selectedPostIdString == null ? -1 : int.parse(selectedPostIdString);
+
+        return FeedScreenFromGrid(selectedPostId: selectedPostId);
+      }
     ),
 
     /// Create post
