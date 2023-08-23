@@ -28,7 +28,9 @@ class MyPostGridListViewModel extends PostListViewModel {
     setPostListState(postListState: state);
 
     if (state is PostListState.Success) {
-      setLimit(value: 6);
+      // FIXME : ErrorNumber 01
+      // FIXME : This initializing from setLimit() not actually working with getPostList() from MyPageScreen, and I don't know why yet
+      // setLimit(value: 6);
       increasePage();
 
       addAdditionalList(additionalList: state.list);

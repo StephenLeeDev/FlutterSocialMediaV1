@@ -404,7 +404,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   Future<void> _refresh() async {
     _postListViewModel.refresh();
-    _postListViewModel.setLimit(value: 15);
+    // FIXME : ErrorNumber 01
+    // FIXME : This initializing from setLimit() not actually working with getPostList(), and I don't know why yet
+    // _postListViewModel.setLimit(value: 15);
     await _myUserInfoViewModel.getMyUserInfo();
   }
 
