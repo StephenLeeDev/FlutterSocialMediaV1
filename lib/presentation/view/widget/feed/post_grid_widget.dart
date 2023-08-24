@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../data/model/post/item/post_model.dart';
 import '../../screen/feed/feed_screen_from_grid.dart';
 
+/// Feed item for grid feed screen
 class PostGridWidget extends StatelessWidget {
   const PostGridWidget({
     Key? key,
@@ -19,7 +20,13 @@ class PostGridWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (isFromMyPage) {
-          context.pushNamed(FeedScreenFromGrid.routeName, queryParameters: {'postId': "${postModel.getId}"});
+          context.pushNamed(
+              FeedScreenFromGrid.routeName,
+              queryParameters: {
+                "postId": "${postModel.getId}",
+                "title": "${postModel.getUserName}'s feed",
+              }
+          );
         } else {
           // TODO : Implement other user's feed screen
         }

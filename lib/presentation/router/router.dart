@@ -59,10 +59,16 @@ final GoRouter router = GoRouter(
       name: FeedScreenFromGrid.routeName,
       path: FeedScreenFromGrid.routeURL,
       builder: (context, state) {
+        /// Selected post's index from grid feed list screen
         final selectedPostIdString = state.queryParameters['postId'];
         final selectedPostId = selectedPostIdString == null ? -1 : int.parse(selectedPostIdString);
 
-        return FeedScreenFromGrid(selectedPostId: selectedPostId);
+        final title = state.queryParameters['title'] ?? "";
+
+        return FeedScreenFromGrid(
+          selectedPostId: selectedPostId,
+          title: title
+        );
       }
     ),
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../../../data/model/post/item/post_model.dart';
 import '../../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
@@ -8,17 +9,19 @@ import '../../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
 import '../../../widget/feed/post_widget.dart';
 
 class FeedFragment extends StatefulWidget {
-  const FeedFragment({Key? key, this.isFromMyPage = false, required this.selectedPostId}) : super(key: key);
+  const FeedFragment({Key? key, this.isFromMyPage = false, required this.selectedPostId, this.title = ""}) : super(key: key);
 
   final bool isFromMyPage;
   final int selectedPostId; /// Selected post's index from grid feed list screen
+  final String title; /// Feed's title for appbar
 
   @override
   State<FeedFragment> createState() => _FeedFragmentState();
 }
 
 class _FeedFragmentState extends State<FeedFragment> {
-  late final ScrollController _scrollController;
+  late final ItemScrollController _scrollController;
+  late final ItemPositionsListener _itemPositionsListener;
 
   late final MyUserInfoViewModel _myUserInfoViewModel;
   late final PostListViewModel _postListViewModel;
@@ -26,23 +29,19 @@ class _FeedFragmentState extends State<FeedFragment> {
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
-    // _scrollController.addListener(_scrollListener);
 
     initViewModels();
+    _initScroll();
 
-    // FIXME : animateTo isn't working and I don't know why yet
+    /// Selected post's index from grid feed list screen
     final selectedIndex = _postListViewModel.currentList.indexWhere((post) => post.getId == widget.selectedPostId);
+
+    /// Jump to the selected post
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.selectedPostId >= 0) {
-        _scrollController.animateTo(4, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+        _scrollController.jumpTo(index: selectedIndex);
       }
     });
-    // Future.delayed(Duration(seconds: 1), () {
-    //   if (widget.selectedPostId >= 0) {
-    //     _scrollController.animateTo(4, duration: const Duration(milliseconds: 100), curve: Curves.easeInOut);
-    //   }
-    // });
   }
 
   /// ViewModels
@@ -75,6 +74,23 @@ class _FeedFragmentState extends State<FeedFragment> {
     await _postListViewModel.getPostList();
   }
 
+  /// ItemScrollController & ItemPositionsListener
+  void _initScroll() {
+    _scrollController = ItemScrollController();
+    _itemPositionsListener = ItemPositionsListener.create();
+
+    _itemPositionsListener.itemPositions.addListener(() {
+      final currentIndex = _itemPositionsListener.itemPositions.value.last.index;
+      final currentListLength = _postListViewModel.currentList.length - 1;
+
+      /// It means, reached the bottom
+      /// Load more feed
+      if (currentIndex == currentListLength) {
+        fetchPostList();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     /// Provider
@@ -85,7 +101,23 @@ class _FeedFragmentState extends State<FeedFragment> {
         ),
       ],
       /// Screen
-      child: buildSuccessStateUI(),
+      child: Scaffold(
+        /// Appbar
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          title: Text(
+            widget.title,
+            style: const TextStyle(
+              fontSize: 24,
+            ),
+          ),
+        ),
+          body: SafeArea(
+              child: buildSuccessStateUI(),
+          ),
+      ),
     );
   }
 
@@ -97,11 +129,11 @@ class _FeedFragmentState extends State<FeedFragment> {
       child: ValueListenableBuilder<List<PostModel>>(
           valueListenable: _postListViewModel.currentListNotifier,
           builder: (context, list, _) {
-            return ListView.separated(
-              physics: const AlwaysScrollableScrollPhysics(),
-              controller: _scrollController,
+            return ScrollablePositionedList.separated(
+              itemScrollController: _scrollController,
               itemCount: list.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemPositionsListener: _itemPositionsListener,
+              itemBuilder: (context, index) {
                 return PostWidget(
                   postModel: list[index],
                 );
@@ -110,18 +142,6 @@ class _FeedFragmentState extends State<FeedFragment> {
           }
       ),
     );
-  }
-
-  void _scrollListener() {
-    if (_scrollController.position.extentAfter == 0) {
-      fetchPostList();
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 
 }

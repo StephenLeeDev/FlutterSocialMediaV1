@@ -6,12 +6,13 @@ import 'fragment/feed_fragment.dart';
 /// I separated it because it has little different features between FeedScreen
 // TODO : Might integrate both, but low priority
 class FeedScreenFromGrid extends StatelessWidget {
-  const FeedScreenFromGrid({Key? key, required this.selectedPostId}) : super(key: key);
+  const FeedScreenFromGrid({Key? key, required this.selectedPostId, this.title = ""}) : super(key: key);
 
   static const String routeName = "feedFromGrid";
   static const String routeURL = "/feedFromGrid";
 
   final int selectedPostId;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class FeedScreenFromGrid extends StatelessWidget {
       body: FeedFragment(
         isFromMyPage: true,
         selectedPostId: selectedPostId,
+        title: title,
       ),
     );
   }
