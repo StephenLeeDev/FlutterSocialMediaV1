@@ -11,6 +11,8 @@ import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_loading_widget.dart';
 import '../../widget/feed/post_widget.dart';
 
+// TODO : Might enhance it from replace with FeedFragment
+// TODO : But low priority
 class FeedScreen extends StatefulWidget {
   const FeedScreen({Key? key}) : super(key: key);
 
@@ -126,6 +128,8 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
+  // TODO : Might enhance it from replace with FeedFragment
+  // TODO : But low priority
   Widget buildSuccessStateUI() {
     return RefreshIndicator(
       onRefresh: () {

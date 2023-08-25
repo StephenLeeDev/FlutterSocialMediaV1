@@ -73,6 +73,13 @@ class PostListViewModel {
     _setCurrentList(list: copyList);
   }
 
+  /// Prepend new posts to the _currentList
+  prependNewCommentToList({int index = 0, required List<PostModel> additionalList}) {
+    List<PostModel> copyList = List.from(currentList);
+    copyList.insertAll(index, additionalList);
+    _setCurrentList(list: copyList);
+  }
+
   /// Fetch additional paginated posts for all users
   Future<void> getPostList() async {
     if (postListState is Loading || !hasNext) return;

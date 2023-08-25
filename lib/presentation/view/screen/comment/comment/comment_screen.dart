@@ -265,6 +265,7 @@ class _CommentScreenState extends State<CommentScreen> {
     _textEditingController.text = "";
   }
 
+  // TODO : Refactor this feature as a module if possible later
   /// Shows a bottom sheet modal for keyboard input.
   void showModalBottomKeyboard({CommentModel? commentItemToUpdate, int? updatedIndex}) {
     final FocusNode focusNode = FocusNode();

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../../data/constant/text.dart';
+import '../../../../../../../data/model/post/item/post_item_state.dart';
 import '../../../../../../viewmodel/post/create/create_post_viewmodel.dart';
 import '../../../../../widget/button/custom_elevated_button.dart';
 import '../../../../../widget/button/rounded_elevated_button.dart';
@@ -111,10 +114,12 @@ class _PostDescriptionFragmentState extends State<PostDescriptionFragment> {
               return CustomElevatedButton(
                 text: create,
                 isEnabled: isValid,
-                onPressed: () {
+                onPressed: () async {
                   /// Create a new post
-                  // TODO : Implement moving to my feed screen feature later (my feed screen doesn't created yet)
-                  _createPostViewModel.createPost();
+                  final state = await _createPostViewModel.createPost();
+                  if (state is Success) {
+                    if (context.mounted) Navigator.pop(context, jsonEncode(state.getItem));
+                  }
                 },
               );
             },

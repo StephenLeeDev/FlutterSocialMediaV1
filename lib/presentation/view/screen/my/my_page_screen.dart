@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../data/constant/text.dart';
+import '../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../data/model/common/single_string_state.dart' as SingleStringState;
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../../data/model/post/list/post_list_state.dart' as PostListState;
@@ -14,6 +15,7 @@ import '../../../../data/model/user/my_user_info.dart';
 import '../../../../data/model/user/my_user_info_state.dart' as MyUserInfoState;
 import '../../../../domain/usecase/post/list/get_my_post_list_usecase.dart';
 import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
+import '../../../../domain/usecase/user/update_user_status_message_usecase.dart';
 import '../../../../domain/usecase/user/update_user_thumbnail_usecase.dart';
 import '../../../util/dialog/dialog_util.dart';
 import '../../../util/logger/image_file_logger_util.dart';
@@ -21,6 +23,7 @@ import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
+import '../../../viewmodel/user/my_info/update/update_status_message_viewmodel.dart';
 import '../../../viewmodel/user/my_info/update/update_thumbnail_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
@@ -44,6 +47,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   late final MyUserInfoViewModel _myUserInfoViewModel;
   late final MyPostGridListViewModel _postListViewModel;
   late final UpdateUserThumbnailViewModel _updateUserThumbnailViewModel;
+  late final UpdateUserStatusMessageViewModel _updateUserStatusMessageViewModel;
 
   @override
   void initState() {
@@ -51,6 +55,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     _scrollController.addListener(_scrollListener);
 
     initViewModels();
+    fetchData(); // TODO : Move MyPostGridListViewModel to MainNavigationScreen, and synchronize it with getPostList() between MyPostGridListViewModel and PostListViewModel.
   }
 
   /// ViewModels
@@ -58,6 +63,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     initMyUserInfoViewModel();
     initListViewModel();
     initUpdateUserThumbnailViewModel();
+    initUpdateUserStatusMessageViewModel();
   }
 
   /// My User Info
@@ -67,16 +73,21 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   /// List
   void initListViewModel() {
-    _postListViewModel = MyPostGridListViewModel(
-        getPostListUseCase: GetIt.instance<GetPostListUseCase>(),
-        getMyPostListUseCase: GetIt.instance<GetMyPostListUseCase>()
-    );
-    _postListViewModel.setLimit(value: 18);
+    _postListViewModel = context.read<MyPostGridListViewModel>();
   }
 
   /// Update user thumbnail
   void initUpdateUserThumbnailViewModel() {
-    _updateUserThumbnailViewModel = UpdateUserThumbnailViewModel(updateThumbnailUseCase: GetIt.instance<UpdateUserThumbnailUseCase>());
+    _updateUserThumbnailViewModel = UpdateUserThumbnailViewModel(
+        updateThumbnailUseCase: GetIt.instance<UpdateUserThumbnailUseCase>(),
+    );
+  }
+
+  /// Update user status message
+  void initUpdateUserStatusMessageViewModel() {
+    _updateUserStatusMessageViewModel = UpdateUserStatusMessageViewModel(
+        updateStatusMessageUseCase: GetIt.instance<UpdateUserStatusMessageUseCase>(),
+    );
   }
 
   void fetchData() async {
@@ -86,6 +97,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
   /// Fetch feed
   Future<void> fetchPostList() async {
     await _postListViewModel.getPostList();
+
+    _myUserInfoViewModel.setTotalPostCount(totalPostCount: _postListViewModel.totalPostCount);
   }
 
   @override
@@ -116,9 +129,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 valueListenable: _myUserInfoViewModel.myUserInfoStateNotifier,
                 builder: (context, state, _) {
                   if (state is MyUserInfoState.Success) {
-                    fetchData();
                     return buildUserProfileUI(myUserInfo: state.getMyUserInfo);
                   } else {
+                    // TODO : Implement Loading UI
                     return Container();
                   }
                 },
@@ -128,6 +141,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
               ValueListenableBuilder<PostListState.PostListState>(
                 valueListenable: _postListViewModel.postListStateNotifier,
                 builder: (context, state, _) {
+
                   /// Loading UI
                   if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
                     return buildLoadingStateUI();
@@ -142,6 +156,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   else {
                     return buildSuccessStateUI();
                   }
+
                 },
               ),
             ],
@@ -151,6 +166,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     );
   }
 
+  // TODO : Replace this function as a widget later
   /// User profile layout
   Widget buildUserProfileUI({required MyUserInfo myUserInfo}) {
     return Wrap(
@@ -162,9 +178,10 @@ class _MyPageScreenState extends State<MyPageScreen> {
             children: [
               /// Appbar
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12),
                 child: Row(
                   children: [
+                    /// User's name
                     Text(
                       myUserInfo.getUserName,
                       style: const TextStyle(
@@ -172,6 +189,10 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         fontWeight: FontWeight.w900,
                       ),
                     ),
+                    const Spacer(),
+
+                    /// Pop up menu
+                    popUpMenuWidget(),
                   ],
                 ),
               ),
@@ -205,16 +226,22 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         /// Posts
                         Expanded(
                           child: Column(
-                            children: const [
-                              Text(
-                                // TODO : Replace with actual state later
-                                "0",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            children: [
+                              /// Total posts count
+                              ValueListenableBuilder<int>(
+                                valueListenable: _myUserInfoViewModel.totalPostCountNotifier,
+                                builder: (context, posts, _) {
+                                  /// Status message exists
+                                  return Text(
+                                    "$posts",
+                                    style: const TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  );
+                                },
                               ),
-                              Text(
+                              const Text(
                                 "Posts",
                                 style: TextStyle(
                                   fontSize: 15.0,
@@ -275,18 +302,36 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 8),
 
               /// Status message
-              Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 12, left: 12, right: 12),
-                child: Text(
-                  // TODO : Replace with actual state later
-                  "Lorem ipsum",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+              /// It's not visible when status message is empty
+              ValueListenableBuilder<String>(
+                valueListenable: _myUserInfoViewModel.statusMessageNotifier,
+                builder: (context, message, _) {
+                  /// Status message exists
+                  if (message.isNotEmpty) {
+                    return Container(
+                      constraints: const BoxConstraints(
+                        minHeight: 50.0,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          message,
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  /// Empty status message space
+                  else {
+                    return const SizedBox(height: 50);
+                  }
+                },
               ),
             ],
           ),
@@ -337,6 +382,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: PostGridWidget(
                 postModel: list[index],
+                isFromMyPage: true,
               ),
             );
           },
@@ -359,7 +405,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   Future<void> _refresh() async {
     _postListViewModel.refresh();
-    _postListViewModel.setLimit(value: 15);
+    // FIXME : ErrorNumber 01
+    // FIXME : This initializing from setLimit() not actually working with getPostList(), and I don't know why yet
+    // _postListViewModel.setLimit(value: 15);
     await _myUserInfoViewModel.getMyUserInfo();
   }
 
@@ -400,9 +448,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
   /// Pick a single image from the camera.
   Future<XFile?> pickImageFromCamera() async {
     final XFile? image = await imagePicker.pickImage(
-        source: ImageSource.camera,
-        maxHeight: maxImageLength,
-        maxWidth: maxImageLength,
+      source: ImageSource.camera,
+      maxHeight: maxImageLength,
+      maxWidth: maxImageLength,
     );
 
     /// It prints image file's information
@@ -417,9 +465,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
   /// Pick multiple images from the gallery.
   Future<XFile?> pickImagesFromGallery() async {
     final XFile? image = await imagePicker.pickImage(
-        maxHeight: maxImageLength,
-        maxWidth: maxImageLength,
-        source: ImageSource.gallery,
+      maxHeight: maxImageLength,
+      maxWidth: maxImageLength,
+      source: ImageSource.gallery,
     );
 
     /// It prints image file's information
@@ -443,4 +491,57 @@ class _MyPageScreenState extends State<MyPageScreen> {
     }
   }
 
+  /// Reload updated user status message
+  void _statusMessageUpdated({required CommonState.CommonState state, required String newStatusMessage}) {
+    if (state is CommonState.Success) {
+      _myUserInfoViewModel.setStatusMessage(statusMessage: newStatusMessage);
+      if (context.mounted) {
+        showSnackBar(context: context, text: statusMessageUpdated);
+        Navigator.of(context).pop();
+      }
+    }
+    /// Failed to update
+    else if (state is CommonState.Fail) {
+      if (context.mounted) showSnackBar(context: context, text: wentSomethingWrong);
+    }
+  }
+
+  Widget popUpMenuWidget() {
+    return PopupMenuButton(
+      color: Colors.white,
+      icon: const Icon(
+        Icons.more_vert_rounded,
+        color: Colors.black,
+      ),
+      onSelected: (value) {
+        /// Update user's status message
+        if (value == updateStatusMessage) {
+          showTextInputDialogForUpdate(
+              context: context,
+              title: newMessage,
+              initialMessage: _myUserInfoViewModel.statusMessage,
+              firstButtonText: submit,
+              firstButtonListener: (String newStatusMessage) async {
+                /// Not execute API when nothing's changed
+                if (newStatusMessage == _myUserInfoViewModel.statusMessage) {
+                  if (context.mounted) showSnackBar(context: context, text: nothingChanged);
+                }
+                /// Execute API
+                else {
+                  final state = await _updateUserStatusMessageViewModel.updateStatusMessage(newStatusMessage: newStatusMessage);
+                  _statusMessageUpdated(state: state, newStatusMessage: newStatusMessage);
+                }
+              },
+              secondButtonText: cancel,
+          );
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        const PopupMenuItem(
+          value: updateStatusMessage,
+          child: Text(updateStatusMessage),
+        ),
+      ],
+    );
+  }
 }

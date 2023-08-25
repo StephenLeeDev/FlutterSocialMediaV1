@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_social_media_v1/domain/usecase/auth/get_access_token_usecase.dart';
+
+import '../../../domain/usecase/auth/get_access_token_usecase.dart';
 
 class TokenInterceptor extends InterceptorsWrapper {
   final GetAccessTokenUseCase getAccessTokenUseCase;

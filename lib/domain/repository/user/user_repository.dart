@@ -8,4 +8,5 @@ abstract class UserRepository {
   Future<MyUserInfoState> getMyUserInfo();
   Future<CommonState> postBookmark({required int postId});
   Future<SingleStringState> updateUserThumbnail({required MultipartFile newThumbnail});
+  Future<CommonState> updateUserStatusMessage({required String newStatusMessage});
 }

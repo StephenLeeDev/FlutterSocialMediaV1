@@ -10,6 +10,14 @@ class MyPostGridListViewModel extends PostListViewModel {
     required getMyPostListUseCase,
   }) : _getMyPostListUseCase = getMyPostListUseCase;
 
+  /// Total posts count
+  int _totalPostCount = 0;
+  int get totalPostCount => _totalPostCount;
+
+  setTotalPostCount({required int totalPostCount}) {
+    _totalPostCount = totalPostCount;
+  }
+
   /// Fetch additional paginated my posts
   @override
   Future<void> getPostList() async {
@@ -20,10 +28,13 @@ class MyPostGridListViewModel extends PostListViewModel {
     setPostListState(postListState: state);
 
     if (state is PostListState.Success) {
-      setLimit(value: 6);
+      // FIXME : ErrorNumber 01
+      // FIXME : This initializing from setLimit() not actually working with getPostList() from MyPageScreen, and I don't know why yet
+      // setLimit(value: 6);
       increasePage();
 
       addAdditionalList(additionalList: state.list);
+      setTotalPostCount(totalPostCount: state.total);
 
       if (currentList.length >= state.total) setHasNext(value: false);
     }

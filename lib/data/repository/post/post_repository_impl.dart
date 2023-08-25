@@ -35,7 +35,7 @@ class PostRepositoryImpl extends PostRepository {
     try {
       final response = await _dio.post(url, data: formData);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final postModel = PostModel.fromJson(response.data);
         final state = PostItemState.Success(item: postModel);
 
