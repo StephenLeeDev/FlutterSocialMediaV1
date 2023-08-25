@@ -18,6 +18,7 @@ class MyUserInfoViewModel {
   _setMyUserInfoState({required MyUserInfoState state}) {
     _myUserInfoState.value = state;
     if (state is Success) {
+      _setMyUsername(myUsername: state.getMyUserInfo.getUserName);
       _setMyEmail(myEmail: state.getMyUserInfo.getEmail);
       setStatusMessage(statusMessage: state.getMyUserInfo.getStatusMessage);
     }
@@ -28,6 +29,13 @@ class MyUserInfoViewModel {
 
     final state = await _getMyUserInfoUseCase.execute();
     _setMyUserInfoState(state: state);
+  }
+
+  String _myUsername = "";
+  String get myUsername => _myUsername;
+
+  _setMyUsername({required String myUsername}) {
+    _myUsername = myUsername;
   }
 
   String _myEmail = "";

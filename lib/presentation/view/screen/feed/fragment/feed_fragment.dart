@@ -102,6 +102,7 @@ class _FeedFragmentState extends State<FeedFragment> {
       ],
       /// Screen
       child: Scaffold(
+        backgroundColor: Colors.white,
         /// Appbar
         appBar: AppBar(
           elevation: 0,
