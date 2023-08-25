@@ -5,6 +5,7 @@ import '../../../data/model/auth/auth_state.dart';
 import '../../../domain/usecase/auth/post_sign_in_usecase.dart';
 import '../../../domain/usecase/auth/set_access_token_usecase.dart';
 
+// TODO : Replace with ValueNotifier later
 class AuthViewModel extends ChangeNotifier {
   final PostSignInUseCase _postSignInUseCase;
   final SetAccessTokenUseCase _setAccessTokenUseCase;

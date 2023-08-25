@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
@@ -25,21 +24,22 @@ import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
 import 'domain/usecase/post/create/create_post_usecase.dart';
 import 'domain/usecase/post/delete/delete_post_usecase.dart';
+import 'domain/usecase/post/list/get_my_post_list_usecase.dart';
 import 'domain/usecase/post/list/get_post_list_usecase.dart';
 import 'domain/usecase/post/like/post_like_usecase.dart';
 import 'domain/usecase/post/update/update_post_description_usecase.dart';
 import 'domain/usecase/user/get_my_user_info_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
+import 'domain/usecase/user/update_user_status_message_usecase.dart';
+import 'domain/usecase/user/update_user_thumbnail_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
-import 'presentation/viewmodel/user/my_info/my_user_info_viewmodel.dart';
+import 'presentation/viewmodel/post/list/post_grid_list_viewmodel.dart';
+import 'presentation/viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
 
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
-
-  // await dotenv.load(fileName: '.env.${kReleaseMode ? 'release' : 'debug'}');
-  // await dotenv.load(fileName: '.env.debug');
 
   /// Lock the screen orientation to portrait mode.
   await SystemChrome.setPreferredOrientations([
@@ -88,8 +88,13 @@ void main() async {
   final getMyUserInfoUseCase = GetMyUserInfoUseCase(userRepository: userRepository);
   final postBookmarkUseCase = PostBookmarkUseCase(userRepository: userRepository);
   getIt.registerSingleton<PostBookmarkUseCase>(postBookmarkUseCase);
+  final updateUserThumbnailUseCase = UpdateUserThumbnailUseCase(userRepository: userRepository);
+  getIt.registerSingleton<UpdateUserThumbnailUseCase>(updateUserThumbnailUseCase);
+  final updateUserStatusMessageUseCase = UpdateUserStatusMessageUseCase(userRepository: userRepository);
+  getIt.registerSingleton<UpdateUserStatusMessageUseCase>(updateUserStatusMessageUseCase);
   // ViewModels
   final myUserInfoViewModel = MyUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
+  // TODO : Replace GetIt to Provider later
   getIt.registerSingleton<MyUserInfoViewModel>(myUserInfoViewModel);
 
   /// Feed(Post List)
@@ -98,6 +103,8 @@ void main() async {
   // UseCases
   final getPostListUseCase = GetPostListUseCase(postRepository: postRepository);
   getIt.registerSingleton<GetPostListUseCase>(getPostListUseCase);
+  final getMyPostListUseCase = GetMyPostListUseCase(postRepository: postRepository);
+  getIt.registerSingleton<GetMyPostListUseCase>(getMyPostListUseCase);
   final updatePostDescriptionUseCase = UpdatePostDescriptionUseCase(postRepository: postRepository);
   getIt.registerSingleton<UpdatePostDescriptionUseCase>(updatePostDescriptionUseCase);
   final createPostUseCase = CreatePostUseCase(postRepository: postRepository);
@@ -106,6 +113,11 @@ void main() async {
   getIt.registerSingleton<PostLikeUseCase>(postLikeUseCase);
   final deletePostUseCase = DeletePostUseCase(postRepository: postRepository);
   getIt.registerSingleton<DeletePostUseCase>(deletePostUseCase);
+  // ViewModels
+  final myPostGridListViewModel = MyPostGridListViewModel(
+      getPostListUseCase: getPostListUseCase,
+      getMyPostListUseCase: getMyPostListUseCase,
+  );
 
   /// Comment/Reply
   // Repository
@@ -130,6 +142,14 @@ void main() async {
       providers: [
         ChangeNotifierProvider<AuthViewModel>(
           create: (context) => authViewModel,
+        ),
+        /// My user information
+        Provider<MyUserInfoViewModel>(
+          create: (context) => myUserInfoViewModel,
+        ),
+        /// My grid feed
+        Provider<MyPostGridListViewModel>(
+          create: (context) => myPostGridListViewModel,
         ),
       ],
       child: const App(),

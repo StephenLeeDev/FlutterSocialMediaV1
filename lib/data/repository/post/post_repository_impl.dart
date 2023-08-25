@@ -18,6 +18,7 @@ class PostRepositoryImpl extends PostRepository {
 
   PostRepositoryImpl(this._dio);
 
+  /// Create a new post
   @override
   Future<PostItemState.PostItemState> createPost({required CreatePostModel createPostModel}) async {
 
@@ -34,7 +35,7 @@ class PostRepositoryImpl extends PostRepository {
     try {
       final response = await _dio.post(url, data: formData);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final postModel = PostModel.fromJson(response.data);
         final state = PostItemState.Success(item: postModel);
 
@@ -51,6 +52,7 @@ class PostRepositoryImpl extends PostRepository {
     }
   }
 
+  /// Get all user's post list
   @override
   Future<PostListState.PostListState> getPostList({required int page, required int limit}) async {
 
@@ -74,6 +76,31 @@ class PostRepositoryImpl extends PostRepository {
     }
   }
 
+  /// Get my post list
+  @override
+  Future<PostListState.PostListState> getMyPostList({required int page, required int limit}) async {
+
+    const api = 'post/my';
+    final url = '$baseUrl$api?page=$page&limit=$limit';
+
+    try {
+      final Response response = await _dio.get(url);
+
+      if (response.statusCode == 200) {
+        final postListModel = PostListModel.fromJson(response.data);
+        final state = PostListState.Success(total: postListModel.total, list: postListModel.postList);
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return PostListState.Fail();
+    } catch (e) {
+      return PostListState.Fail();
+    }
+  }
+
+  /// Update post's description
   @override
   Future<PostItemState.PostItemState> updatePostDescription({required UpdatePostDescriptionModel updatePostDescriptionModel}) async {
 
@@ -96,6 +123,7 @@ class PostRepositoryImpl extends PostRepository {
     }
   }
 
+  /// Like/unlike the post
   @override
   Future<SingleIntegerState.SingleIntegerState> postLike({required int postId}) async {
 
@@ -119,6 +147,7 @@ class PostRepositoryImpl extends PostRepository {
     }
   }
 
+  /// Delete a post by ID
   @override
   Future<CommonState.CommonState> deletePost({required int postId}) async {
 

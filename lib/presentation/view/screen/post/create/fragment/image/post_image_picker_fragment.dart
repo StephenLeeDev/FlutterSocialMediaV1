@@ -193,7 +193,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
       content: selectPictureSource,
       firstButtonText: gallery,
 
-      /// Pick a image from gallery
+      /// Pick an image from gallery
       firstButtonListener: () async {
         var images = await pickImagesFromGallery();
 
@@ -218,6 +218,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
     );
   }
 
+  // TODO : Refactor this feature as a module
   /// Pick a single image from the camera.
   Future<List<XFile>> pickImageFromCamera() async {
     final XFile? image = await imagePicker.pickImage(
@@ -233,6 +234,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
     return image != null ? [image] : [];
   }
 
+  // TODO : Refactor this feature as a module
   /// Pick multiple images from the gallery.
   Future<List<XFile>> pickImagesFromGallery() async {
     final List<XFile> images = await imagePicker.pickMultiImage(

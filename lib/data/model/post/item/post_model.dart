@@ -7,9 +7,12 @@ class PostModel {
   String get getDescription => description ?? "";
   String? status;
   UserModel? user;
+  String get getUserThumbnail => user?.thumbnail ?? "";
   String get getUserEmail => user?.email ?? "Unknown";
+  String get getUserName => user?.getUserName ?? "Unknown";
   DateTime? createdAt;
   List<String>? imageUrls;
+  String get getFirstImage => imageUrls?.first ?? "";
   int? likeCount;
   bool? isLiked;
   bool? isBookmarked;
@@ -96,10 +99,6 @@ class PostModel {
       commentCount: commentCount ?? this.commentCount,
       isMine: this.isMine,
     );
-  }
-
-  String getUserName() {
-    return user?.username ?? "Unknown";
   }
 
   setBookmark() {
