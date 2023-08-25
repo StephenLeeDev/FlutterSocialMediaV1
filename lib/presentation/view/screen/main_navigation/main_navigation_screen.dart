@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -9,8 +10,10 @@ import '../../../../data/constant/text.dart';
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
+import '../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
 import '../../widget/navigation/navigation_tab.dart';
 import '../feed/feed_screen.dart';
+import '../feed/feed_screen_from_grid.dart';
 import '../my/my_page_screen.dart';
 import '../notification/notification_screen.dart';
 import '../post/create/create_post_screen.dart';
@@ -61,6 +64,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       _postGridListViewModel.prependNewCommentToList(additionalList: [createdPost]);
       if (context.mounted) showSnackBar(context: context, text: postCreatedMessage);
       _onTap(4);
+
+      /// Move to my feed screen
+      if (context.mounted) {
+        final title = GetIt.instance<MyUserInfoViewModel>().myUsername;
+        context.pushNamed(
+            FeedScreenFromGrid.routeName,
+            queryParameters: {
+              "title": title,
+            }
+        );
+      }
     }
   }
 
