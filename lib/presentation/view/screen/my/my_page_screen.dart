@@ -11,10 +11,7 @@ import '../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../data/model/common/single_string_state.dart' as SingleStringState;
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../../data/model/post/list/post_list_state.dart' as PostListState;
-import '../../../../data/model/user/my_user_info.dart';
 import '../../../../data/model/user/my_user_info_state.dart' as MyUserInfoState;
-import '../../../../domain/usecase/post/list/get_my_post_list_usecase.dart';
-import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
 import '../../../../domain/usecase/user/update_user_status_message_usecase.dart';
 import '../../../../domain/usecase/user/update_user_thumbnail_usecase.dart';
 import '../../../util/dialog/dialog_util.dart';
@@ -97,8 +94,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
   /// Fetch feed
   Future<void> fetchPostList() async {
     await _postListViewModel.getPostList();
-
-    _myUserInfoViewModel.setTotalPostCount(totalPostCount: _postListViewModel.totalPostCount);
   }
 
   @override
@@ -129,7 +124,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 valueListenable: _myUserInfoViewModel.myUserInfoStateNotifier,
                 builder: (context, state, _) {
                   if (state is MyUserInfoState.Success) {
-                    return buildUserProfileUI(myUserInfo: state.getMyUserInfo);
+                    return buildUserProfileUI();
                   } else {
                     // TODO : Implement Loading UI
                     return Container();
@@ -166,9 +161,10 @@ class _MyPageScreenState extends State<MyPageScreen> {
     );
   }
 
+  // TODO : Low priority
   // TODO : Replace this function as a widget later
   /// User profile layout
-  Widget buildUserProfileUI({required MyUserInfo myUserInfo}) {
+  Widget buildUserProfileUI() {
     return Wrap(
       children: [
         Padding(
@@ -182,12 +178,18 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 child: Row(
                   children: [
                     /// User's name
-                    Text(
-                      myUserInfo.getUserName,
-                      style: const TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w900,
-                      ),
+                    ValueListenableBuilder<String>(
+                      valueListenable: _myUserInfoViewModel.myUsernameNotifier,
+                      builder: (context, name, _) {
+                        /// Status message exists
+                        return Text(
+                          name,
+                          style: const TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        );
+                      },
                     ),
                     const Spacer(),
 
@@ -213,9 +215,15 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: Image.network(
-                        myUserInfo.getUserThumbnail,
-                        fit: BoxFit.cover,
+                      child: ValueListenableBuilder<String>(
+                        valueListenable: _myUserInfoViewModel.thumbnailNotifier,
+                        builder: (context, thumbnail, _) {
+                          /// Status message exists
+                          return Image.network(
+                            thumbnail,
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -230,10 +238,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               /// Total posts count
                               ValueListenableBuilder<int>(
                                 valueListenable: _myUserInfoViewModel.totalPostCountNotifier,
-                                builder: (context, posts, _) {
-                                  /// Status message exists
+                                builder: (context, total, _) {
                                   return Text(
-                                    "$posts",
+                                    "$total",
                                     style: const TextStyle(
                                       fontSize: 15.0,
                                       fontWeight: FontWeight.w600,
@@ -255,16 +262,21 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         /// Followers
                         Expanded(
                           child: Column(
-                            children: const [
-                              Text(
-                                // TODO : Replace with actual state later
-                                "0",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            children: [
+                              /// Total follower count
+                              ValueListenableBuilder<int>(
+                                valueListenable: _myUserInfoViewModel.totalFollowerCountNotifier,
+                                builder: (context, total, _) {
+                                  return Text(
+                                    "$total",
+                                    style: const TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  );
+                                },
                               ),
-                              Text(
+                              const Text(
                                 "Followers",
                                 style: TextStyle(
                                   fontSize: 15.0,
@@ -278,16 +290,21 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         /// Following
                         Expanded(
                           child: Column(
-                            children: const [
-                              Text(
-                                // TODO : Replace with actual state later
-                                "0",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            children: [
+                              /// Total following count
+                              ValueListenableBuilder<int>(
+                                valueListenable: _myUserInfoViewModel.totalFollowingCountNotifier,
+                                builder: (context, total, _) {
+                                  return Text(
+                                    "$total",
+                                    style: const TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  );
+                                },
                               ),
-                              Text(
+                              const Text(
                                 "Following",
                                 style: TextStyle(
                                   fontSize: 15.0,
@@ -340,6 +357,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
     );
   }
 
+  // TODO : Low priority
+  // TODO : Enhance loading UI
   /// Loading UI
   Widget buildLoadingStateUI() {
     return LayoutBuilder(
@@ -514,6 +533,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
         color: Colors.black,
       ),
       onSelected: (value) {
+        // TODO : Low priority
+        // TODO : Enhance keyboard UI just like CommentScreen's showModalBottomKeyboard()
         /// Update user's status message
         if (value == updateStatusMessage) {
           showTextInputDialogForUpdate(
