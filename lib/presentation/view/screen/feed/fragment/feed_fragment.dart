@@ -80,13 +80,20 @@ class _FeedFragmentState extends State<FeedFragment> {
     _itemPositionsListener = ItemPositionsListener.create();
 
     _itemPositionsListener.itemPositions.addListener(() {
-      final currentIndex = _itemPositionsListener.itemPositions.value.last.index;
-      final currentListLength = _postListViewModel.currentList.length - 1;
+      final itemPositions = _itemPositionsListener.itemPositions;
+      // QUESTION : Sometimes, ValueNotifier<Iterable<ItemPosition>> issue occurs here
+      // QUESTION : It's rarely happens, and I don't know why yet
+      // QUESTION : Luckily, it does not cause critical issues such as NPE
+      // QUESTION : So I just added a simple conditional statement for the exception
+      if (itemPositions.value.isNotEmpty) {
+        final currentIndex = itemPositions.value.last.index ?? 0;
+        final currentListLength = _postListViewModel.currentList.length - 1;
 
-      /// It means, reached the bottom
-      /// Load more feed
-      if (currentIndex == currentListLength) {
-        fetchPostList();
+        /// It means, reached the bottom
+        /// Load more feed
+        if (currentIndex == currentListLength) {
+          fetchPostList();
+        }
       }
     });
   }
