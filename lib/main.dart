@@ -12,6 +12,7 @@ import 'data/networking/dio_singleton.dart';
 import 'data/networking/interceptor/token_interceptor.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'data/repository/comment/comment_repository_impl.dart';
+import 'data/repository/follow/follow_repository_impl.dart';
 import 'data/repository/post/post_repository_impl.dart';
 import 'data/repository/secure_storage/secure_storage_repository_impl.dart';
 import 'data/repository/user/user_repository_impl.dart';
@@ -22,6 +23,7 @@ import 'domain/usecase/comment/create/create_comment_usecase.dart';
 import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
 import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
+import 'domain/usecase/follow/start_follow_usecase.dart';
 import 'domain/usecase/post/create/create_post_usecase.dart';
 import 'domain/usecase/post/delete/delete_post_usecase.dart';
 import 'domain/usecase/post/list/get_my_post_list_usecase.dart';
@@ -131,6 +133,12 @@ void main() async {
   getIt.registerSingleton<DeleteCommentUseCase>(deleteCommentUseCase);
   final updateCommentUseCase = UpdateCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<UpdateCommentUseCase>(updateCommentUseCase);
+
+  /// Follow
+  final followRepository = FollowRepositoryImpl(dio);
+  // UseCases
+  final startFollowUseCase = StartFollowUseCase(followRepository: followRepository);
+  getIt.registerSingleton<StartFollowUseCase>(startFollowUseCase);
 
   await Firebase.initializeApp();
 
