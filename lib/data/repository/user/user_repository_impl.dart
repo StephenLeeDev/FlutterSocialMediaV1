@@ -14,6 +14,7 @@ class UserRepositoryImpl extends UserRepository {
 
   UserRepositoryImpl(this._dio);
 
+  /// Get current user's detail information
   @override
   Future<MyUserInfoState.MyUserInfoState> getMyUserInfo() async {
     const api = 'user';

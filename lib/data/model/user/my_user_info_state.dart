@@ -1,4 +1,4 @@
-import 'package:flutter_social_media_v1/data/model/user/my_user_info.dart';
+import 'my_user_info.dart';
 
 abstract class MyUserInfoState {}
 

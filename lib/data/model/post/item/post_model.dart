@@ -6,7 +6,7 @@ class PostModel {
   String? description;
   String get getDescription => description ?? "";
   String? status;
-  UserModel? user;
+  UserModel? user; // TODO : Refactor this to SimpleUserInfo
   String get getUserThumbnail => user?.thumbnail ?? "";
   String get getUserEmail => user?.email ?? "Unknown";
   String get getUserName => user?.getUserName ?? "Unknown";
