@@ -31,6 +31,7 @@ import 'domain/usecase/post/list/get_post_list_usecase.dart';
 import 'domain/usecase/post/like/post_like_usecase.dart';
 import 'domain/usecase/post/update/update_post_description_usecase.dart';
 import 'domain/usecase/user/get_my_user_info_usecase.dart';
+import 'domain/usecase/user/get_user_info_by_email_usecase.dart';
 import 'domain/usecase/user/post_bookmark_usecase.dart';
 import 'domain/usecase/user/update_user_status_message_usecase.dart';
 import 'domain/usecase/user/update_user_thumbnail_usecase.dart';
@@ -88,6 +89,8 @@ void main() async {
   final userRepository = UserRepositoryImpl(dio);
   // UseCases
   final getMyUserInfoUseCase = GetMyUserInfoUseCase(userRepository: userRepository);
+  final getUserInfoByEmailUseCase = GetUserInfoByEmailUseCase(userRepository: userRepository);
+  getIt.registerSingleton<GetUserInfoByEmailUseCase>(getUserInfoByEmailUseCase);
   final postBookmarkUseCase = PostBookmarkUseCase(userRepository: userRepository);
   getIt.registerSingleton<PostBookmarkUseCase>(postBookmarkUseCase);
   final updateUserThumbnailUseCase = UpdateUserThumbnailUseCase(userRepository: userRepository);
