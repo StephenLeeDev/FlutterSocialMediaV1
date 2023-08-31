@@ -2,13 +2,13 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../../data/model/user/my_user_info.dart';
 import '../../../../../data/model/user/my_user_info_state.dart';
-import '../../../../../domain/usecase/user/get_my_user_info_usecase.dart';
+import '../../../../../domain/usecase/user/current_user/get_current_user_info_usecase.dart';
 
-class MyUserInfoViewModel {
-  final GetMyUserInfoUseCase _getMyUserInfoUseCase;
+class CurrentUserInfoViewModel {
+  final GetCurrentUserInfoUseCase _getMyUserInfoUseCase;
 
-  MyUserInfoViewModel({
-    required GetMyUserInfoUseCase getMyUserInfoUseCase,
+  CurrentUserInfoViewModel({
+    required GetCurrentUserInfoUseCase getMyUserInfoUseCase,
   }) : _getMyUserInfoUseCase = getMyUserInfoUseCase;
 
   final ValueNotifier<MyUserInfoState> _myUserInfoState = ValueNotifier<MyUserInfoState>(Ready());

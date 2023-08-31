@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../../../data/model/post/item/post_model.dart';
-import '../../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
+import '../../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
 import '../../../../viewmodel/post/list/post_list_viewmodel.dart';
-import '../../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
+import '../../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../../widget/feed/post_widget.dart';
 
 class FeedFragment extends StatefulWidget {
@@ -23,7 +23,7 @@ class _FeedFragmentState extends State<FeedFragment> {
   late final ItemScrollController _scrollController;
   late final ItemPositionsListener _itemPositionsListener;
 
-  late final MyUserInfoViewModel _myUserInfoViewModel;
+  late final CurrentUserInfoViewModel _myUserInfoViewModel;
   late final PostListViewModel _postListViewModel;
 
   @override
@@ -52,13 +52,13 @@ class _FeedFragmentState extends State<FeedFragment> {
 
   /// My User Info
   void initMyUserInfoViewModel() {
-    _myUserInfoViewModel = context.read<MyUserInfoViewModel>();
+    _myUserInfoViewModel = context.read<CurrentUserInfoViewModel>();
   }
 
   /// List
   void initListViewModel() {
     if (widget.isFromMyPage) {
-      _postListViewModel = context.read<MyPostGridListViewModel>();
+      _postListViewModel = context.read<CurrentUserPostGridListViewModel>();
     } else {
       _postListViewModel = context.read<PostListViewModel>();
     }

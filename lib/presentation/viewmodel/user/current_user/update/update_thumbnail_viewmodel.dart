@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../../data/model/common/single_string_state.dart';
-import '../../../../../domain/usecase/user/update_user_thumbnail_usecase.dart';
+import '../../../../../domain/usecase/user/current_user/update_user_thumbnail_usecase.dart';
 import '../../../../util/converter/file_converter_util.dart';
 
 class UpdateUserThumbnailViewModel {

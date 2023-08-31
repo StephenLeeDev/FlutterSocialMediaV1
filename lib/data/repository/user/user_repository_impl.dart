@@ -18,7 +18,7 @@ class UserRepositoryImpl extends UserRepository {
 
   /// Get current user's detail information
   @override
-  Future<MyUserInfoState.MyUserInfoState> getMyUserInfo() async {
+  Future<MyUserInfoState.MyUserInfoState> getCurrentUserInfo() async {
     const api = 'user';
     const url = '$baseUrl$api';
 

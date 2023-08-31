@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../../../data/model/common/common_state.dart';
-import '../../../../../domain/usecase/user/update_user_status_message_usecase.dart';
+import '../../../../../domain/usecase/user/current_user/update_user_status_message_usecase.dart';
 
 class UpdateUserStatusMessageViewModel {
   final UpdateUserStatusMessageUseCase _updateStatusMessageUseCase;

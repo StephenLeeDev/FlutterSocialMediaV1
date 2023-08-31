@@ -76,9 +76,9 @@ class PostRepositoryImpl extends PostRepository {
     }
   }
 
-  /// Get my post list
+  /// Get current user's post list
   @override
-  Future<PostListState.PostListState> getMyPostList({required int page, required int limit}) async {
+  Future<PostListState.PostListState> getCurrentUserPostList({required int page, required int limit}) async {
 
     const api = 'post/my';
     final url = '$baseUrl$api?page=$page&limit=$limit';

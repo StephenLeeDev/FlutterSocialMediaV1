@@ -1,11 +1,11 @@
-import '../../../../domain/usecase/post/list/get_my_post_list_usecase.dart';
+import '../../../../domain/usecase/post/list/get_current_user_post_list_usecase.dart';
 import '../../../../data/model/post/list/post_list_state.dart' as PostListState;
 import 'post_list_viewmodel.dart';
 
-class MyPostGridListViewModel extends PostListViewModel {
-  final GetMyPostListUseCase _getMyPostListUseCase;
+class CurrentUserPostGridListViewModel extends PostListViewModel {
+  final GetCurrentUserPostListUseCase _getMyPostListUseCase;
 
-  MyPostGridListViewModel({
+  CurrentUserPostGridListViewModel({
     required super.getPostListUseCase,
     required getMyPostListUseCase,
   }) : _getMyPostListUseCase = getMyPostListUseCase;

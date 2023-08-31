@@ -8,7 +8,7 @@ import '../../../data/model/post/update/update_post_description_model.dart';
 abstract class PostRepository {
   Future<PostItemState> createPost({required CreatePostModel createPostModel});
   Future<PostListState> getPostList({required int page, required int limit});
-  Future<PostListState> getMyPostList({required int page, required int limit});
+  Future<PostListState> getCurrentUserPostList({required int page, required int limit});
   Future<PostItemState> updatePostDescription({required UpdatePostDescriptionModel updatePostDescriptionModel});
   Future<SingleIntegerState> postLike({required int postId});
   Future<CommonState> deletePost({required int postId});

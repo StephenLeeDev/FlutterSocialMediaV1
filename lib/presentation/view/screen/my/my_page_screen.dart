@@ -12,16 +12,16 @@ import '../../../../data/model/common/single_string_state.dart' as SingleStringS
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../../data/model/post/list/post_list_state.dart' as PostListState;
 import '../../../../data/model/user/my_user_info_state.dart' as MyUserInfoState;
-import '../../../../domain/usecase/user/update_user_status_message_usecase.dart';
-import '../../../../domain/usecase/user/update_user_thumbnail_usecase.dart';
+import '../../../../domain/usecase/user/current_user/update_user_status_message_usecase.dart';
+import '../../../../domain/usecase/user/current_user/update_user_thumbnail_usecase.dart';
 import '../../../util/dialog/dialog_util.dart';
 import '../../../util/logger/image_file_logger_util.dart';
 import '../../../util/snackbar/snackbar_util.dart';
-import '../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
+import '../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
-import '../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
-import '../../../viewmodel/user/my_info/update/update_status_message_viewmodel.dart';
-import '../../../viewmodel/user/my_info/update/update_thumbnail_viewmodel.dart';
+import '../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
+import '../../../viewmodel/user/current_user/update/update_status_message_viewmodel.dart';
+import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
 
@@ -41,8 +41,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
   final ImagePicker imagePicker = ImagePicker();
   final _scrollController = ScrollController();
 
-  late final MyUserInfoViewModel _myUserInfoViewModel;
-  late final MyPostGridListViewModel _postListViewModel;
+  late final CurrentUserInfoViewModel _myUserInfoViewModel;
+  late final CurrentUserPostGridListViewModel _postListViewModel;
   late final UpdateUserThumbnailViewModel _updateUserThumbnailViewModel;
   late final UpdateUserStatusMessageViewModel _updateUserStatusMessageViewModel;
 
@@ -65,12 +65,12 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   /// My User Info
   void initMyUserInfoViewModel() {
-    _myUserInfoViewModel = GetIt.instance<MyUserInfoViewModel>();
+    _myUserInfoViewModel = GetIt.instance<CurrentUserInfoViewModel>();
   }
 
   /// List
   void initListViewModel() {
-    _postListViewModel = context.read<MyPostGridListViewModel>();
+    _postListViewModel = context.read<CurrentUserPostGridListViewModel>();
   }
 
   /// Update user thumbnail
@@ -104,7 +104,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
         Provider<PostListViewModel>(
           create: (context) => _postListViewModel,
         ),
-        Provider<MyUserInfoViewModel>(
+        Provider<CurrentUserInfoViewModel>(
           create: (context) => _myUserInfoViewModel,
         ),
       ],
