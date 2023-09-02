@@ -8,7 +8,12 @@ class MyUserInfo {
   List<int>? bookMarks;
   String? statusMessage;
   String get getStatusMessage => statusMessage ?? "";
-  int totalPostCount = 0;
+  int? totalPostCount;
+  int get getTotalPostCount => totalPostCount ?? 0;
+  int? followers;
+  int get getFollowers => followers ?? 0;
+  int? followings;
+  int get getFollowings => followings ?? 0;
 
   MyUserInfo({
     this.email,
@@ -16,6 +21,9 @@ class MyUserInfo {
     this.thumbnail,
     this.bookMarks,
     this.statusMessage,
+    this.totalPostCount,
+    this.followers,
+    this.followings,
   });
 
   factory MyUserInfo.fromJson(Map<String, dynamic> json) {
@@ -27,6 +35,9 @@ class MyUserInfo {
       thumbnail: json['thumbnail'],
       bookMarks: bookMarks,
       statusMessage: json['statusMessage'],
+      totalPostCount: json['totalPostCount'],
+      followers: json['followers'],
+      followings: json['followings'],
     );
   }
 
@@ -37,6 +48,9 @@ class MyUserInfo {
       'thumbnail': thumbnail,
       'bookMarks': bookMarks,
       'statusMessage': statusMessage,
+      'totalPostCount': totalPostCount,
+      'followers': followers,
+      'followings': followings,
     };
   }
 
@@ -46,6 +60,9 @@ class MyUserInfo {
     String? thumbnail,
     List<int>? bookMarks,
     String? statusMessage,
+    int? totalPostCount,
+    int? followers,
+    int? followings,
   }) {
     return MyUserInfo(
       email: email ?? this.email,
@@ -53,11 +70,14 @@ class MyUserInfo {
       thumbnail: thumbnail ?? this.thumbnail,
       bookMarks: bookMarks ?? this.bookMarks,
       statusMessage: statusMessage ?? this.statusMessage,
+      totalPostCount: totalPostCount ?? this.totalPostCount,
+      followers: followers ?? this.followers,
+      followings: followings ?? this.followings,
     );
   }
 
   @override
   String toString() {
-    return 'MyUserInfo(email: $email, username: $username, thumbnail: $thumbnail, bookMarks: $bookMarks, statusMessage: $statusMessage)';
+    return 'MyUserInfo(email: $email, username: $username, thumbnail: $thumbnail, bookMarks: $bookMarks, statusMessage: $statusMessage, totalPostCount: $totalPostCount, followers: $followers, followings: $followings)';
   }
 }

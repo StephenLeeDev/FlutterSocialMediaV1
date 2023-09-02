@@ -9,7 +9,7 @@ import '../../../../../data/constant/text.dart';
 import '../../../../../data/model/post/item/post_model.dart';
 import '../../../../../domain/usecase/post/update/update_post_description_usecase.dart';
 import '../../../../viewmodel/post/update/update_post_description_viewmodel.dart';
-import '../../../widget/button/custom_elevated_button.dart';
+import '../../../widget/common/button/custom_elevated_button.dart';
 
 class UpdatePostDescriptionScreen extends StatefulWidget {
   const UpdatePostDescriptionScreen({Key? key, required this.postString}) : super(key: key);

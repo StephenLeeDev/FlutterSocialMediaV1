@@ -5,6 +5,8 @@ import '../../../domain/repository/user/user_repository.dart';
 import '../../constant/constant.dart';
 import '../../model/common/common_state.dart' as CommonState;
 import '../../model/common/single_string_state.dart' as SingleStringState;
+import '../../model/user/detail_user_info_model.dart';
+import '../../model/user/detail_user_info_state.dart' as DetailUserInfoState;
 import '../../model/user/my_user_info.dart';
 import '../../model/user/my_user_info_state.dart' as MyUserInfoState;
 
@@ -14,8 +16,9 @@ class UserRepositoryImpl extends UserRepository {
 
   UserRepositoryImpl(this._dio);
 
+  /// Get current user's detail information
   @override
-  Future<MyUserInfoState.MyUserInfoState> getMyUserInfo() async {
+  Future<MyUserInfoState.MyUserInfoState> getCurrentUserInfo() async {
     const api = 'user';
     const url = '$baseUrl$api';
 
@@ -37,6 +40,32 @@ class UserRepositoryImpl extends UserRepository {
       return MyUserInfoState.Fail();
     } catch (e) {
       return MyUserInfoState.Fail();
+    }
+  }
+
+  /// Get other user's detailed information by email
+  /// it's not for current user
+  /// If you want to get current user's information, use getMyUserInfo()
+  @override
+  Future<DetailUserInfoState.DetailUserInfoState> getUserInfoByEmail({required String userEmail}) async {
+    const api = 'user/{userEmail}';
+    const url = '$baseUrl$api';
+
+    try {
+      final Response response = await _dio.get(url, queryParameters: {'userEmail': userEmail});
+
+      final code = response.statusCode;
+
+      if (code == 200) {
+        final state = DetailUserInfoState.Success(DetailUserInfoModel.fromJson(response.data));
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return DetailUserInfoState.Fail();
+    } catch (e) {
+      return DetailUserInfoState.Fail();
     }
   }
 

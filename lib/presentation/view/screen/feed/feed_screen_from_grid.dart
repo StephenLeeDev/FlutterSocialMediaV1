@@ -6,21 +6,25 @@ import 'fragment/feed_fragment.dart';
 /// I separated it because it has little different features between FeedScreen
 // TODO : Might integrate both, but low priority
 class FeedScreenFromGrid extends StatelessWidget {
-  const FeedScreenFromGrid({Key? key, required this.selectedPostId, this.title = ""}) : super(key: key);
+  const FeedScreenFromGrid({Key? key, this.isFromMyPage = true, required this.selectedIndex, this.title = ""}) : super(key: key);
 
   static const String routeName = "feedFromGrid";
   static const String routeURL = "/feedFromGrid";
 
-  final int selectedPostId;
+  final bool isFromMyPage;
+  final int selectedIndex;
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FeedFragment(
-        isFromMyPage: true,
-        selectedPostId: selectedPostId,
-        title: title,
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: FeedFragment(
+          isFromMyPage: isFromMyPage,
+          selectedIndex: selectedIndex,
+          title: title,
+        ),
       ),
     );
   }

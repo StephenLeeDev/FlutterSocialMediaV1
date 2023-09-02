@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../../data/model/common/common_state.dart';
-import '../../../../domain/usecase/user/post_bookmark_usecase.dart';
+import '../../../../../data/model/common/common_state.dart';
+import '../../../../../domain/usecase/user/current_user/post_bookmark_usecase.dart';
 
 // TODO : Replace with ValueNotifier later
 class BookmarkViewModel extends ChangeNotifier {

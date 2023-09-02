@@ -78,13 +78,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ),
         /// PageView screen
         /// ImagePicker, and Description fragments
-        body: PageView.builder(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: fragments.length,
-          itemBuilder: (context, index) {
-            return fragments[index];
-          },
+        body: SafeArea(
+          child: PageView.builder(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: fragments.length,
+            itemBuilder: (context, index) {
+              return fragments[index];
+            },
+          ),
         ),
       ),
     );

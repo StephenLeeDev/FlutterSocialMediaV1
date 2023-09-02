@@ -76,12 +76,36 @@ class PostRepositoryImpl extends PostRepository {
     }
   }
 
-  /// Get my post list
+  /// Get current user's post list
   @override
-  Future<PostListState.PostListState> getMyPostList({required int page, required int limit}) async {
+  Future<PostListState.PostListState> getCurrentUserPostList({required int page, required int limit}) async {
 
     const api = 'post/my';
     final url = '$baseUrl$api?page=$page&limit=$limit';
+
+    try {
+      final Response response = await _dio.get(url);
+
+      if (response.statusCode == 200) {
+        final postListModel = PostListModel.fromJson(response.data);
+        final state = PostListState.Success(total: postListModel.total, list: postListModel.postList);
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return PostListState.Fail();
+    } catch (e) {
+      return PostListState.Fail();
+    }
+  }
+
+  /// Get other user's post list by email address
+  @override
+  Future<PostListState.PostListState> getPostListByUserEmail({required int page, required int limit, required String email}) async {
+
+    const api = 'post/user';
+    final url = '$baseUrl$api?page=$page&limit=$limit&email=$email';
 
     try {
       final Response response = await _dio.get(url);

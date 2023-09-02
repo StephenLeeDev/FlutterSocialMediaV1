@@ -12,7 +12,7 @@ import '../../../../data/model/common/single_integer_state.dart' as SingleIntege
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../../domain/usecase/post/delete/delete_post_usecase.dart';
 import '../../../../domain/usecase/post/like/post_like_usecase.dart';
-import '../../../../domain/usecase/user/post_bookmark_usecase.dart';
+import '../../../../domain/usecase/user/current_user/post_bookmark_usecase.dart';
 import '../../../util/bottom_sheet/bottom_sheet_util.dart';
 import '../../../util/custom_toast/custom_toast_util.dart';
 import '../../../util/date/date_util.dart';
@@ -22,13 +22,15 @@ import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/delete/delete_post_viewmodel.dart';
 import '../../../viewmodel/post/like/post_like_viewmodel.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
-import '../../../viewmodel/user/bookmark/bookmark_viewmodel.dart';
+import '../../../viewmodel/user/current_user/bookmark/bookmark_viewmodel.dart';
 import '../../screen/comment/comment/comment_screen.dart';
 import '../../screen/post/update/update_post_description_screen.dart';
+import '../../screen/user/user_detail_screen.dart';
 
 class PostWidget extends StatefulWidget {
-  const PostWidget({Key? key, required this.postModel}) : super(key: key);
+  const PostWidget({Key? key, required this.postModel, this.isAbleToMoveUserDetailScreen = true}) : super(key: key);
   final PostModel postModel;
+  final bool isAbleToMoveUserDetailScreen;
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -96,8 +98,27 @@ class _PostWidgetState extends State<PostWidget> {
           Row(
             children: [
               GestureDetector(
-                // TODO : Implement moving to the user's detail screen feature
-                onTap: () {},
+                onTap: () {
+                  /// Description for the '!widget.postModel.isMine' flag
+                  /// Move to the UserDetailScreen when it's not the current user's post
+                  /// The UserDetailScreen is not for the current user
+                  /// The current user should use MyPageScreen
+                  ///
+                  /// Description for the 'widget.isAbleToMoveUserDetailScreen' flag
+                  /// Shouldn't move to the UserDetailScreen when the current location is the FeedFragment
+                  /// Because if it is possible, then it causes the infinite loop screens issue
+                  ///
+                  /// Overall, moving screens is allowed only when meet both conditions for the above flags
+                  final isAbleToMove = !widget.postModel.isMine && widget.isAbleToMoveUserDetailScreen;
+                  if (isAbleToMove) {
+                    context.pushNamed(
+                      UserDetailScreen.routeName,
+                      queryParameters: {
+                        'userEmail': widget.postModel.getUserEmail,
+                      },
+                    );
+                  }
+                },
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

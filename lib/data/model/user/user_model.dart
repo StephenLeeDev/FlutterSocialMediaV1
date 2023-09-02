@@ -1,3 +1,4 @@
+// TODO : Refactor all the UserModel to SimpleUserInfo, and delete this class
 class UserModel {
   String? email;
   String? username;
