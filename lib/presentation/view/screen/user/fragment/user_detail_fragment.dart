@@ -59,57 +59,50 @@ class _UserDetailFragmentState extends State<UserDetailFragment> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<OtherUserInfoViewModel>(
-          create: (context) => _otherUserInfoViewModel,
-        ),
-      ],
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          controller: _scrollController,
-          children: [
-            /// User profile
-            ValueListenableBuilder<DetailUserInfoState.DetailUserInfoState>(
-              valueListenable: _otherUserInfoViewModel.userInfoStateNotifier,
-              builder: (context, state, _) {
-                if (state is DetailUserInfoState.Success) {
-                  return const UserProfileWidget();
-                } else {
-                  // TODO : Implement Loading UI just like FeedScreen
-                  return Container();
-                }
-              },
-            ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        controller: _scrollController,
+        children: [
+          /// User profile
+          ValueListenableBuilder<DetailUserInfoState.DetailUserInfoState>(
+            valueListenable: _otherUserInfoViewModel.userInfoStateNotifier,
+            builder: (context, state, _) {
+              if (state is DetailUserInfoState.Success) {
+                return const UserProfileWidget();
+              } else {
+                // TODO : Implement Loading UI just like FeedScreen
+                return Container();
+              }
+            },
+          ),
 
-            // TODO : Implement follow/unfollow button UI & feature
+          // TODO : Implement follow/unfollow button UI & feature
 
-            /// Grid feed
-            ValueListenableBuilder<PostListState.PostListState>(
-              valueListenable: _postListViewModel.postListStateNotifier,
-              builder: (context, state, _) {
+          /// Grid feed
+          ValueListenableBuilder<PostListState.PostListState>(
+            valueListenable: _postListViewModel.postListStateNotifier,
+            builder: (context, state, _) {
 
-                /// Loading UI
-                if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
-                  return buildLoadingStateUI();
-                }
+              /// Loading UI
+              if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
+                return buildLoadingStateUI();
+              }
 
-                /// Fail UI
-                else if (state is PostListState.Fail) {
-                  return buildFailStateUI();
-                }
+              /// Fail UI
+              else if (state is PostListState.Fail) {
+                return buildFailStateUI();
+              }
 
-                /// Success UI (default)
-                else {
-                  return const GridFeedWidget();
-                }
+              /// Success UI (default)
+              else {
+                return const GridFeedWidget(isFromMyPage: false);
+              }
 
-              },
-            ),
-          ],
-        ),
+            },
+          ),
+        ],
       ),
     );
   }

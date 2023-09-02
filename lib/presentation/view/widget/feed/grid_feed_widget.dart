@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../viewmodel/post/list/other_user_post_list_viewmodel.dart';
+import '../../screen/feed/feed_screen_from_grid.dart';
 import 'post_grid_widget.dart';
 
 class GridFeedWidget extends StatefulWidget {
-  const GridFeedWidget({Key? key}) : super(key: key);
+  const GridFeedWidget({Key? key, this.isFromMyPage = true, this.scrollController}) : super(key: key);
+
+  final bool isFromMyPage;
+  final ItemScrollController? scrollController;
 
   @override
   State<GridFeedWidget> createState() => _GridFeedWidgetState();
@@ -51,10 +57,17 @@ class _GridFeedWidgetState extends State<GridFeedWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: PostGridWidget(
                 postModel: list[index],
-                isFromMyPage: true,
+                isFromMyPage: widget.isFromMyPage,
                 onTap: () {
-                  /// Move to the selected item's index in the FeedFragment
-                  // TODO : Move to the next page in this PageView
+                  /// Move to the selected item's index in the FeedScreen
+                  context.pushNamed(
+                      FeedScreenFromGrid.routeName,
+                      queryParameters: {
+                        "isFromMyPage": "false",
+                        "selectedIndex": "$index",
+                        "title": "${list[index].getUserName}'s feed",
+                      }
+                  );
                 },
               ),
             );

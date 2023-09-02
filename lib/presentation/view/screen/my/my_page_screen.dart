@@ -411,7 +411,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                   context.pushNamed(
                       FeedScreenFromGrid.routeName,
                       queryParameters: {
-                        "postId": "${list[index].getId}",
+                        "selectedIndex": "$index",
                         "title": "${list[index].getUserName}'s feed",
                       }
                   );

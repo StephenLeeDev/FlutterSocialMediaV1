@@ -109,11 +109,15 @@ class PostListViewModel {
 
   /// Refresh the post list
   Future<void> refresh() async {
+    reinitialize();
+    getPostList();
+  }
+
+  /// Reinitialize
+  void reinitialize() {
     _setCurrentList(list: []);
     _setPage(value: 1);
     setHasNext(value: true);
-
-    getPostList();
   }
 
   /// Set updated post item's bookmark/unbookmark

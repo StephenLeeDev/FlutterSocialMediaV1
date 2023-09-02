@@ -61,13 +61,16 @@ final GoRouter router = GoRouter(
       path: FeedScreenFromGrid.routeURL,
       builder: (context, state) {
         /// Selected post's index from grid feed list screen
-        final selectedPostIdString = state.queryParameters['postId'];
-        final selectedPostId = selectedPostIdString == null ? -1 : int.parse(selectedPostIdString);
+        final selectedIndexString = state.queryParameters['selectedIndex'];
+        final selectedPostId = selectedIndexString == null ? -1 : int.parse(selectedIndexString);
 
         final title = state.queryParameters['title'] ?? "";
+        final isFromMyPage = state.queryParameters['isFromMyPage'] ?? "true";
+        debugPrint("isFromMyPage : $isFromMyPage");
 
         return FeedScreenFromGrid(
-          selectedPostId: selectedPostId,
+          isFromMyPage: isFromMyPage == "true",
+          selectedIndex: selectedPostId,
           title: title
         );
       }

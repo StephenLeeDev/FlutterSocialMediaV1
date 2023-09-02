@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_social_media_v1/presentation/viewmodel/post/list/other_user_post_list_viewmodel.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
@@ -126,6 +127,25 @@ void main() async {
       getPostListUseCase: getPostListUseCase,
       getMyPostListUseCase: getMyPostListUseCase,
   );
+  // REFACTOR : Mid priority
+  // REFACTOR : Replace the OtherUserPostGridListViewModel's scope to the UserDetailScreen
+
+  // REFACTOR : The OtherUserPostGridListViewModel should located in the UserDetailScreen, because this ViewModel used only under UserDetailScreen's scope
+  // REFACTOR : It's not a best practice, and it could cause side effects
+  // REFACTOR : More than anything, I don't like this
+
+  // REFACTOR : Actually, I tried just like that at the beginning, but there was a problem
+  // REFACTOR : At the beginning, I created the OtherUserPostGridListViewModel inside of the UserDetailScreen
+  // REFACTOR : And then created fragments UserDetailFragment, and FeedFragment with a PageView inside of the UserDetailScreen
+  // REFACTOR : I injected a ItemScrollController to UserDetailFragment, FeedFragment from UserDetailScreen
+  // REFACTOR : I thought the UserDetailFragment can control the FeedFragment's ItemScrollController from the injected ItemScrollController object
+  // REFACTOR : But ItemScrollController couldn't be injected with Provider, and I don't know why
+  // REFACTOR : I can't help but I had to replace the OtherUserPostGridListViewModel to main() from UserDetailScreen
+  // REFACTOR : Maybe, I can refactor it after the DirectMessage feature is implemented later
+  final otherUserPostGridListViewModel = OtherUserPostGridListViewModel(
+      getPostListUseCase: getPostListUseCase,
+      getPostListByUserEmailUseCase: getPostListByUserEmailUseCase,
+  );
 
   /// Comment/Reply
   // Repository
@@ -164,6 +184,10 @@ void main() async {
         /// Current user's grid feed
         Provider<CurrentUserPostGridListViewModel>(
           create: (context) => myPostGridListViewModel,
+        ),
+        /// Other user's grid feed
+        Provider<OtherUserPostGridListViewModel>(
+          create: (context) => otherUserPostGridListViewModel,
         ),
       ],
       child: const App(),

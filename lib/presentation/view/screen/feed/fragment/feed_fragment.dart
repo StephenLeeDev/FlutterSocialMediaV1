@@ -10,10 +10,10 @@ import '../../../../viewmodel/user/current_user/get_user_info/current_user_info_
 import '../../../widget/feed/post_widget.dart';
 
 class FeedFragment extends StatefulWidget {
-  const FeedFragment({Key? key, this.isFromMyPage = false, this.selectedPostId, this.title = ""}) : super(key: key);
+  const FeedFragment({Key? key, this.isFromMyPage = false, this.selectedIndex, this.title = ""}) : super(key: key);
 
   final bool isFromMyPage;
-  final int? selectedPostId; /// Selected post's index from grid feed list screen
+  final int? selectedIndex; /// Selected post's index from grid feed list screen
   final String title; /// Feed's title for appbar
 
   @override
@@ -21,7 +21,7 @@ class FeedFragment extends StatefulWidget {
 }
 
 class _FeedFragmentState extends State<FeedFragment> {
-  late final ItemScrollController _scrollController;
+  final ItemScrollController _scrollController = ItemScrollController();
   late final ItemPositionsListener _itemPositionsListener;
 
   late final CurrentUserInfoViewModel _myUserInfoViewModel;
@@ -32,16 +32,13 @@ class _FeedFragmentState extends State<FeedFragment> {
     super.initState();
 
     initViewModels();
-    _initScroll();
-
-    /// Selected post's index from grid feed list screen
-    final selectedIndex = _postListViewModel.currentList.indexWhere((post) => post.getId == widget.selectedPostId);
+    _initPositionListener();
 
     /// Jump to the selected post
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final selected = widget.selectedPostId ?? -1;
+      final selected = widget.selectedIndex ?? -1;
       if (selected >= 0) {
-        _scrollController.jumpTo(index: selectedIndex);
+        _scrollController.jumpTo(index: selected);
       }
     });
   }
@@ -58,6 +55,7 @@ class _FeedFragmentState extends State<FeedFragment> {
   }
 
   /// List
+  /// This FeedFragment is used from multiple screens, so _postListViewModel branching is needed
   void initListViewModel() {
     if (widget.isFromMyPage) {
       _postListViewModel = context.read<CurrentUserPostGridListViewModel>();
@@ -76,9 +74,8 @@ class _FeedFragmentState extends State<FeedFragment> {
     await _postListViewModel.getPostList();
   }
 
-  /// ItemScrollController & ItemPositionsListener
-  void _initScroll() {
-    _scrollController = ItemScrollController();
+  /// Initialize ItemPositionsListener
+  void _initPositionListener() {
     _itemPositionsListener = ItemPositionsListener.create();
 
     _itemPositionsListener.itemPositions.addListener(() {
@@ -113,18 +110,17 @@ class _FeedFragmentState extends State<FeedFragment> {
       child: Scaffold(
         backgroundColor: Colors.white,
         /// Appbar
-        appBar: widget.isFromMyPage ?
-          AppBar(
-            elevation: 0,
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black87,
-            title: Text(
-              widget.title,
-              style: const TextStyle(
-                fontSize: 24,
-              ),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          title: Text(
+            widget.title,
+            style: const TextStyle(
+              fontSize: 24,
             ),
-          ) : null,
+          ),
+        ),
         body: buildSuccessStateUI(),
       ),
     );

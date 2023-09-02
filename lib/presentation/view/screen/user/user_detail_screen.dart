@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../domain/usecase/post/list/get_post_list_by_user_email_usecase.dart';
-import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
 import '../../../../domain/usecase/user/other_user/get_user_info_by_email_usecase.dart';
 import '../../../viewmodel/post/list/other_user_post_list_viewmodel.dart';
 import '../../../viewmodel/user/other_user/get_user_info/other_user_info_viewmodel.dart';
-import '../feed/fragment/feed_fragment.dart';
 import 'fragment/user_detail_fragment.dart';
 
 /// This screen displays detailed information about other users
@@ -26,15 +23,8 @@ class UserDetailScreen extends StatefulWidget {
 
 class _UserDetailScreenState extends State<UserDetailScreen> {
 
-  final PageController _pageController = PageController();
-
   late final OtherUserInfoViewModel _otherUserInfoViewModel;
   late final OtherUserPostGridListViewModel _postListViewModel;
-
-  final List<Widget> fragments = [
-    const UserDetailFragment(),
-    const FeedFragment(),
-  ];
 
   @override
   void initState() {
@@ -57,10 +47,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
   /// Initialize feed ViewModel
   void _initListViewModel() {
-    _postListViewModel = OtherUserPostGridListViewModel(
-      getPostListUseCase: GetIt.instance<GetPostListUseCase>(),
-      getPostListByUserEmailUseCase: GetIt.instance<GetPostListByUserEmailUseCase>(),
-    );
+    _postListViewModel = context.read<OtherUserPostGridListViewModel>();
+    _postListViewModel.reinitialize();
+
     _postListViewModel.setEmail(email: widget.userEmail);
     _postListViewModel.setLimit(value: 15);
   }
@@ -117,16 +106,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               },
             ),
         ),
-        body: SafeArea(
+        body: const SafeArea(
           bottom: false,
-          child: PageView.builder(
-            controller: _pageController,
-            // physics: const NeverScrollableScrollPhysics(),
-            itemCount: fragments.length,
-            itemBuilder: (context, index) {
-              return fragments[index];
-            },
-          ),
+          child: UserDetailFragment(),
         ),
       ),
     );
