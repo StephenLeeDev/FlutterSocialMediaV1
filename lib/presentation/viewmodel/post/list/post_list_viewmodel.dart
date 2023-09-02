@@ -63,7 +63,7 @@ class PostListViewModel {
   List<PostModel> get currentList => _currentList.value;
 
   _setCurrentList({required List<PostModel> list}) {
-    _currentList.value = _setIsMineStatusAndReturn(list: list);
+    _currentList.value = setIsMineStatusAndReturn(list: list);
   }
 
   /// Add additional posts to the _currentList
@@ -109,11 +109,15 @@ class PostListViewModel {
 
   /// Refresh the post list
   Future<void> refresh() async {
+    reinitialize();
+    getPostList();
+  }
+
+  /// Reinitialize
+  void reinitialize() {
     _setCurrentList(list: []);
     _setPage(value: 1);
     setHasNext(value: true);
-
-    getPostList();
   }
 
   /// Set updated post item's bookmark/unbookmark
@@ -139,8 +143,8 @@ class PostListViewModel {
     }
   }
 
-  /// Check is mine
-  List<PostModel> _setIsMineStatusAndReturn({required List<PostModel> list}) {
+  /// Check is current user's post
+  List<PostModel> setIsMineStatusAndReturn({required List<PostModel> list}) {
     final copyList = List.of(list);
     for (int i = 0; i < copyList.length; i++) {
       if (copyList[i].isMyPost(myEmail: myEmail)) copyList[i].isMine = true;

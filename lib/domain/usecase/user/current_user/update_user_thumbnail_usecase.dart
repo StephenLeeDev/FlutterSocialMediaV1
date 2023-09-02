@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
-import '../../../data/model/common/single_string_state.dart';
-import '../../repository/user/user_repository.dart';
+import '../../../../data/model/common/single_string_state.dart';
+import '../../../repository/user/user_repository.dart';
 
 class UpdateUserThumbnailUseCase {
   final UserRepository _userRepository;

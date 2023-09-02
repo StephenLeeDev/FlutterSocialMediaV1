@@ -9,8 +9,8 @@ import 'package:provider/provider.dart';
 import '../../../../data/constant/text.dart';
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../util/snackbar/snackbar_util.dart';
-import '../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
-import '../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
+import '../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
+import '../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../widget/navigation/navigation_tab.dart';
 import '../feed/feed_screen.dart';
 import '../feed/feed_screen_from_grid.dart';
@@ -32,7 +32,7 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
-  late final MyPostGridListViewModel _postGridListViewModel;
+  late final CurrentUserPostGridListViewModel _postGridListViewModel;
 
   /// Tab items
   final List<String> _tabs = [
@@ -55,6 +55,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   /// On create a new post tab
+  /// Move to the post creation screen
   void _onCreatePostTap() async {
     String? createdPostString = await context.pushNamed(CreatePostScreen.routeName);
 
@@ -67,7 +68,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
       /// Move to my feed screen
       if (context.mounted) {
-        final title = GetIt.instance<MyUserInfoViewModel>().myUsername;
+        final title = GetIt.instance<CurrentUserInfoViewModel>().myUsername;
         context.pushNamed(
             FeedScreenFromGrid.routeName,
             queryParameters: {
@@ -92,7 +93,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   /// List
   void initGridListViewModel() {
-    _postGridListViewModel = context.read<MyPostGridListViewModel>();
+    _postGridListViewModel = context.read<CurrentUserPostGridListViewModel>();
     _postGridListViewModel.setLimit(value: 18);
   }
 

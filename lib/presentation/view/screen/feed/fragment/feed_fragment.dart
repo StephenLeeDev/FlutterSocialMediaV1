@@ -3,16 +3,17 @@ import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../../../data/model/post/item/post_model.dart';
-import '../../../../viewmodel/post/list/post_grid_list_viewmodel.dart';
+import '../../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
+import '../../../../viewmodel/post/list/other_user_post_list_viewmodel.dart';
 import '../../../../viewmodel/post/list/post_list_viewmodel.dart';
-import '../../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
+import '../../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../../widget/feed/post_widget.dart';
 
 class FeedFragment extends StatefulWidget {
-  const FeedFragment({Key? key, this.isFromMyPage = false, required this.selectedPostId, this.title = ""}) : super(key: key);
+  const FeedFragment({Key? key, this.isFromMyPage = false, this.selectedIndex, this.title = ""}) : super(key: key);
 
   final bool isFromMyPage;
-  final int selectedPostId; /// Selected post's index from grid feed list screen
+  final int? selectedIndex; /// Selected post's index from grid feed list screen
   final String title; /// Feed's title for appbar
 
   @override
@@ -20,10 +21,10 @@ class FeedFragment extends StatefulWidget {
 }
 
 class _FeedFragmentState extends State<FeedFragment> {
-  late final ItemScrollController _scrollController;
+  final ItemScrollController _scrollController = ItemScrollController();
   late final ItemPositionsListener _itemPositionsListener;
 
-  late final MyUserInfoViewModel _myUserInfoViewModel;
+  late final CurrentUserInfoViewModel _myUserInfoViewModel;
   late final PostListViewModel _postListViewModel;
 
   @override
@@ -31,15 +32,13 @@ class _FeedFragmentState extends State<FeedFragment> {
     super.initState();
 
     initViewModels();
-    _initScroll();
-
-    /// Selected post's index from grid feed list screen
-    final selectedIndex = _postListViewModel.currentList.indexWhere((post) => post.getId == widget.selectedPostId);
+    _initPositionListener();
 
     /// Jump to the selected post
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.selectedPostId >= 0) {
-        _scrollController.jumpTo(index: selectedIndex);
+      final selected = widget.selectedIndex ?? -1;
+      if (selected >= 0) {
+        _scrollController.jumpTo(index: selected);
       }
     });
   }
@@ -52,17 +51,18 @@ class _FeedFragmentState extends State<FeedFragment> {
 
   /// My User Info
   void initMyUserInfoViewModel() {
-    _myUserInfoViewModel = context.read<MyUserInfoViewModel>();
+    _myUserInfoViewModel = context.read<CurrentUserInfoViewModel>();
   }
 
   /// List
+  /// This FeedFragment is used from multiple screens, so _postListViewModel branching is needed
   void initListViewModel() {
     if (widget.isFromMyPage) {
-      _postListViewModel = context.read<MyPostGridListViewModel>();
+      _postListViewModel = context.read<CurrentUserPostGridListViewModel>();
+      _postListViewModel.setMyEmail(value: _myUserInfoViewModel.myEmail);
     } else {
-      _postListViewModel = context.read<PostListViewModel>();
+      _postListViewModel = context.read<OtherUserPostGridListViewModel>();
     }
-    _postListViewModel.setMyEmail(value: _myUserInfoViewModel.myEmail);
   }
 
   void fetchData() async {
@@ -74,19 +74,25 @@ class _FeedFragmentState extends State<FeedFragment> {
     await _postListViewModel.getPostList();
   }
 
-  /// ItemScrollController & ItemPositionsListener
-  void _initScroll() {
-    _scrollController = ItemScrollController();
+  /// Initialize ItemPositionsListener
+  void _initPositionListener() {
     _itemPositionsListener = ItemPositionsListener.create();
 
     _itemPositionsListener.itemPositions.addListener(() {
-      final currentIndex = _itemPositionsListener.itemPositions.value.last.index;
-      final currentListLength = _postListViewModel.currentList.length - 1;
+      final itemPositions = _itemPositionsListener.itemPositions;
+      // QUESTION : Sometimes, ValueNotifier<Iterable<ItemPosition>> issue occurs here
+      // QUESTION : It's rarely happens, and I don't know why yet
+      // QUESTION : Luckily, it does not cause critical issues such as NPE
+      // QUESTION : So I just added a simple conditional statement for the exception
+      if (itemPositions.value.isNotEmpty) {
+        final currentIndex = itemPositions.value.last.index ?? 0;
+        final currentListLength = _postListViewModel.currentList.length - 1;
 
-      /// It means, reached the bottom
-      /// Load more feed
-      if (currentIndex == currentListLength) {
-        fetchPostList();
+        /// It means, reached the bottom
+        /// Load more feed
+        if (currentIndex == currentListLength) {
+          fetchPostList();
+        }
       }
     });
   }
@@ -115,9 +121,7 @@ class _FeedFragmentState extends State<FeedFragment> {
             ),
           ),
         ),
-          body: SafeArea(
-              child: buildSuccessStateUI(),
-          ),
+        body: buildSuccessStateUI(),
       ),
     );
   }
@@ -137,6 +141,7 @@ class _FeedFragmentState extends State<FeedFragment> {
               itemBuilder: (context, index) {
                 return PostWidget(
                   postModel: list[index],
+                  isAbleToMoveUserDetailScreen: false,
                 );
               }, separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
             );

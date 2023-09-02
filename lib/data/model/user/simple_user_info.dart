@@ -1,8 +1,10 @@
 class SimpleUserInfo {
   String? email;
+  String get getEmail => email ?? "Unknown";
   String? username;
   String get getUserName => username ?? "Unknown";
   String? thumbnail;
+  String get getThumbnail => thumbnail ?? "";
 
   SimpleUserInfo({
     this.email,

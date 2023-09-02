@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../data/model/post/item/post_model.dart';
-import '../../screen/feed/feed_screen_from_grid.dart';
 
 /// Feed item for grid feed screen
 class PostGridWidget extends StatelessWidget {
@@ -10,26 +8,18 @@ class PostGridWidget extends StatelessWidget {
     Key? key,
     required this.postModel,
     this.isFromMyPage = false,
+    required this.onTap,
   }) : super(key: key);
 
   final PostModel postModel;
   final bool isFromMyPage;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (isFromMyPage) {
-          context.pushNamed(
-              FeedScreenFromGrid.routeName,
-              queryParameters: {
-                "postId": "${postModel.getId}",
-                "title": "${postModel.getUserName}'s feed",
-              }
-          );
-        } else {
-          // TODO : Implement other user's feed screen
-        }
+        onTap();
       },
       child: Image.network(
         postModel.getFirstImage,

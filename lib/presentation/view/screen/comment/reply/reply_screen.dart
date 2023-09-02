@@ -18,7 +18,7 @@ import '../../../../util/keyboard/keyboard_util.dart';
 import '../../../../viewmodel/comment/list/comment_list_viewmodel.dart';
 import '../../../../viewmodel/comment/create/create_comment_viewmodel.dart';
 import '../../../../viewmodel/comment/update/update_comment_viewmodel.dart';
-import '../../../../viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
+import '../../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../../widget/comment/comment_widget.dart';
 import '../../../widget/common/empty/empty_widget.dart';
 import '../../../widget/common/error/error_widget.dart';
@@ -50,7 +50,7 @@ class _ReplyScreenState extends State<ReplyScreen> {
   late CreateCommentViewModel createCommentViewModel;
   late UpdateCommentViewModel updateCommentViewModel;
 
-  final myEmail = GetIt.instance<MyUserInfoViewModel>().myEmail;
+  final myEmail = GetIt.instance<CurrentUserInfoViewModel>().myEmail;
   late final CommentModel? _commentModel;
 
   /// It's used for branching the creation/update logic

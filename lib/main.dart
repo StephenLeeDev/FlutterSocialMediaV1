@@ -12,6 +12,7 @@ import 'data/networking/dio_singleton.dart';
 import 'data/networking/interceptor/token_interceptor.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'data/repository/comment/comment_repository_impl.dart';
+import 'data/repository/follow/follow_repository_impl.dart';
 import 'data/repository/post/post_repository_impl.dart';
 import 'data/repository/secure_storage/secure_storage_repository_impl.dart';
 import 'data/repository/user/user_repository_impl.dart';
@@ -22,20 +23,24 @@ import 'domain/usecase/comment/create/create_comment_usecase.dart';
 import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
 import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
+import 'domain/usecase/follow/start_follow_usecase.dart';
 import 'domain/usecase/post/create/create_post_usecase.dart';
 import 'domain/usecase/post/delete/delete_post_usecase.dart';
-import 'domain/usecase/post/list/get_my_post_list_usecase.dart';
+import 'domain/usecase/post/list/get_current_user_post_list_usecase.dart';
+import 'domain/usecase/post/list/get_post_list_by_user_email_usecase.dart';
 import 'domain/usecase/post/list/get_post_list_usecase.dart';
 import 'domain/usecase/post/like/post_like_usecase.dart';
 import 'domain/usecase/post/update/update_post_description_usecase.dart';
-import 'domain/usecase/user/get_my_user_info_usecase.dart';
-import 'domain/usecase/user/post_bookmark_usecase.dart';
-import 'domain/usecase/user/update_user_status_message_usecase.dart';
-import 'domain/usecase/user/update_user_thumbnail_usecase.dart';
+import 'domain/usecase/user/current_user/get_current_user_info_usecase.dart';
+import 'domain/usecase/user/other_user/get_user_info_by_email_usecase.dart';
+import 'domain/usecase/user/current_user/post_bookmark_usecase.dart';
+import 'domain/usecase/user/current_user/update_user_status_message_usecase.dart';
+import 'domain/usecase/user/current_user/update_user_thumbnail_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
-import 'presentation/viewmodel/post/list/post_grid_list_viewmodel.dart';
-import 'presentation/viewmodel/user/my_info/get/my_user_info_viewmodel.dart';
+import 'presentation/viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
+import 'presentation/viewmodel/post/list/other_user_post_list_viewmodel.dart';
+import 'presentation/viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 
 void main() async {
 
@@ -85,7 +90,9 @@ void main() async {
   // Repository
   final userRepository = UserRepositoryImpl(dio);
   // UseCases
-  final getMyUserInfoUseCase = GetMyUserInfoUseCase(userRepository: userRepository);
+  final getMyUserInfoUseCase = GetCurrentUserInfoUseCase(userRepository: userRepository);
+  final getUserInfoByEmailUseCase = GetUserInfoByEmailUseCase(userRepository: userRepository);
+  getIt.registerSingleton<GetUserInfoByEmailUseCase>(getUserInfoByEmailUseCase);
   final postBookmarkUseCase = PostBookmarkUseCase(userRepository: userRepository);
   getIt.registerSingleton<PostBookmarkUseCase>(postBookmarkUseCase);
   final updateUserThumbnailUseCase = UpdateUserThumbnailUseCase(userRepository: userRepository);
@@ -93,9 +100,9 @@ void main() async {
   final updateUserStatusMessageUseCase = UpdateUserStatusMessageUseCase(userRepository: userRepository);
   getIt.registerSingleton<UpdateUserStatusMessageUseCase>(updateUserStatusMessageUseCase);
   // ViewModels
-  final myUserInfoViewModel = MyUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
+  final myUserInfoViewModel = CurrentUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
   // TODO : Replace GetIt to Provider later
-  getIt.registerSingleton<MyUserInfoViewModel>(myUserInfoViewModel);
+  getIt.registerSingleton<CurrentUserInfoViewModel>(myUserInfoViewModel);
 
   /// Feed(Post List)
   // Repository
@@ -103,8 +110,10 @@ void main() async {
   // UseCases
   final getPostListUseCase = GetPostListUseCase(postRepository: postRepository);
   getIt.registerSingleton<GetPostListUseCase>(getPostListUseCase);
-  final getMyPostListUseCase = GetMyPostListUseCase(postRepository: postRepository);
-  getIt.registerSingleton<GetMyPostListUseCase>(getMyPostListUseCase);
+  final getMyPostListUseCase = GetCurrentUserPostListUseCase(postRepository: postRepository);
+  getIt.registerSingleton<GetCurrentUserPostListUseCase>(getMyPostListUseCase);
+  final getPostListByUserEmailUseCase = GetPostListByUserEmailUseCase(postRepository: postRepository);
+  getIt.registerSingleton<GetPostListByUserEmailUseCase>(getPostListByUserEmailUseCase);
   final updatePostDescriptionUseCase = UpdatePostDescriptionUseCase(postRepository: postRepository);
   getIt.registerSingleton<UpdatePostDescriptionUseCase>(updatePostDescriptionUseCase);
   final createPostUseCase = CreatePostUseCase(postRepository: postRepository);
@@ -114,9 +123,28 @@ void main() async {
   final deletePostUseCase = DeletePostUseCase(postRepository: postRepository);
   getIt.registerSingleton<DeletePostUseCase>(deletePostUseCase);
   // ViewModels
-  final myPostGridListViewModel = MyPostGridListViewModel(
+  final myPostGridListViewModel = CurrentUserPostGridListViewModel(
       getPostListUseCase: getPostListUseCase,
       getMyPostListUseCase: getMyPostListUseCase,
+  );
+  // REFACTOR : Mid priority
+  // REFACTOR : Replace the OtherUserPostGridListViewModel's scope to the UserDetailScreen
+
+  // REFACTOR : The OtherUserPostGridListViewModel should located in the UserDetailScreen, because this ViewModel can be used only under UserDetailScreen's scope
+  // REFACTOR : It's not a best practice, and it could cause side effects
+  // REFACTOR : More than anything, I don't like this
+
+  // REFACTOR : Actually, I tried just like that at the beginning, but there was a problem
+  // REFACTOR : At the beginning, I created the OtherUserPostGridListViewModel inside of the UserDetailScreen
+  // REFACTOR : And then created fragments UserDetailFragment, and FeedFragment with a PageView inside of the UserDetailScreen
+  // REFACTOR : I injected a ItemScrollController to UserDetailFragment, FeedFragment from UserDetailScreen
+  // REFACTOR : I thought the UserDetailFragment can control the FeedFragment's ItemScrollController from the injected ItemScrollController object
+  // REFACTOR : But ItemScrollController couldn't be injected with Provider, and I don't know why
+  // REFACTOR : I can't help but I had to replace the OtherUserPostGridListViewModel to main() from UserDetailScreen
+  // REFACTOR : Maybe, I can refactor it after the DirectMessage feature is implemented later
+  final otherUserPostGridListViewModel = OtherUserPostGridListViewModel(
+      getPostListUseCase: getPostListUseCase,
+      getPostListByUserEmailUseCase: getPostListByUserEmailUseCase,
   );
 
   /// Comment/Reply
@@ -132,6 +160,12 @@ void main() async {
   final updateCommentUseCase = UpdateCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<UpdateCommentUseCase>(updateCommentUseCase);
 
+  /// Follow
+  final followRepository = FollowRepositoryImpl(dio);
+  // UseCases
+  final startFollowUseCase = StartFollowUseCase(followRepository: followRepository);
+  getIt.registerSingleton<StartFollowUseCase>(startFollowUseCase);
+
   await Firebase.initializeApp();
 
   final String? fcmToken = await FirebaseMessaging.instance.getToken();
@@ -143,13 +177,17 @@ void main() async {
         ChangeNotifierProvider<AuthViewModel>(
           create: (context) => authViewModel,
         ),
-        /// My user information
-        Provider<MyUserInfoViewModel>(
+        /// Current user information
+        Provider<CurrentUserInfoViewModel>(
           create: (context) => myUserInfoViewModel,
         ),
-        /// My grid feed
-        Provider<MyPostGridListViewModel>(
+        /// Current user's grid feed
+        Provider<CurrentUserPostGridListViewModel>(
           create: (context) => myPostGridListViewModel,
+        ),
+        /// Other user's grid feed
+        Provider<OtherUserPostGridListViewModel>(
+          create: (context) => otherUserPostGridListViewModel,
         ),
       ],
       child: const App(),

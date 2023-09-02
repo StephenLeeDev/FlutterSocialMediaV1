@@ -16,6 +16,7 @@ import '../view/screen/notification/notification_screen.dart';
 import '../view/screen/post/create/create_post_screen.dart';
 import '../view/screen/post/update/update_post_description_screen.dart';
 import '../view/screen/search/search_screen.dart';
+import '../view/screen/user/user_detail_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: FeedScreen.routeURL,
@@ -60,16 +61,18 @@ final GoRouter router = GoRouter(
       path: FeedScreenFromGrid.routeURL,
       builder: (context, state) {
         /// Selected post's index from grid feed list screen
-        final selectedPostIdString = state.queryParameters['postId'];
-        final selectedPostId = selectedPostIdString == null ? -1 : int.parse(selectedPostIdString);
+        final selectedIndexString = state.queryParameters['selectedIndex'];
+        final selectedPostId = selectedIndexString == null ? -1 : int.parse(selectedIndexString);
 
         final title = state.queryParameters['title'] ?? "";
+        final isFromMyPage = state.queryParameters['isFromMyPage'] ?? "true";
 
         return FeedScreenFromGrid(
-          selectedPostId: selectedPostId,
+          isFromMyPage: isFromMyPage == "true",
+          selectedIndex: selectedPostId,
           title: title
         );
-      }
+      },
     ),
 
     /// Create post
@@ -86,7 +89,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final postString = state.queryParameters[PostModel().getSimpleName()] ?? "";
         return UpdatePostDescriptionScreen(postString: postString);
-      }
+      },
     ),
 
     /// Comment
@@ -101,13 +104,23 @@ final GoRouter router = GoRouter(
 
     /// Reply
     GoRoute(
-        name: ReplyScreen.routeName,
-        path: ReplyScreen.routeURL,
-        builder: (context, state) {
-          final postId = state.queryParameters['postId'] ?? "-1";
-          final commentString = state.queryParameters[CommentModel().getSimpleName()] ?? "";
-          return ReplyScreen(postId: postId, commentString: commentString);
-        }
+      name: ReplyScreen.routeName,
+      path: ReplyScreen.routeURL,
+      builder: (context, state) {
+        final postId = state.queryParameters['postId'] ?? "-1";
+        final commentString = state.queryParameters[CommentModel().getSimpleName()] ?? "";
+        return ReplyScreen(postId: postId, commentString: commentString);
+      },
+    ),
+
+    /// User detail
+    GoRoute(
+      name: UserDetailScreen.routeName,
+      path: UserDetailScreen.routeURL,
+      builder: (context, state) {
+        final userEmail = state.queryParameters['userEmail'] ?? "";
+        return UserDetailScreen(userEmail: userEmail);
+      },
     ),
 
   ],
