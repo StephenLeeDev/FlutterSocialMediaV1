@@ -1,3 +1,4 @@
+import '../../../../data/model/post/item/post_model.dart';
 import '../../../../domain/usecase/post/list/get_current_user_post_list_usecase.dart';
 import '../../../../data/model/post/list/post_list_state.dart' as PostListState;
 import 'post_list_viewmodel.dart';
@@ -30,4 +31,17 @@ class CurrentUserPostGridListViewModel extends PostListViewModel {
       if (currentList.length >= state.total) setHasNext(value: false);
     }
   }
+
+  /// Check if the current user's post
+  /// It's always 'true' because CurrentUserPostGridListViewModel is for the current user's feed
+  /// So setIsMineStatusAndReturn() simply sets 'true' to all items
+  @override
+  List<PostModel> setIsMineStatusAndReturn({required List<PostModel> list}) {
+    final copyList = List.of(list);
+    for (int i = 0; i < copyList.length; i++) {
+      copyList[i].isMine = true;
+    }
+    return copyList;
+  }
+
 }
