@@ -25,6 +25,7 @@ import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/current_user/bookmark/bookmark_viewmodel.dart';
 import '../../screen/comment/comment/comment_screen.dart';
 import '../../screen/post/update/update_post_description_screen.dart';
+import '../../screen/user/user_detail_screen.dart';
 
 class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.postModel}) : super(key: key);
@@ -96,8 +97,19 @@ class _PostWidgetState extends State<PostWidget> {
           Row(
             children: [
               GestureDetector(
-                // TODO : Implement moving to the user's detail screen feature
-                onTap: () {},
+                onTap: () {
+                  /// Move to UserDetailScreen when it's not the current user's post
+                  /// The UserDetailScreen is not for the current user
+                  /// The current user should use MyPageScreen
+                  if (!widget.postModel.isMine) {
+                    context.pushNamed(
+                      UserDetailScreen.routeName,
+                      queryParameters: {
+                        'userEmail': widget.postModel.getUserEmail,
+                      },
+                    );
+                  }
+                },
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

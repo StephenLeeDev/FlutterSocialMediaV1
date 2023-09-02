@@ -9,6 +9,7 @@ abstract class PostRepository {
   Future<PostItemState> createPost({required CreatePostModel createPostModel});
   Future<PostListState> getPostList({required int page, required int limit});
   Future<PostListState> getCurrentUserPostList({required int page, required int limit});
+  Future<PostListState> getPostListByUserEmail({required int page, required int limit, required String email});
   Future<PostItemState> updatePostDescription({required UpdatePostDescriptionModel updatePostDescriptionModel});
   Future<SingleIntegerState> postLike({required int postId});
   Future<CommonState> deletePost({required int postId});

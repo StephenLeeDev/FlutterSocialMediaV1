@@ -16,6 +16,7 @@ import '../view/screen/notification/notification_screen.dart';
 import '../view/screen/post/create/create_post_screen.dart';
 import '../view/screen/post/update/update_post_description_screen.dart';
 import '../view/screen/search/search_screen.dart';
+import '../view/screen/user/user_detail_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: FeedScreen.routeURL,
@@ -107,6 +108,16 @@ final GoRouter router = GoRouter(
           final postId = state.queryParameters['postId'] ?? "-1";
           final commentString = state.queryParameters[CommentModel().getSimpleName()] ?? "";
           return ReplyScreen(postId: postId, commentString: commentString);
+        }
+    ),
+
+    /// User detail
+    GoRoute(
+        name: UserDetailScreen.routeName,
+        path: UserDetailScreen.routeURL,
+        builder: (context, state) {
+          final userEmail = state.queryParameters['userEmail'] ?? "";
+          return UserDetailScreen(userEmail: userEmail);
         }
     ),
 

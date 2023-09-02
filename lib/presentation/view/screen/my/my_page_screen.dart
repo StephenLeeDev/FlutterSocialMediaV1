@@ -404,6 +404,16 @@ class _MyPageScreenState extends State<MyPageScreen> {
               child: PostGridWidget(
                 postModel: list[index],
                 isFromMyPage: true,
+                onTap: () {
+                  /// Move to the selected item's index in the FeedScreen
+                  context.pushNamed(
+                      FeedScreenFromGrid.routeName,
+                      queryParameters: {
+                        "postId": "${list[index].getId}",
+                        "title": "${list[index].getUserName}'s feed",
+                      }
+                  );
+                },
               ),
             );
           },

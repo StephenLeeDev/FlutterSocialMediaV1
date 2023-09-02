@@ -4,15 +4,16 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../../../data/model/post/item/post_model.dart';
 import '../../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
+import '../../../../viewmodel/post/list/other_user_post_list_viewmodel.dart';
 import '../../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../../widget/feed/post_widget.dart';
 
 class FeedFragment extends StatefulWidget {
-  const FeedFragment({Key? key, this.isFromMyPage = false, required this.selectedPostId, this.title = ""}) : super(key: key);
+  const FeedFragment({Key? key, this.isFromMyPage = false, this.selectedPostId, this.title = ""}) : super(key: key);
 
   final bool isFromMyPage;
-  final int selectedPostId; /// Selected post's index from grid feed list screen
+  final int? selectedPostId; /// Selected post's index from grid feed list screen
   final String title; /// Feed's title for appbar
 
   @override
@@ -38,7 +39,8 @@ class _FeedFragmentState extends State<FeedFragment> {
 
     /// Jump to the selected post
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.selectedPostId >= 0) {
+      final selected = widget.selectedPostId ?? -1;
+      if (selected >= 0) {
         _scrollController.jumpTo(index: selectedIndex);
       }
     });
@@ -59,10 +61,10 @@ class _FeedFragmentState extends State<FeedFragment> {
   void initListViewModel() {
     if (widget.isFromMyPage) {
       _postListViewModel = context.read<CurrentUserPostGridListViewModel>();
+      _postListViewModel.setMyEmail(value: _myUserInfoViewModel.myEmail);
     } else {
-      _postListViewModel = context.read<PostListViewModel>();
+      _postListViewModel = context.read<OtherUserPostGridListViewModel>();
     }
-    _postListViewModel.setMyEmail(value: _myUserInfoViewModel.myEmail);
   }
 
   void fetchData() async {
@@ -111,20 +113,19 @@ class _FeedFragmentState extends State<FeedFragment> {
       child: Scaffold(
         backgroundColor: Colors.white,
         /// Appbar
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          title: Text(
-            widget.title,
-            style: const TextStyle(
-              fontSize: 24,
+        appBar: widget.isFromMyPage ?
+          AppBar(
+            elevation: 0,
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black87,
+            title: Text(
+              widget.title,
+              style: const TextStyle(
+                fontSize: 24,
+              ),
             ),
-          ),
-        ),
-          body: SafeArea(
-              child: buildSuccessStateUI(),
-          ),
+          ) : null,
+        body: buildSuccessStateUI(),
       ),
     );
   }

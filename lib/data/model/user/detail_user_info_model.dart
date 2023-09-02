@@ -2,9 +2,15 @@ import 'simple_user_info.dart';
 
 class DetailUserInfoModel extends SimpleUserInfo {
   String? statusMessage;
+  String get getStatusMessage => statusMessage ?? "";
   bool? isFollowing;
+  bool get getIsFollowing => isFollowing ?? false;
+  int? totalPostCount;
+  int get getTotalPostCount => totalPostCount ?? 0;
   int? followerCount;
+  int get getFollowerCount => followerCount ?? 0;
   int? followingCount;
+  int get getFollowingCount => followingCount ?? 0;
 
   DetailUserInfoModel({
     String? email,
@@ -12,6 +18,7 @@ class DetailUserInfoModel extends SimpleUserInfo {
     String? thumbnail,
     this.statusMessage,
     this.isFollowing,
+    this.totalPostCount,
     this.followerCount,
     this.followingCount,
   }) : super(email: email, username: username, thumbnail: thumbnail);
@@ -23,6 +30,7 @@ class DetailUserInfoModel extends SimpleUserInfo {
       thumbnail: json['thumbnail'],
       statusMessage: json['statusMessage'],
       isFollowing: json['isFollowing'],
+      totalPostCount: json['totalPostCount'],
       followerCount: json['followerCount'],
       followingCount: json['followingCount'],
     );
@@ -33,6 +41,7 @@ class DetailUserInfoModel extends SimpleUserInfo {
     final Map<String, dynamic> data = super.toJson();
     data['statusMessage'] = statusMessage;
     data['isFollowing'] = isFollowing;
+    data['totalPostCount'] = totalPostCount;
     data['followerCount'] = followerCount;
     data['followingCount'] = followingCount;
     return data;
@@ -40,6 +49,6 @@ class DetailUserInfoModel extends SimpleUserInfo {
 
   @override
   String toString() {
-    return 'DetailUserInfoModel(email: $email, username: $username, thumbnail: $thumbnail, statusMessage: $statusMessage, isFollowing: $isFollowing, followerCount: $followerCount, followingCount: $followingCount)';
+    return 'DetailUserInfoModel(email: $email, username: $username, thumbnail: $thumbnail, statusMessage: $statusMessage, isFollowing: $isFollowing, totalPostCount: $totalPostCount, followerCount: $followerCount, followingCount: $followingCount)';
   }
 }
