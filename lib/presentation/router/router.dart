@@ -66,14 +66,13 @@ final GoRouter router = GoRouter(
 
         final title = state.queryParameters['title'] ?? "";
         final isFromMyPage = state.queryParameters['isFromMyPage'] ?? "true";
-        debugPrint("isFromMyPage : $isFromMyPage");
 
         return FeedScreenFromGrid(
           isFromMyPage: isFromMyPage == "true",
           selectedIndex: selectedPostId,
           title: title
         );
-      }
+      },
     ),
 
     /// Create post
@@ -90,7 +89,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final postString = state.queryParameters[PostModel().getSimpleName()] ?? "";
         return UpdatePostDescriptionScreen(postString: postString);
-      }
+      },
     ),
 
     /// Comment
@@ -105,23 +104,23 @@ final GoRouter router = GoRouter(
 
     /// Reply
     GoRoute(
-        name: ReplyScreen.routeName,
-        path: ReplyScreen.routeURL,
-        builder: (context, state) {
-          final postId = state.queryParameters['postId'] ?? "-1";
-          final commentString = state.queryParameters[CommentModel().getSimpleName()] ?? "";
-          return ReplyScreen(postId: postId, commentString: commentString);
-        }
+      name: ReplyScreen.routeName,
+      path: ReplyScreen.routeURL,
+      builder: (context, state) {
+        final postId = state.queryParameters['postId'] ?? "-1";
+        final commentString = state.queryParameters[CommentModel().getSimpleName()] ?? "";
+        return ReplyScreen(postId: postId, commentString: commentString);
+      },
     ),
 
     /// User detail
     GoRoute(
-        name: UserDetailScreen.routeName,
-        path: UserDetailScreen.routeURL,
-        builder: (context, state) {
-          final userEmail = state.queryParameters['userEmail'] ?? "";
-          return UserDetailScreen(userEmail: userEmail);
-        }
+      name: UserDetailScreen.routeName,
+      path: UserDetailScreen.routeURL,
+      builder: (context, state) {
+        final userEmail = state.queryParameters['userEmail'] ?? "";
+        return UserDetailScreen(userEmail: userEmail);
+      },
     ),
 
   ],

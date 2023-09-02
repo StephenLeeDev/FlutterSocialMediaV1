@@ -55,6 +55,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   /// On create a new post tab
+  /// Move to the post creation screen
   void _onCreatePostTap() async {
     String? createdPostString = await context.pushNamed(CreatePostScreen.routeName);
 

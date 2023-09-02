@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/post/list/other_user_post_list_viewmodel.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +39,7 @@ import 'domain/usecase/user/current_user/update_user_thumbnail_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
 import 'presentation/viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
+import 'presentation/viewmodel/post/list/other_user_post_list_viewmodel.dart';
 import 'presentation/viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 
 void main() async {
@@ -130,7 +130,7 @@ void main() async {
   // REFACTOR : Mid priority
   // REFACTOR : Replace the OtherUserPostGridListViewModel's scope to the UserDetailScreen
 
-  // REFACTOR : The OtherUserPostGridListViewModel should located in the UserDetailScreen, because this ViewModel used only under UserDetailScreen's scope
+  // REFACTOR : The OtherUserPostGridListViewModel should located in the UserDetailScreen, because this ViewModel can be used only under UserDetailScreen's scope
   // REFACTOR : It's not a best practice, and it could cause side effects
   // REFACTOR : More than anything, I don't like this
 
