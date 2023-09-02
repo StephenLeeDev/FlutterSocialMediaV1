@@ -100,7 +100,7 @@ class PostRepositoryImpl extends PostRepository {
     }
   }
 
-  /// Get current user's post list
+  /// Get other user's post list by email address
   @override
   Future<PostListState.PostListState> getPostListByUserEmail({required int page, required int limit, required String email}) async {
 
