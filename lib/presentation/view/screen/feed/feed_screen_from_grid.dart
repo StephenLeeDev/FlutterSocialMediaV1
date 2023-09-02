@@ -17,10 +17,14 @@ class FeedScreenFromGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FeedFragment(
-        isFromMyPage: true,
-        selectedPostId: selectedPostId,
-        title: title,
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        bottom: false,
+        child: FeedFragment(
+          isFromMyPage: true,
+          selectedPostId: selectedPostId,
+          title: title,
+        ),
       ),
     );
   }

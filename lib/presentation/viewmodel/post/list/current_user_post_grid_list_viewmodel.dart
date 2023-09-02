@@ -10,14 +10,6 @@ class CurrentUserPostGridListViewModel extends PostListViewModel {
     required getMyPostListUseCase,
   }) : _getMyPostListUseCase = getMyPostListUseCase;
 
-  /// Total posts count
-  int _totalPostCount = 0;
-  int get totalPostCount => _totalPostCount;
-
-  setTotalPostCount({required int totalPostCount}) {
-    _totalPostCount = totalPostCount;
-  }
-
   /// Fetch additional paginated my posts
   @override
   Future<void> getPostList() async {
@@ -34,7 +26,6 @@ class CurrentUserPostGridListViewModel extends PostListViewModel {
       increasePage();
 
       addAdditionalList(additionalList: state.list);
-      setTotalPostCount(totalPostCount: state.total);
 
       if (currentList.length >= state.total) setHasNext(value: false);
     }

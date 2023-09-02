@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +25,7 @@ import '../../../viewmodel/user/current_user/update/update_status_message_viewmo
 import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
+import '../feed/feed_screen_from_grid.dart';
 
 class MyPageScreen extends StatefulWidget {
   const MyPageScreen({Key? key}) : super(key: key);
@@ -181,7 +183,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     ValueListenableBuilder<String>(
                       valueListenable: _myUserInfoViewModel.myUsernameNotifier,
                       builder: (context, name, _) {
-                        /// Status message exists
                         return Text(
                           name,
                           style: const TextStyle(
@@ -220,7 +221,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       child: ValueListenableBuilder<String>(
                         valueListenable: _myUserInfoViewModel.thumbnailNotifier,
                         builder: (context, thumbnail, _) {
-                          /// Status message exists
                           return Image.network(
                             thumbnail,
                             fit: BoxFit.cover,
@@ -386,6 +386,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
   }
 
   /// Success UI (default)
+  // TODO : Low priority
+  // TODO : Replace this function as a widget later
   Widget buildSuccessStateUI() {
     return ValueListenableBuilder<List<PostModel>>(
       valueListenable: _postListViewModel.currentListNotifier,
