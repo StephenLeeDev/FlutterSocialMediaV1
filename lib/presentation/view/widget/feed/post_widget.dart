@@ -28,8 +28,9 @@ import '../../screen/post/update/update_post_description_screen.dart';
 import '../../screen/user/user_detail_screen.dart';
 
 class PostWidget extends StatefulWidget {
-  const PostWidget({Key? key, required this.postModel}) : super(key: key);
+  const PostWidget({Key? key, required this.postModel, this.isAbleToMoveUserDetailScreen = true}) : super(key: key);
   final PostModel postModel;
+  final bool isAbleToMoveUserDetailScreen;
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -98,10 +99,18 @@ class _PostWidgetState extends State<PostWidget> {
             children: [
               GestureDetector(
                 onTap: () {
-                  /// Move to UserDetailScreen when it's not the current user's post
+                  /// Description for the '!widget.postModel.isMine' flag
+                  /// Move to the UserDetailScreen when it's not the current user's post
                   /// The UserDetailScreen is not for the current user
                   /// The current user should use MyPageScreen
-                  if (!widget.postModel.isMine) {
+                  ///
+                  /// Description for the 'widget.isAbleToMoveUserDetailScreen' flag
+                  /// Shouldn't move to the UserDetailScreen when the current location is the FeedFragment
+                  /// Because if it is possible, then it causes the infinite loop screens issue
+                  ///
+                  /// Overall, moving screens is allowed only when meet both conditions for the above flags
+                  final isAbleToMove = !widget.postModel.isMine && widget.isAbleToMoveUserDetailScreen;
+                  if (isAbleToMove) {
                     context.pushNamed(
                       UserDetailScreen.routeName,
                       queryParameters: {

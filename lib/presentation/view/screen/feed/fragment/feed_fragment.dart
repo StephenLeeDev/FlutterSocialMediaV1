@@ -141,6 +141,7 @@ class _FeedFragmentState extends State<FeedFragment> {
               itemBuilder: (context, index) {
                 return PostWidget(
                   postModel: list[index],
+                  isAbleToMoveUserDetailScreen: false,
                 );
               }, separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
             );
