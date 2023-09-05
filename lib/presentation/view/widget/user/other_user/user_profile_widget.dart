@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../data/model/common/common_state.dart' as CommonState;
+import '../../../../../domain/usecase/follow/start_follow_usecase.dart';
+import '../../../../../domain/usecase/follow/unfollow_usecase.dart';
+import '../../../../values/text/text.dart';
+import '../../../../viewmodel/follow/follow_viewmodel.dart';
 import '../../../../viewmodel/user/other_user/get_user_info/other_user_info_viewmodel.dart';
+import '../../common/button/custom_elevated_button.dart';
 
 class UserProfileWidget extends StatefulWidget {
   const UserProfileWidget({Key? key}) : super(key: key);
@@ -13,6 +20,7 @@ class UserProfileWidget extends StatefulWidget {
 class _UserProfileWidgetState extends State<UserProfileWidget> {
 
   late final OtherUserInfoViewModel _otherUserInfoViewModel;
+  late final FollowViewModel _followViewModel;
 
   @override
   void initState() {
@@ -24,11 +32,20 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
   /// Initialize ViewModels
   void _initViewModels() {
     _initUserInfoViewModel();
+    _initFollowViewModel();
   }
 
   /// Initialize user information ViewModel
   void _initUserInfoViewModel() {
     _otherUserInfoViewModel = context.read<OtherUserInfoViewModel>();
+  }
+
+  /// Initialize follow ViewModel
+  void _initFollowViewModel() {
+    _followViewModel = FollowViewModel(
+      startFollowUseCase: GetIt.instance<StartFollowUseCase>(),
+      unfollowUseCase: GetIt.instance<UnfollowUseCase>(),
+    );
   }
 
   @override
@@ -184,6 +201,53 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
               }
             },
           ),
+
+          /// Follow/Unfollow button
+          ValueListenableBuilder<bool>(
+              valueListenable: _otherUserInfoViewModel.isFollowingNotifier,
+              builder: (context, isFollowing, _) {
+                return CustomElevatedButton(
+                  text: isFollowing ? following : follow,
+                  isEnabled: isFollowing,
+                  /// [Unfollow]
+                  /// Current state is [Following] the user
+                  /// Execute unfollowing API
+                  onPositiveListener: () async {
+                    debugPrint("onPositiveListener has ran");
+                    /// Avoid multiple calling
+                    debugPrint("unfollowingState : ${_followViewModel.unfollowingState}");
+                    if (_followViewModel.unfollowingState is CommonState.Loading) return;
+                    /// Execute unfollowing API
+                    final unFollowState = await _followViewModel.unfollowTheUser(userEmail: _otherUserInfoViewModel.email);
+                    /// Unfollow successfully
+                    if (unFollowState is CommonState.Success) {
+                      _otherUserInfoViewModel.setIsFollowing(isFollowing: false);
+                    }
+                    else {
+                      // TODO : Show error message with dialog
+                    }
+                  },
+                  /// [Follow]
+                  /// Current state is [Unfollowing] the user
+                  /// Execute start following API
+                  onNegativeListener: () async {
+                    debugPrint("onNegativeListener has ran");
+                    /// Avoid multiple calling
+                    if (_followViewModel.followingState is CommonState.Loading) return;
+                    /// Execute unfollowing API
+                    final followState = await _followViewModel.startFollowTheUser(userEmail: _otherUserInfoViewModel.email);
+                    /// Unfollow successfully
+                    if (followState is CommonState.Success) {
+                      _otherUserInfoViewModel.setIsFollowing(isFollowing: true);
+                    }
+                    else {
+                      // TODO : Show error message with dialog
+                    }
+                  },
+                );
+              }
+          ),
+
         ],
       ),
     );

@@ -38,6 +38,8 @@ class OtherUserInfoViewModel {
       _setTotalFollowerCount(totalFollowerCount: state.getUserInfo.getFollowerCount);
       /// The number of user's followings
       _setTotalFollowingCount(totalFollowingCount: state.getUserInfo.getFollowingCount);
+      /// Is following the user, or not
+      setIsFollowing(isFollowing: state.getUserInfo.getIsFollowing);
     }
   }
 
@@ -69,7 +71,7 @@ class OtherUserInfoViewModel {
 
   /// Email
   String _email = "";
-  String get mail => _email;
+  String get email => _email;
 
   _setEmail({required String mail}) {
     _email = mail;

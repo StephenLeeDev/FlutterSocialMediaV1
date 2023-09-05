@@ -34,4 +34,27 @@ class FollowRepositoryImpl extends FollowRepository {
     }
   }
 
+  /// Unfollow the user by their email
+  @override
+  Future<CommonState.CommonState> unFollow({required String userEmail}) async {
+
+    final api = 'follow/following/cancel?email=$userEmail';
+    final url = '$baseUrl$api';
+
+    try {
+      final Response response = await _dio.delete(url);
+
+      if (response.statusCode == 200) {
+        final state = CommonState.Success();
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return CommonState.Fail();
+    } catch (e) {
+      return CommonState.Fail();
+    }
+  }
+
 }
