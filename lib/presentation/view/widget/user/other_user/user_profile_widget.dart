@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../../domain/usecase/follow/start_follow_usecase.dart';
 import '../../../../../domain/usecase/follow/unfollow_usecase.dart';
+import '../../../../values/color/color.dart';
 import '../../../../values/text/text.dart';
 import '../../../../viewmodel/follow/follow_viewmodel.dart';
 import '../../../../viewmodel/user/other_user/get_user_info/other_user_info_viewmodel.dart';
@@ -206,8 +207,9 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
           ValueListenableBuilder<bool>(
               valueListenable: _otherUserInfoViewModel.isFollowingNotifier,
               builder: (context, isFollowing, _) {
-                return CustomElevatedButton(
+                return CustomAnimatedButton(
                   text: isFollowing ? following : follow,
+                  color: lightBlue00A7FF,
                   isEnabled: isFollowing,
                   /// [Unfollow]
                   /// Current state is [Following] the user

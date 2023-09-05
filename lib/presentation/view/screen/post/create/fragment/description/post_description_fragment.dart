@@ -111,7 +111,7 @@ class _PostDescriptionFragmentState extends State<PostDescriptionFragment> {
           child: ValueListenableBuilder<bool>(
             valueListenable: _createPostViewModel.isValidNotifier,
             builder: (context, isValid, _) {
-              return CustomElevatedButton(
+              return CustomAnimatedButton(
                 text: create,
                 isEnabled: isValid,
                 onPositiveListener: () async {

@@ -129,7 +129,7 @@ class _UpdatePostDescriptionScreenState extends State<UpdatePostDescriptionScree
             child: ValueListenableBuilder<bool>(
               valueListenable: _updatePostDescriptionViewModel.isValidNotifier,
               builder: (context, isValid, _) {
-                return CustomElevatedButton(
+                return CustomAnimatedButton(
                   text: update,
                   isEnabled: isValid,
                   onPositiveListener: () async {

@@ -257,7 +257,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
       valueListenable: _createPostViewModel.imageListNotifier,
       builder: (context, list, _) {
         final isEnabled = list.isNotEmpty;
-        return CustomElevatedButton(
+        return CustomAnimatedButton(
           text: next,
           isEnabled: isEnabled,
           onPositiveListener: () {
