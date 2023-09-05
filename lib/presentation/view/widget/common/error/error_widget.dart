@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../data/constant/error.dart';
+import '../../../../values/text/error.dart';
 
 class CustomErrorWidget extends StatelessWidget {
   const CustomErrorWidget({Key? key, required this.listener})

@@ -61,3 +61,8 @@ const updateThumbnail = "Update thumbnail";
 const thumbnailUpdated = "Thumbnail updated successfully";
 const updateStatusMessage = "Update status message";
 const statusMessageUpdated = "Message updated successfully";
+
+/// Follow
+const follow = "Follow";
+const unfollow = "Unfollow";
+const following = "Following";

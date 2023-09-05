@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../../data/constant/text.dart';
+import '../../../../../../values/text/text.dart';
 import '../../../../../../util/dialog/dialog_util.dart';
 import '../../../../../../util/integer/integer_util.dart';
 import '../../../../../../util/logger/image_file_logger_util.dart';
@@ -260,7 +260,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
         return CustomElevatedButton(
           text: next,
           isEnabled: isEnabled,
-          onPressed: () {
+          onPositiveListener: () {
             /// Move to the next page
             _pageController.nextPage(
               duration: const Duration(milliseconds: 300),
