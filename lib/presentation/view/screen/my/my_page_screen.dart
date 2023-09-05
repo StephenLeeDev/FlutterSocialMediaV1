@@ -450,7 +450,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     showTwoButtonDialog(
       context: context,
       title: updateThumbnail,
-      content: selectPictureSource,
+      message: selectPictureSource,
       firstButtonText: gallery,
 
       /// Pick an image from gallery

@@ -96,7 +96,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     showTwoButtonDialog(
       context: context,
       title: areYouSure,
-      content: quitPostWritingConfirm,
+      message: quitPostWritingConfirm,
 
       /// Keep writing
       firstButtonText: keepWriting,

@@ -201,7 +201,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     showTwoButtonDialog(
         context: context,
         title: deleteComment,
-        content: deleteCommentConfirm,
+        message: deleteCommentConfirm,
         /// Delete button
         firstButtonText: delete,
         firstButtonListener: () {

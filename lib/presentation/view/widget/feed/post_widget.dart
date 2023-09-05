@@ -352,7 +352,7 @@ class _PostWidgetState extends State<PostWidget> {
     showTwoButtonDialog(
       context: context,
       title: deletePost,
-      content: deletePostConfirm,
+      message: deletePostConfirm,
       /// Delete button
       firstButtonText: delete,
       firstButtonListener: () {

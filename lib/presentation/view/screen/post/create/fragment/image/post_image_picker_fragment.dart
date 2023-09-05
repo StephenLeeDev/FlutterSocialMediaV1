@@ -190,7 +190,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
     showTwoButtonDialog(
       context: context,
       title: selectOption,
-      content: selectPictureSource,
+      message: selectPictureSource,
       firstButtonText: gallery,
 
       /// Pick an image from gallery
@@ -277,7 +277,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
     showTwoButtonDialog(
       context: context,
       title: warning,
-      content: canAddUpToFourPictures,
+      message: canAddUpToFourPictures,
 
       firstButtonText: ok,
       firstButtonListener: () {},
@@ -289,7 +289,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
     showTwoButtonDialog(
       context: context,
       title: warning,
-      content: "$canAddUpToFourPictures\n\nAdded only $count picture${IntegerUtil().getPluralSuffix(count: count)} from your select",
+      message: "$canAddUpToFourPictures\n\nAdded only $count picture${IntegerUtil().getPluralSuffix(count: count)} from your select",
 
       firstButtonText: ok,
       firstButtonListener: () {},
