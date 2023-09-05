@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../../domain/usecase/follow/start_follow_usecase.dart';
 import '../../../../../domain/usecase/follow/unfollow_usecase.dart';
+import '../../../../util/dialog/dialog_util.dart';
 import '../../../../values/color/color.dart';
 import '../../../../values/text/text.dart';
 import '../../../../viewmodel/follow/follow_viewmodel.dart';
@@ -226,7 +227,7 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                       _otherUserInfoViewModel.setIsFollowing(isFollowing: false);
                     }
                     else {
-                      // TODO : Show error message with dialog
+                      showErrorMessageDialog();
                     }
                   },
                   /// [Follow]
@@ -243,7 +244,7 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                       _otherUserInfoViewModel.setIsFollowing(isFollowing: true);
                     }
                     else {
-                      // TODO : Show error message with dialog
+                      showErrorMessageDialog();
                     }
                   },
                 );
@@ -254,4 +255,14 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
       ),
     );
   }
+
+  void showErrorMessageDialog() {
+    showTwoButtonDialog(
+      context: context,
+      title: whoops,
+      message: somethingWentWrongPleaseTryAgain,
+      firstButtonText: ok,
+    );
+  }
+
 }
