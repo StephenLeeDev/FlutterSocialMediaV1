@@ -24,6 +24,7 @@ import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
 import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
 import 'domain/usecase/follow/start_follow_usecase.dart';
+import 'domain/usecase/follow/unfollow_usecase.dart';
 import 'domain/usecase/post/create/create_post_usecase.dart';
 import 'domain/usecase/post/delete/delete_post_usecase.dart';
 import 'domain/usecase/post/list/get_current_user_post_list_usecase.dart';
@@ -165,6 +166,8 @@ void main() async {
   // UseCases
   final startFollowUseCase = StartFollowUseCase(followRepository: followRepository);
   getIt.registerSingleton<StartFollowUseCase>(startFollowUseCase);
+  final unfollowUseCase = UnfollowUseCase(followRepository: followRepository);
+  getIt.registerSingleton<UnfollowUseCase>(unfollowUseCase);
 
   await Firebase.initializeApp();
 
