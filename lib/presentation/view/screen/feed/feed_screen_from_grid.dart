@@ -20,6 +20,7 @@ class FeedScreenFromGrid extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
+        bottom: false,
         child: FeedFragment(
           isFromMyPage: isFromMyPage,
           selectedIndex: selectedIndex,
