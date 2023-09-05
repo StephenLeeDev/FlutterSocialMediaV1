@@ -4,14 +4,16 @@ class CustomElevatedButton extends StatelessWidget {
   const CustomElevatedButton({
     Key? key,
     required this.text,
-    required this.onPressed,
+    required this.onPositiveListener,
+    this.onNegativeListener,
     this.isEnabled = true,
     this.minimumSize = 50.0,
     this.borderRadius = 10,
   }) : super(key: key);
 
   final String text;
-  final Function onPressed;
+  final Function onPositiveListener;
+  final Function? onNegativeListener;
   final bool isEnabled;
   final double minimumSize;
   final double borderRadius;
@@ -27,7 +29,11 @@ class CustomElevatedButton extends StatelessWidget {
       ),
       child: ElevatedButton(
         onPressed: () {
-          isEnabled ? onPressed() : null;
+          if (isEnabled) {
+            onPositiveListener();
+          } else {
+            onNegativeListener != null ? onNegativeListener!() : null;
+          }
         },
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 50.0),
