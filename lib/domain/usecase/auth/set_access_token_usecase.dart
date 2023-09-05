@@ -7,7 +7,7 @@ class SetAccessTokenUseCase {
       : _secureStorageRepository = secureStorageRepository;
 
   Future<void> execute({required String accessToken}) async {
-    await _secureStorageRepository.setAccessTokenFromSecureStorage(accessToken: accessToken);
+    await _secureStorageRepository.setAccessTokenFromSecureStorage(accessToken: accessToken.trim().replaceAll("Bearer ", ""));
   }
 
 }
