@@ -520,7 +520,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     }
     /// Fail
     else if (state is SingleStringState.Fail) {
-      if (context.mounted) showSnackBar(context: context, text: wentSomethingWrong);
+      if (context.mounted) showSnackBar(context: context, text: somethingWentWrongPleaseTryAgain);
     }
   }
 
@@ -535,7 +535,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     }
     /// Failed to update
     else if (state is CommonState.Fail) {
-      if (context.mounted) showSnackBar(context: context, text: wentSomethingWrong);
+      if (context.mounted) showSnackBar(context: context, text: somethingWentWrongPleaseTryAgain);
     }
   }
 

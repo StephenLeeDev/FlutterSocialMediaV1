@@ -13,13 +13,16 @@ const update = "Update";
 const ok = "Ok";
 const yes = "Yes";
 const no = "No";
+const whoops = "Whoops!";
 const warning = "Warning";
 const confirm = "Confirm";
 const areYouSure = "Are you sure?";
-const wentSomethingWrong = "Something went wrong.\nPlease try again.";
- const submit = "Submit";
+const somethingWentWrongPleaseTryAgain = "Something went wrong\nPlease try again";
+const submit = "Submit";
 const newMessage = "New message";
 const nothingChanged = "Nothing's changed";
+const somethingWentWrong = "Something went wrong";
+const pleaseTryAgain = "Please try again";
 
 /// Post
 const post = "Post";
