@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../data/model/common/common_state.dart' as CommonState;
+import '../../../../../data/model/common/single_integer_state.dart';
 import '../../../../../domain/usecase/follow/start_follow_usecase.dart';
 import '../../../../../domain/usecase/follow/unfollow_usecase.dart';
 import '../../../../util/dialog/dialog_util.dart';
@@ -219,11 +219,12 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                     debugPrint("onPositiveListener has ran");
                     /// Avoid multiple calling
                     debugPrint("unfollowingState : ${_followViewModel.unfollowingState}");
-                    if (_followViewModel.unfollowingState is CommonState.Loading) return;
+                    if (_followViewModel.unfollowingState is Loading) return;
                     /// Execute unfollowing API
                     final unFollowState = await _followViewModel.unfollowTheUser(userEmail: _otherUserInfoViewModel.email);
                     /// Unfollow successfully
-                    if (unFollowState is CommonState.Success) {
+                    if (unFollowState is Success) {
+                      _otherUserInfoViewModel.setTotalFollowerCount(totalFollowerCount: unFollowState.getValue);
                       _otherUserInfoViewModel.setIsFollowing(isFollowing: false);
                     }
                     else {
@@ -236,11 +237,12 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                   onNegativeListener: () async {
                     debugPrint("onNegativeListener has ran");
                     /// Avoid multiple calling
-                    if (_followViewModel.followingState is CommonState.Loading) return;
+                    if (_followViewModel.followingState is Loading) return;
                     /// Execute unfollowing API
                     final followState = await _followViewModel.startFollowTheUser(userEmail: _otherUserInfoViewModel.email);
                     /// Unfollow successfully
-                    if (followState is CommonState.Success) {
+                    if (followState is Success) {
+                      _otherUserInfoViewModel.setTotalFollowerCount(totalFollowerCount: followState.getValue);
                       _otherUserInfoViewModel.setIsFollowing(isFollowing: true);
                     }
                     else {

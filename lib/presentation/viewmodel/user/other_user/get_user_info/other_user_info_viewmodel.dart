@@ -35,7 +35,7 @@ class OtherUserInfoViewModel {
       /// Total post count
       _setTotalPostCount(totalPostCount: state.getUserInfo.getTotalPostCount);
       /// The number of user's followers
-      _setTotalFollowerCount(totalFollowerCount: state.getUserInfo.getFollowerCount);
+      setTotalFollowerCount(totalFollowerCount: state.getUserInfo.getFollowerCount);
       /// The number of user's followings
       _setTotalFollowingCount(totalFollowingCount: state.getUserInfo.getFollowingCount);
       /// Is following the user, or not
@@ -91,7 +91,7 @@ class OtherUserInfoViewModel {
   ValueNotifier<int> get totalFollowerCountNotifier => _totalFollowerCount;
   int get totalFollowerCount => totalFollowerCountNotifier.value;
 
-  _setTotalFollowerCount({required int totalFollowerCount}) {
+  setTotalFollowerCount({required int totalFollowerCount}) {
     _totalFollowerCount.value = totalFollowerCount;
   }
 

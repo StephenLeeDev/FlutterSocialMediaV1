@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../data/model/common/common_state.dart';
+import '../../../data/model/common/single_integer_state.dart';
 import '../../../domain/usecase/follow/start_follow_usecase.dart';
 import '../../../domain/usecase/follow/unfollow_usecase.dart';
 
@@ -24,16 +24,16 @@ class FollowViewModel {
     _unfollowUseCase = unfollowUseCase;
 
   /// It represents following state
-  final ValueNotifier<CommonState> _followingState = ValueNotifier<CommonState>(Ready());
-  ValueNotifier<CommonState> get followingStateNotifier => _followingState;
-  CommonState get followingState => followingStateNotifier.value;
+  final ValueNotifier<SingleIntegerState> _followingState = ValueNotifier<SingleIntegerState>(Ready());
+  ValueNotifier<SingleIntegerState> get followingStateNotifier => _followingState;
+  SingleIntegerState get followingState => followingStateNotifier.value;
 
-  _setFollowingState({required CommonState state}) {
+  _setFollowingState({required SingleIntegerState state}) {
     _followingState.value = state;
   }
 
   /// Execute the start following the user API
-  Future<CommonState> startFollowTheUser({required String userEmail}) async {
+  Future<SingleIntegerState> startFollowTheUser({required String userEmail}) async {
     _setFollowingState(state: Loading());
 
     final state = await _startFollowUseCase.execute(userEmail: userEmail);
@@ -42,16 +42,16 @@ class FollowViewModel {
   }
 
   /// It represents unfollowing state
-  final ValueNotifier<CommonState> _unfollowingState = ValueNotifier<CommonState>(Ready());
-  ValueNotifier<CommonState> get unfollowingStateNotifier => _unfollowingState;
-  CommonState get unfollowingState => unfollowingStateNotifier.value;
+  final ValueNotifier<SingleIntegerState> _unfollowingState = ValueNotifier<SingleIntegerState>(Ready());
+  ValueNotifier<SingleIntegerState> get unfollowingStateNotifier => _unfollowingState;
+  SingleIntegerState get unfollowingState => unfollowingStateNotifier.value;
 
-  _setUnfollowingState({required CommonState state}) {
+  _setUnfollowingState({required SingleIntegerState state}) {
     _unfollowingState.value = state;
   }
 
   /// Execute the unfollowing the user API
-  Future<CommonState> unfollowTheUser({required String userEmail}) async {
+  Future<SingleIntegerState> unfollowTheUser({required String userEmail}) async {
     _setUnfollowingState(state: Loading());
 
     final state = await _unfollowUseCase.execute(userEmail: userEmail);

@@ -1,4 +1,4 @@
-import '../../../data/model/common/common_state.dart';
+import '../../../data/model/common/single_integer_state.dart';
 import '../../repository/follow/follow_repository.dart';
 
 class UnfollowUseCase {
@@ -7,7 +7,7 @@ class UnfollowUseCase {
   UnfollowUseCase({required FollowRepository followRepository})
       : _followRepository = followRepository;
 
-  Future<CommonState> execute({required String userEmail}) async {
+  Future<SingleIntegerState> execute({required String userEmail}) async {
     return await _followRepository.unFollow(userEmail: userEmail);
   }
 

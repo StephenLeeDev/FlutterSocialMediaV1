@@ -1,6 +1,6 @@
-import '../../../data/model/common/common_state.dart';
+import '../../../data/model/common/single_integer_state.dart';
 
 abstract class FollowRepository {
-  Future<CommonState> startFollow({required String userEmail});
-  Future<CommonState> unFollow({required String userEmail});
+  Future<SingleIntegerState> startFollow({required String userEmail});
+  Future<SingleIntegerState> unFollow({required String userEmail});
 }
