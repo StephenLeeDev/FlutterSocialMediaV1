@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_social_media_v1/data/model/auth/auth_request.dart';
 
 import '../../../domain/repository/auth/auth_repository.dart';
 import '../../constant/constant.dart';
+import '../../model/auth/auth_request.dart';
 import '../../model/auth/auth_response.dart';
 import '../../model/auth/auth_state.dart';
 
@@ -18,9 +18,6 @@ class AuthRepositoryImpl extends AuthRepository {
     const api = 'auth/signIn';
     const url = '$baseUrl$api';
 
-    debugPrint("url : $url");
-    debugPrint("authRequest : ${authRequest.toString()}");
-
     try {
       final response = await _dio.post(
         url,
@@ -30,15 +27,14 @@ class AuthRepositoryImpl extends AuthRepository {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final authResponse = AuthResponse.fromJson(response.data);
-        final AuthState authState = Success(authResponse.accessToken);
+        final AuthState state = Success(authResponse.accessToken);
 
-        debugPrint("authResponse : ${authResponse.toString()}");
+        debugPrint("state : ${state.toString()}");
 
-        return authState;
+        return state;
       }
       return Fail();
     } catch (e) {
-      debugPrint("signIn Fail : ${e.toString()}");
       return Fail();
     }
   }
