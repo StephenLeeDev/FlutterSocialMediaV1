@@ -5,8 +5,8 @@ import '../../../domain/repository/user/user_repository.dart';
 import '../../constant/constant.dart';
 import '../../model/common/common_state.dart' as CommonState;
 import '../../model/common/single_string_state.dart' as SingleStringState;
-import '../../model/user/detail_user_info_model.dart';
-import '../../model/user/detail_user_info_state.dart' as DetailUserInfoState;
+import '../../model/user/detail/detail_user_info_model.dart';
+import '../../model/user/detail/detail_user_info_state.dart' as DetailUserInfoState;
 import '../../model/user/my_user_info.dart';
 import '../../model/user/my_user_info_state.dart' as MyUserInfoState;
 

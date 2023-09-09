@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../data/model/common/single_integer_state.dart';
-import '../../../domain/usecase/follow/start_follow_usecase.dart';
-import '../../../domain/usecase/follow/unfollow_usecase.dart';
+import '../../../../data/model/common/single_integer_state.dart';
+import '../../../../domain/usecase/follow/start_follow_usecase.dart';
+import '../../../../domain/usecase/follow/unfollow_usecase.dart';
 
 /// Follow/Unfollow ViewModel
 /// It handling start follow feature with calling the follow API[StartFollowUseCase]

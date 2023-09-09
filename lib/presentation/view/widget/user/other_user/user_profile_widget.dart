@@ -8,7 +8,7 @@ import '../../../../../domain/usecase/follow/unfollow_usecase.dart';
 import '../../../../util/dialog/dialog_util.dart';
 import '../../../../values/color/color.dart';
 import '../../../../values/text/text.dart';
-import '../../../../viewmodel/follow/follow_viewmodel.dart';
+import '../../../../viewmodel/follow/create_delete/follow_viewmodel.dart';
 import '../../../../viewmodel/user/other_user/get_user_info/other_user_info_viewmodel.dart';
 import '../../common/button/custom_elevated_button.dart';
 

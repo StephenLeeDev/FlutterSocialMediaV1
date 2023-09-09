@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../data/model/post/list/post_list_state.dart' as PostListState;
-import '../../../../../data/model/user/detail_user_info_state.dart' as DetailUserInfoState;
+import '../../../../../data/model/user/detail/detail_user_info_state.dart' as DetailUserInfoState;
 import '../../../../viewmodel/post/list/other_user_post_list_viewmodel.dart';
 import '../../../../viewmodel/user/other_user/get_user_info/other_user_info_viewmodel.dart';
 import '../../../widget/common/error/error_widget.dart';

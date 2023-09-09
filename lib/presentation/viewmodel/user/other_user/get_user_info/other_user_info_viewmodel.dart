@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../../../data/model/user/detail_user_info_state.dart';
+import '../../../../../data/model/user/detail/detail_user_info_state.dart';
 import '../../../../../domain/usecase/user/other_user/get_user_info_by_email_usecase.dart';
 
 // TODO : Low priority
