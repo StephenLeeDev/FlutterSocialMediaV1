@@ -229,6 +229,7 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
               }
             },
           ),
+          const SizedBox(height: 8),
 
           /// Follow/Unfollow button
           ValueListenableBuilder<bool>(
