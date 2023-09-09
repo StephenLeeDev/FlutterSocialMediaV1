@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../values/color/color.dart';
+
 class CustomAnimatedButton extends StatelessWidget {
   const CustomAnimatedButton({
     Key? key,
@@ -9,7 +11,7 @@ class CustomAnimatedButton extends StatelessWidget {
     this.isEnabled = true,
     this.minimumSize = 50.0,
     this.borderRadius = 10,
-    this.color = Colors.black,
+    this.color = lightBlue00A7FF,
     this.fontSize = 20,
     this.fontWeight = FontWeight.w600,
     this.padding = const EdgeInsets.all(0),

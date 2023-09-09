@@ -35,6 +35,7 @@ import 'domain/usecase/post/list/get_post_list_usecase.dart';
 import 'domain/usecase/post/like/post_like_usecase.dart';
 import 'domain/usecase/post/update/update_post_description_usecase.dart';
 import 'domain/usecase/user/current_user/get_current_user_info_usecase.dart';
+import 'domain/usecase/user/list/get_user_list_by_keyword_usecase.dart';
 import 'domain/usecase/user/other_user/get_user_info_by_email_usecase.dart';
 import 'domain/usecase/user/current_user/post_bookmark_usecase.dart';
 import 'domain/usecase/user/current_user/update_user_status_message_usecase.dart';
@@ -102,9 +103,10 @@ void main() async {
   getIt.registerSingleton<UpdateUserThumbnailUseCase>(updateUserThumbnailUseCase);
   final updateUserStatusMessageUseCase = UpdateUserStatusMessageUseCase(userRepository: userRepository);
   getIt.registerSingleton<UpdateUserStatusMessageUseCase>(updateUserStatusMessageUseCase);
+  final getUserListByKeywordUseCase = GetUserListByKeywordUseCase(userRepository: userRepository);
+  getIt.registerSingleton<GetUserListByKeywordUseCase>(getUserListByKeywordUseCase);
   // ViewModels
   final myUserInfoViewModel = CurrentUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
-  // TODO : Replace GetIt to Provider later
   getIt.registerSingleton<CurrentUserInfoViewModel>(myUserInfoViewModel);
 
   /// Feed(Post List)

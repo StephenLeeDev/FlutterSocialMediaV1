@@ -23,6 +23,8 @@ const newMessage = "New message";
 const nothingChanged = "Nothing's changed";
 const somethingWentWrong = "Something went wrong";
 const pleaseTryAgain = "Please try again";
+const search = "Search";
+const noSearchResultFound = "No search results found";
 
 /// Post
 const post = "Post";
@@ -64,6 +66,7 @@ const updateThumbnail = "Update thumbnail";
 const thumbnailUpdated = "Thumbnail updated successfully";
 const updateStatusMessage = "Update status message";
 const statusMessageUpdated = "Message updated successfully";
+const searchUser = "Search User";
 
 /// Follow
 const follow = "Follow";
