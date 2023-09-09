@@ -23,6 +23,8 @@ import 'domain/usecase/comment/create/create_comment_usecase.dart';
 import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
 import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
+import 'domain/usecase/follow/get_follower_list_usecase.dart';
+import 'domain/usecase/follow/get_following_list_usecase.dart';
 import 'domain/usecase/follow/start_follow_usecase.dart';
 import 'domain/usecase/follow/unfollow_usecase.dart';
 import 'domain/usecase/post/create/create_post_usecase.dart';
@@ -168,6 +170,10 @@ void main() async {
   getIt.registerSingleton<StartFollowUseCase>(startFollowUseCase);
   final unfollowUseCase = UnfollowUseCase(followRepository: followRepository);
   getIt.registerSingleton<UnfollowUseCase>(unfollowUseCase);
+  final getFollowerListUseCase = GetFollowerListUseCase(followRepository: followRepository);
+  getIt.registerSingleton<GetFollowerListUseCase>(getFollowerListUseCase);
+  final getFollowingListUseCase = GetFollowingListUseCase(followRepository: followRepository);
+  getIt.registerSingleton<GetFollowingListUseCase>(getFollowingListUseCase);
 
   await Firebase.initializeApp();
 

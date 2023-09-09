@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../data/model/common/single_integer_state.dart';
@@ -10,6 +11,7 @@ import '../../../../values/color/color.dart';
 import '../../../../values/text/text.dart';
 import '../../../../viewmodel/follow/create_delete/follow_viewmodel.dart';
 import '../../../../viewmodel/user/other_user/get_user_info/other_user_info_viewmodel.dart';
+import '../../../screen/follow/follow_list_screen.dart';
 import '../../common/button/custom_elevated_button.dart';
 
 class UserProfileWidget extends StatefulWidget {
@@ -114,57 +116,81 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
 
                     /// Followers
                     Expanded(
-                      child: Column(
-                        children: [
-                          /// Total follower count
-                          ValueListenableBuilder<int>(
-                            valueListenable: _otherUserInfoViewModel.totalFollowerCountNotifier,
-                            builder: (context, total, _) {
-                              return Text(
-                                "$total",
-                                style: const TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              );
+                      child: GestureDetector(
+                        onTap: () {
+                          /// Move to the follower list screen
+                          context.pushNamed(
+                            FollowListScreen.routeName,
+                            queryParameters: {
+                              "userEmail": _otherUserInfoViewModel.email,
+                              "isFollowerMode": "true",
                             },
-                          ),
-                          const Text(
-                            "Followers",
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w600,
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            /// Total follower count
+                            ValueListenableBuilder<int>(
+                              valueListenable: _otherUserInfoViewModel.totalFollowerCountNotifier,
+                              builder: (context, total, _) {
+                                return Text(
+                                  "$total",
+                                  style: const TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              },
                             ),
-                          ),
-                        ],
+                            const Text(
+                              "Followers",
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
                     /// Following
                     Expanded(
-                      child: Column(
-                        children: [
-                          /// Total following count
-                          ValueListenableBuilder<int>(
-                            valueListenable: _otherUserInfoViewModel.totalFollowingCountNotifier,
-                            builder: (context, total, _) {
-                              return Text(
-                                "$total",
-                                style: const TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              );
+                      child: GestureDetector(
+                        onTap: () {
+                          /// Move to the following list screen
+                          context.pushNamed(
+                            FollowListScreen.routeName,
+                            queryParameters: {
+                              "userEmail": _otherUserInfoViewModel.email,
+                              "isFollowerMode": "false",
                             },
-                          ),
-                          const Text(
-                            "Following",
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w600,
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            /// Total following count
+                            ValueListenableBuilder<int>(
+                              valueListenable: _otherUserInfoViewModel.totalFollowingCountNotifier,
+                              builder: (context, total, _) {
+                                return Text(
+                                  "$total",
+                                  style: const TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              },
                             ),
-                          ),
-                        ],
+                            const Text(
+                              "Following",
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

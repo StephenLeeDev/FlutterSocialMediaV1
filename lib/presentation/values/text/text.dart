@@ -69,3 +69,5 @@ const statusMessageUpdated = "Message updated successfully";
 const follow = "Follow";
 const unfollow = "Unfollow";
 const following = "Following";
+const followers = "Followers";
+const followings = "Followings";

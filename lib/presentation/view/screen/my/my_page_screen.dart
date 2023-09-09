@@ -26,6 +26,7 @@ import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.d
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
 import '../feed/feed_screen_from_grid.dart';
+import '../follow/follow_list_screen.dart';
 
 class MyPageScreen extends StatefulWidget {
   const MyPageScreen({Key? key}) : super(key: key);
@@ -263,57 +264,81 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
                         /// Followers
                         Expanded(
-                          child: Column(
-                            children: [
-                              /// Total follower count
-                              ValueListenableBuilder<int>(
-                                valueListenable: _myUserInfoViewModel.totalFollowerCountNotifier,
-                                builder: (context, total, _) {
-                                  return Text(
-                                    "$total",
-                                    style: const TextStyle(
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  );
+                          child: GestureDetector(
+                            onTap: () {
+                              /// Move to the follower list screen
+                              context.pushNamed(
+                                FollowListScreen.routeName,
+                                queryParameters: {
+                                  "userEmail": _myUserInfoViewModel.myEmail,
+                                  "isFollowerMode": "true",
                                 },
-                              ),
-                              const Text(
-                                "Followers",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                /// Total follower count
+                                ValueListenableBuilder<int>(
+                                  valueListenable: _myUserInfoViewModel.totalFollowerCountNotifier,
+                                  builder: (context, total, _) {
+                                    return Text(
+                                      "$total",
+                                      style: const TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ),
-                            ],
+                                const Text(
+                                  "Followers",
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
 
                         /// Following
                         Expanded(
-                          child: Column(
-                            children: [
-                              /// Total following count
-                              ValueListenableBuilder<int>(
-                                valueListenable: _myUserInfoViewModel.totalFollowingCountNotifier,
-                                builder: (context, total, _) {
-                                  return Text(
-                                    "$total",
-                                    style: const TextStyle(
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  );
+                          child: GestureDetector(
+                            onTap: () {
+                              /// Move to the following list screen
+                              context.pushNamed(
+                                FollowListScreen.routeName,
+                                queryParameters: {
+                                  "userEmail": _myUserInfoViewModel.myEmail,
+                                  "isFollowerMode": "false",
                                 },
-                              ),
-                              const Text(
-                                "Following",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                /// Total following count
+                                ValueListenableBuilder<int>(
+                                  valueListenable: _myUserInfoViewModel.totalFollowingCountNotifier,
+                                  builder: (context, total, _) {
+                                    return Text(
+                                      "$total",
+                                      style: const TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ),
-                            ],
+                                const Text(
+                                  "Following",
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
