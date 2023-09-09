@@ -9,6 +9,8 @@ import '../../model/user/detail/detail_user_info_model.dart';
 import '../../model/user/detail/detail_user_info_state.dart' as DetailUserInfoState;
 import '../../model/user/my_user_info.dart';
 import '../../model/user/my_user_info_state.dart' as MyUserInfoState;
+import '../../model/user/simple/list/simple_user_list_model.dart';
+import '../../model/user/simple/list/simple_user_list_state.dart' as SimpleUserListState;
 
 class UserRepositoryImpl extends UserRepository {
 
@@ -144,6 +146,31 @@ class UserRepositoryImpl extends UserRepository {
       return CommonState.Fail();
     } catch (e) {
       return CommonState.Fail();
+    }
+  }
+
+  /// Get user list by keyword
+  /// It returns users whose username contains the keyword
+  @override
+  Future<SimpleUserListState.SimpleUserListState> getUserListByKeyword({required String keyword, required int page, required int limit}) async {
+
+    const api = 'user/search/users';
+    final url = '$baseUrl$api?keyword=$keyword&page=$page&limit=$limit';
+
+    try {
+      final Response response = await _dio.get(url);
+
+      if (response.statusCode == 200) {
+        final simpleUserListModel = SimpleUserListModel.fromJson(response.data);
+        final state = SimpleUserListState.Success(total: simpleUserListModel.total, list: simpleUserListModel.userList);
+
+        debugPrint("state : ${state.toString()}");
+
+        return state;
+      }
+      return SimpleUserListState.Fail();
+    } catch (e) {
+      return SimpleUserListState.Fail();
     }
   }
 

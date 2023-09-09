@@ -12,7 +12,7 @@ import '../../../../values/text/text.dart';
 import '../../../../viewmodel/follow/create_delete/follow_viewmodel.dart';
 import '../../../../viewmodel/user/other_user/get_user_info/other_user_info_viewmodel.dart';
 import '../../../screen/follow/follow_list_screen.dart';
-import '../../common/button/custom_elevated_button.dart';
+import '../../common/button/custom_animated_button.dart';
 
 class UserProfileWidget extends StatefulWidget {
   const UserProfileWidget({Key? key}) : super(key: key);
