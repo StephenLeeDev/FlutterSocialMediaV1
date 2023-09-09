@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../../data/constant/text.dart';
+import '../../../../../../values/text/text.dart';
 import '../../../../../../util/dialog/dialog_util.dart';
 import '../../../../../../util/integer/integer_util.dart';
 import '../../../../../../util/logger/image_file_logger_util.dart';
@@ -190,7 +190,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
     showTwoButtonDialog(
       context: context,
       title: selectOption,
-      content: selectPictureSource,
+      message: selectPictureSource,
       firstButtonText: gallery,
 
       /// Pick an image from gallery
@@ -257,10 +257,10 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
       valueListenable: _createPostViewModel.imageListNotifier,
       builder: (context, list, _) {
         final isEnabled = list.isNotEmpty;
-        return CustomElevatedButton(
+        return CustomAnimatedButton(
           text: next,
           isEnabled: isEnabled,
-          onPressed: () {
+          onPositiveListener: () {
             /// Move to the next page
             _pageController.nextPage(
               duration: const Duration(milliseconds: 300),
@@ -277,7 +277,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
     showTwoButtonDialog(
       context: context,
       title: warning,
-      content: canAddUpToFourPictures,
+      message: canAddUpToFourPictures,
 
       firstButtonText: ok,
       firstButtonListener: () {},
@@ -289,7 +289,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
     showTwoButtonDialog(
       context: context,
       title: warning,
-      content: "$canAddUpToFourPictures\n\nAdded only $count picture${IntegerUtil().getPluralSuffix(count: count)} from your select",
+      message: "$canAddUpToFourPictures\n\nAdded only $count picture${IntegerUtil().getPluralSuffix(count: count)} from your select",
 
       firstButtonText: ok,
       firstButtonListener: () {},

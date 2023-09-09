@@ -15,4 +15,14 @@ class Success extends SingleIntegerState {
   Success(this._value);
 
   int get getValue => _value;
+
+  factory Success.fromJson(Map<String, dynamic> json) {
+    return Success(json['value']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'value': _value,
+    };
+  }
 }

@@ -1,7 +1,6 @@
-import 'package:flutter_social_media_v1/data/model/auth/auth_request.dart';
-import 'package:flutter_social_media_v1/domain/repository/auth/auth_repository.dart';
-
+import '../../../data/model/auth/auth_request.dart';
 import '../../../data/model/auth/auth_state.dart';
+import '../../repository/auth/auth_repository.dart';
 
 class PostSignInUseCase {
   final AuthRepository _authRepository;

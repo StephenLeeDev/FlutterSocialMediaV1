@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 void showTwoButtonDialog({
   required BuildContext context,
   required String title,
-  String? content,
+  String? message,
   /// First button
   required String firstButtonText,
-  required Function() firstButtonListener,
+  Function()? firstButtonListener,
   /// Second button
   String? secondButtonText,
   Function()? secondButtonListener,
@@ -16,34 +16,24 @@ void showTwoButtonDialog({
     builder: (BuildContext buildContext) {
       return AlertDialog(
         title: Text(title),
-        content: (content != null && content != "") ? Text(content) : null,
+        content: (message != null && message != "") ? Text(message) : null,
         actions: [
           /// Second button
           if (secondButtonText != null)
-            ElevatedButton(
+            TextButton(
+              child: Text(secondButtonText),
               onPressed: () {
-                Navigator.pop(buildContext);
+                Navigator.of(context).pop();
                 if (secondButtonListener != null) secondButtonListener();
               },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-                elevation: MaterialStateProperty.all<double>(0),
-              ),
-              child: Text(secondButtonText),
             ),
           /// First button
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(buildContext);
-              firstButtonListener();
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-              elevation: MaterialStateProperty.all<double>(0),
-            ),
+          TextButton(
             child: Text(firstButtonText),
+            onPressed: () {
+              Navigator.of(context).pop();
+              if (firstButtonListener != null) firstButtonListener();
+            },
           ),
         ],
       );

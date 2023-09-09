@@ -1,4 +1,4 @@
-import '../../user/simple_user_info.dart';
+import '../../user/simple/item/simple_user_info_model.dart';
 
 class CommentModel {
   int? id;
@@ -9,7 +9,7 @@ class CommentModel {
   int? parentCommentId;
   String? parentCommentAuthor;
   int? postId;
-  SimpleUserInfo? user;
+  SimpleUserInfoModel? user;
   String get getUserName => user?.username ?? "Unknown";
   String get getUserEmail => user?.email ?? "Unknown";
   DateTime? createdAt;
@@ -40,7 +40,7 @@ class CommentModel {
       parentCommentId: json['parentCommentId'],
       parentCommentAuthor: json['parentCommentAuthor'],
       postId: json['postId'],
-      user: SimpleUserInfo.fromJson(json['user']),
+      user: SimpleUserInfoModel.fromJson(json['user']),
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       childrenCount: json['childrenCount'],
@@ -78,7 +78,7 @@ class CommentModel {
     int? parentCommentId,
     String? parentCommentAuthor,
     int? postId,
-    SimpleUserInfo? user,
+    SimpleUserInfoModel? user,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? childrenCount,

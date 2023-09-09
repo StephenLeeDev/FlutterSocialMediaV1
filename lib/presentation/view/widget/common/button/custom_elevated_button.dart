@@ -1,46 +1,65 @@
 import 'package:flutter/material.dart';
 
-class CustomElevatedButton extends StatelessWidget {
-  const CustomElevatedButton({
+class CustomAnimatedButton extends StatelessWidget {
+  const CustomAnimatedButton({
     Key? key,
     required this.text,
-    required this.onPressed,
+    required this.onPositiveListener,
+    this.onNegativeListener,
     this.isEnabled = true,
     this.minimumSize = 50.0,
     this.borderRadius = 10,
+    this.color = Colors.black,
+    this.fontSize = 20,
+    this.fontWeight = FontWeight.w600,
+    this.padding = const EdgeInsets.all(0),
   }) : super(key: key);
 
   final String text;
-  final Function onPressed;
+  final Function onPositiveListener;
+  final Function? onNegativeListener;
   final bool isEnabled;
   final double minimumSize;
   final double borderRadius;
+  final Color color;
+  final double fontSize;
+  final FontWeight fontWeight;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: isEnabled ? Colors.black : Colors.grey.shade300,
-      ),
-      child: ElevatedButton(
-        onPressed: () {
-          isEnabled ? onPressed() : null;
-        },
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 50.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
+    return Padding(
+      padding: padding,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: isEnabled ? color : Colors.grey.shade300,
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isEnabled ? Colors.white : Colors.grey,
+        child: GestureDetector(
+          onTap: () {
+            if (isEnabled) {
+              onPositiveListener();
+            } else {
+              onNegativeListener != null ? onNegativeListener!() : null;
+            }
+          },
+          child: Container(
+            width: double.infinity,
+            height: 50.0,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: fontWeight,
+                color: isEnabled ? Colors.white : Colors.grey,
+              ),
+            ),
           ),
         ),
       ),

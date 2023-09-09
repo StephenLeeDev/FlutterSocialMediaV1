@@ -74,16 +74,16 @@ class LocationPermissionHandler {
               'Please enable location access in settings to use this feature.'),
           actions: <Widget>[
             TextButton(
-              child: const Text('Open Settings'),
+              child: const Text('Cancel'),
               onPressed: () {
-                // Open app settings.
-                Geolocator.openAppSettings();
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Cancel'),
+              child: const Text('Open Settings'),
               onPressed: () {
+                /// Open app settings
+                Geolocator.openAppSettings();
                 Navigator.of(context).pop();
               },
             ),

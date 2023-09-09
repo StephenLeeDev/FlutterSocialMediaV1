@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../data/constant/text.dart';
+import '../../../../values/text/text.dart';
 import '../../../../../domain/usecase/post/create/create_post_usecase.dart';
 import '../../../../util/dialog/dialog_util.dart';
 import '../../../../viewmodel/post/create/create_post_viewmodel.dart';
@@ -96,7 +96,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     showTwoButtonDialog(
       context: context,
       title: areYouSure,
-      content: quitPostWritingConfirm,
+      message: quitPostWritingConfirm,
 
       /// Keep writing
       firstButtonText: keepWriting,

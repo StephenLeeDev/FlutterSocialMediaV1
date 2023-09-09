@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../../../data/model/user/detail_user_info_state.dart';
+import '../../../../../data/model/user/detail/detail_user_info_state.dart';
 import '../../../../../domain/usecase/user/other_user/get_user_info_by_email_usecase.dart';
 
 // TODO : Low priority
@@ -35,9 +35,11 @@ class OtherUserInfoViewModel {
       /// Total post count
       _setTotalPostCount(totalPostCount: state.getUserInfo.getTotalPostCount);
       /// The number of user's followers
-      _setTotalFollowerCount(totalFollowerCount: state.getUserInfo.getFollowerCount);
+      setTotalFollowerCount(totalFollowerCount: state.getUserInfo.getFollowerCount);
       /// The number of user's followings
       _setTotalFollowingCount(totalFollowingCount: state.getUserInfo.getFollowingCount);
+      /// Is following the user, or not
+      setIsFollowing(isFollowing: state.getUserInfo.getIsFollowing);
     }
   }
 
@@ -69,7 +71,7 @@ class OtherUserInfoViewModel {
 
   /// Email
   String _email = "";
-  String get mail => _email;
+  String get email => _email;
 
   _setEmail({required String mail}) {
     _email = mail;
@@ -89,7 +91,7 @@ class OtherUserInfoViewModel {
   ValueNotifier<int> get totalFollowerCountNotifier => _totalFollowerCount;
   int get totalFollowerCount => totalFollowerCountNotifier.value;
 
-  _setTotalFollowerCount({required int totalFollowerCount}) {
+  setTotalFollowerCount({required int totalFollowerCount}) {
     _totalFollowerCount.value = totalFollowerCount;
   }
 
