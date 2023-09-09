@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_media_v1/data/model/auth/auth_request.dart';
-import 'package:flutter_social_media_v1/data/model/auth/auth_state.dart';
-import 'package:flutter_social_media_v1/presentation/view/screen/feed/feed_screen.dart';
-import 'package:flutter_social_media_v1/presentation/viewmodel/auth/auth_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../data/model/auth/auth_request.dart';
+import '../../../../data/model/auth/auth_state.dart';
 import '../../../../domain/usecase/auth/social_sign_in/google_sign_in_api.dart';
 import '../../../util/snackbar/snackbar_util.dart';
+import '../../../viewmodel/auth/auth_viewmodel.dart';
+import '../feed/feed_screen.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({Key? key}) : super(key: key);

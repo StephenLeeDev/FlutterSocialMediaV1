@@ -134,7 +134,7 @@ class _FeedFragmentState extends State<FeedFragment> {
       child: ValueListenableBuilder<List<PostModel>>(
           valueListenable: _postListViewModel.currentListNotifier,
           builder: (context, list, _) {
-            return ScrollablePositionedList.separated(
+            return ScrollablePositionedList.builder(
               itemScrollController: _scrollController,
               itemCount: list.length,
               itemPositionsListener: _itemPositionsListener,
@@ -143,7 +143,7 @@ class _FeedFragmentState extends State<FeedFragment> {
                   postModel: list[index],
                   isAbleToMoveUserDetailScreen: false,
                 );
-              }, separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
+              },
             );
           }
       ),

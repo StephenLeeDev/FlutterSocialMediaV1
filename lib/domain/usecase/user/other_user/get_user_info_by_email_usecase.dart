@@ -1,4 +1,4 @@
-import '../../../../data/model/user/detail_user_info_state.dart';
+import '../../../../data/model/user/detail/detail_user_info_state.dart';
 import '../../../repository/user/user_repository.dart';
 
 class GetUserInfoByEmailUseCase {

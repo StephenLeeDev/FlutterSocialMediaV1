@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../../data/constant/text.dart';
+import '../../../../../../values/text/text.dart';
 import '../../../../../../../data/model/post/item/post_item_state.dart';
 import '../../../../../../viewmodel/post/create/create_post_viewmodel.dart';
 import '../../../../../widget/common/button/custom_elevated_button.dart';
@@ -111,10 +111,10 @@ class _PostDescriptionFragmentState extends State<PostDescriptionFragment> {
           child: ValueListenableBuilder<bool>(
             valueListenable: _createPostViewModel.isValidNotifier,
             builder: (context, isValid, _) {
-              return CustomElevatedButton(
+              return CustomAnimatedButton(
                 text: create,
                 isEnabled: isValid,
-                onPressed: () async {
+                onPositiveListener: () async {
                   /// Create a new post
                   final state = await _createPostViewModel.createPost();
                   if (state is Success) {

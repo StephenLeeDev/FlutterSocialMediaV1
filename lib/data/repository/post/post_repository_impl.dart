@@ -52,7 +52,7 @@ class PostRepositoryImpl extends PostRepository {
     }
   }
 
-  /// Get all user's post list
+  /// Get current user's post list
   @override
   Future<PostListState.PostListState> getPostList({required int page, required int limit}) async {
 

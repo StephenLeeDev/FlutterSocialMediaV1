@@ -10,10 +10,10 @@ class MyUserInfo {
   String get getStatusMessage => statusMessage ?? "";
   int? totalPostCount;
   int get getTotalPostCount => totalPostCount ?? 0;
-  int? followers;
-  int get getFollowers => followers ?? 0;
-  int? followings;
-  int get getFollowings => followings ?? 0;
+  int? followerCount;
+  int get getFollowers => followerCount ?? 0;
+  int? followingCount;
+  int get getFollowings => followingCount ?? 0;
 
   MyUserInfo({
     this.email,
@@ -22,8 +22,8 @@ class MyUserInfo {
     this.bookMarks,
     this.statusMessage,
     this.totalPostCount,
-    this.followers,
-    this.followings,
+    this.followerCount,
+    this.followingCount,
   });
 
   factory MyUserInfo.fromJson(Map<String, dynamic> json) {
@@ -36,8 +36,8 @@ class MyUserInfo {
       bookMarks: bookMarks,
       statusMessage: json['statusMessage'],
       totalPostCount: json['totalPostCount'],
-      followers: json['followers'],
-      followings: json['followings'],
+      followerCount: json['followerCount'],
+      followingCount: json['followingCount'],
     );
   }
 
@@ -49,8 +49,8 @@ class MyUserInfo {
       'bookMarks': bookMarks,
       'statusMessage': statusMessage,
       'totalPostCount': totalPostCount,
-      'followers': followers,
-      'followings': followings,
+      'followerCount': followerCount,
+      'followingCount': followingCount,
     };
   }
 
@@ -61,8 +61,8 @@ class MyUserInfo {
     List<int>? bookMarks,
     String? statusMessage,
     int? totalPostCount,
-    int? followers,
-    int? followings,
+    int? followerCount,
+    int? followingCount,
   }) {
     return MyUserInfo(
       email: email ?? this.email,
@@ -71,13 +71,13 @@ class MyUserInfo {
       bookMarks: bookMarks ?? this.bookMarks,
       statusMessage: statusMessage ?? this.statusMessage,
       totalPostCount: totalPostCount ?? this.totalPostCount,
-      followers: followers ?? this.followers,
-      followings: followings ?? this.followings,
+      followerCount: followerCount ?? this.followerCount,
+      followingCount: followingCount ?? this.followingCount,
     );
   }
 
   @override
   String toString() {
-    return 'MyUserInfo(email: $email, username: $username, thumbnail: $thumbnail, bookMarks: $bookMarks, statusMessage: $statusMessage, totalPostCount: $totalPostCount, followers: $followers, followings: $followings)';
+    return 'MyUserInfo(email: $email, username: $username, thumbnail: $thumbnail, bookMarks: $bookMarks, statusMessage: $statusMessage, totalPostCount: $totalPostCount, followerCount: $followerCount, followingCount: $followingCount)';
   }
 }

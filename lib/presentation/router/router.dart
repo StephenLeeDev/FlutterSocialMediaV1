@@ -10,6 +10,7 @@ import '../view/screen/comment/comment/comment_screen.dart';
 import '../view/screen/comment/reply/reply_screen.dart';
 import '../view/screen/feed/feed_screen.dart';
 import '../view/screen/feed/feed_screen_from_grid.dart';
+import '../view/screen/follow/follow_list_screen.dart';
 import '../view/screen/main_navigation/main_navigation_screen.dart';
 import '../view/screen/my/my_page_screen.dart';
 import '../view/screen/notification/notification_screen.dart';
@@ -120,6 +121,23 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final userEmail = state.queryParameters['userEmail'] ?? "";
         return UserDetailScreen(userEmail: userEmail);
+      },
+    ),
+
+    /// Follow list
+    GoRoute(
+      name: FollowListScreen.routeName,
+      path: FollowListScreen.routeURL,
+      builder: (context, state) {
+
+        /// The user's email address to fetch
+        final userEmail = state.queryParameters['userEmail'] ?? "";
+
+        /// When [isFollower] is true, it works as a Follower list screen
+        /// When [isFollower] is false, it works as a Following list screen
+        final bool isFollower = state.queryParameters['isFollowerMode'] == "true";
+
+        return FollowListScreen(userEmail: userEmail, isFollowerMode: isFollower);
       },
     ),
 

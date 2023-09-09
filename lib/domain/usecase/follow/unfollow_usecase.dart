@@ -1,14 +1,14 @@
 import '../../../data/model/common/single_integer_state.dart';
 import '../../repository/follow/follow_repository.dart';
 
-class StartFollowUseCase {
+class UnfollowUseCase {
   final FollowRepository _followRepository;
 
-  StartFollowUseCase({required FollowRepository followRepository})
+  UnfollowUseCase({required FollowRepository followRepository})
       : _followRepository = followRepository;
 
   Future<SingleIntegerState> execute({required String userEmail}) async {
-    return await _followRepository.startFollow(userEmail: userEmail);
+    return await _followRepository.unFollow(userEmail: userEmail);
   }
 
 }

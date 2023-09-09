@@ -1,6 +1,6 @@
-import 'simple_user_info.dart';
+import '../simple/item/simple_user_info_model.dart';
 
-class DetailUserInfoModel extends SimpleUserInfo {
+class DetailUserInfoModel extends SimpleUserInfoModel {
   String? statusMessage;
   String get getStatusMessage => statusMessage ?? "";
   bool? isFollowing;

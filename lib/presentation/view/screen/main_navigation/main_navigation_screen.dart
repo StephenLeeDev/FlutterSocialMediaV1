@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../data/constant/text.dart';
+import '../../../values/text/text.dart';
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';

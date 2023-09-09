@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../data/constant/text.dart';
+import '../../../values/text/text.dart';
 import '../../../../data/model/comment/item/comment_model.dart';
 import '../../../../data/model/common/common_state.dart';
 import '../../../../domain/usecase/comment/delete/delete_comment_usecase.dart';
@@ -201,7 +201,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     showTwoButtonDialog(
         context: context,
         title: deleteComment,
-        content: deleteCommentConfirm,
+        message: deleteCommentConfirm,
         /// Delete button
         firstButtonText: delete,
         firstButtonListener: () {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../data/constant/error.dart';
+import '../../../../values/text/text.dart';
 
 class CustomErrorWidget extends StatelessWidget {
   const CustomErrorWidget({Key? key, required this.listener})
@@ -16,7 +16,7 @@ class CustomErrorWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            wentSomethingWrong,
+            somethingWentWrongPleaseTryAgain,
             style: TextStyle(
               fontSize: 15.0,
               fontWeight: FontWeight.w400,

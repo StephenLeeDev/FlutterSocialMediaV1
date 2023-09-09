@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_social_media_v1/data/model/post/item/post_item_state.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../data/constant/text.dart';
+import '../../../../../data/model/post/item/post_item_state.dart';
+import '../../../../values/text/text.dart';
 import '../../../../../data/model/post/item/post_model.dart';
 import '../../../../../domain/usecase/post/update/update_post_description_usecase.dart';
 import '../../../../viewmodel/post/update/update_post_description_viewmodel.dart';
@@ -129,10 +129,10 @@ class _UpdatePostDescriptionScreenState extends State<UpdatePostDescriptionScree
             child: ValueListenableBuilder<bool>(
               valueListenable: _updatePostDescriptionViewModel.isValidNotifier,
               builder: (context, isValid, _) {
-                return CustomElevatedButton(
+                return CustomAnimatedButton(
                   text: update,
                   isEnabled: isValid,
-                  onPressed: () async {
+                  onPositiveListener: () async {
                     /// Update the post's description
                     final state = await _updatePostDescriptionViewModel.updatePost();
 

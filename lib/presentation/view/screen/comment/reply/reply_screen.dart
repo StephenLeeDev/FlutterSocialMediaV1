@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../data/constant/text.dart';
+import '../../../../values/text/text.dart';
 import '../../../../../data/model/comment/item/comment_item_state.dart' as CommentItemState;
 import '../../../../../data/model/comment/list/comment_list_state.dart' as CommentListState;
 import '../../../../../data/model/comment/item/comment_model.dart';

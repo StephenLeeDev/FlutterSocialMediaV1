@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../data/constant/text.dart';
+import '../../../values/text/text.dart';
 import '../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../data/model/common/single_string_state.dart' as SingleStringState;
 import '../../../../data/model/post/item/post_model.dart';
@@ -26,6 +26,7 @@ import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.d
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
 import '../feed/feed_screen_from_grid.dart';
+import '../follow/follow_list_screen.dart';
 
 class MyPageScreen extends StatefulWidget {
   const MyPageScreen({Key? key}) : super(key: key);
@@ -263,57 +264,81 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
                         /// Followers
                         Expanded(
-                          child: Column(
-                            children: [
-                              /// Total follower count
-                              ValueListenableBuilder<int>(
-                                valueListenable: _myUserInfoViewModel.totalFollowerCountNotifier,
-                                builder: (context, total, _) {
-                                  return Text(
-                                    "$total",
-                                    style: const TextStyle(
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  );
+                          child: GestureDetector(
+                            onTap: () {
+                              /// Move to the follower list screen
+                              context.pushNamed(
+                                FollowListScreen.routeName,
+                                queryParameters: {
+                                  "userEmail": _myUserInfoViewModel.myEmail,
+                                  "isFollowerMode": "true",
                                 },
-                              ),
-                              const Text(
-                                "Followers",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                /// Total follower count
+                                ValueListenableBuilder<int>(
+                                  valueListenable: _myUserInfoViewModel.totalFollowerCountNotifier,
+                                  builder: (context, total, _) {
+                                    return Text(
+                                      "$total",
+                                      style: const TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ),
-                            ],
+                                const Text(
+                                  "Followers",
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
 
                         /// Following
                         Expanded(
-                          child: Column(
-                            children: [
-                              /// Total following count
-                              ValueListenableBuilder<int>(
-                                valueListenable: _myUserInfoViewModel.totalFollowingCountNotifier,
-                                builder: (context, total, _) {
-                                  return Text(
-                                    "$total",
-                                    style: const TextStyle(
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  );
+                          child: GestureDetector(
+                            onTap: () {
+                              /// Move to the following list screen
+                              context.pushNamed(
+                                FollowListScreen.routeName,
+                                queryParameters: {
+                                  "userEmail": _myUserInfoViewModel.myEmail,
+                                  "isFollowerMode": "false",
                                 },
-                              ),
-                              const Text(
-                                "Following",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                /// Total following count
+                                ValueListenableBuilder<int>(
+                                  valueListenable: _myUserInfoViewModel.totalFollowingCountNotifier,
+                                  builder: (context, total, _) {
+                                    return Text(
+                                      "$total",
+                                      style: const TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ),
-                            ],
+                                const Text(
+                                  "Following",
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -450,7 +475,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     showTwoButtonDialog(
       context: context,
       title: updateThumbnail,
-      content: selectPictureSource,
+      message: selectPictureSource,
       firstButtonText: gallery,
 
       /// Pick an image from gallery
@@ -520,7 +545,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     }
     /// Fail
     else if (state is SingleStringState.Fail) {
-      if (context.mounted) showSnackBar(context: context, text: wentSomethingWrong);
+      if (context.mounted) showSnackBar(context: context, text: somethingWentWrongPleaseTryAgain);
     }
   }
 
@@ -535,7 +560,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     }
     /// Failed to update
     else if (state is CommonState.Fail) {
-      if (context.mounted) showSnackBar(context: context, text: wentSomethingWrong);
+      if (context.mounted) showSnackBar(context: context, text: somethingWentWrongPleaseTryAgain);
     }
   }
 

@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../data/constant/text.dart';
+import '../../../values/text/text.dart';
 import '../../../../data/model/common/common_state.dart';
 import '../../../../data/model/common/single_integer_state.dart' as SingleIntegerState;
 import '../../../../data/model/post/item/post_model.dart';
@@ -352,7 +352,7 @@ class _PostWidgetState extends State<PostWidget> {
     showTwoButtonDialog(
       context: context,
       title: deletePost,
-      content: deletePostConfirm,
+      message: deletePostConfirm,
       /// Delete button
       firstButtonText: delete,
       firstButtonListener: () {
