@@ -383,7 +383,7 @@ class _PostWidgetState extends State<PostWidget> {
     );
     /// If updated post exists, replace the item from the list
     if (updatedPost != null) {
-      _postListViewModel.replaceUpdatedCommentFromList(updatedPost: PostModel.fromJson(jsonDecode(updatedPost)));
+      _postListViewModel.replaceUpdatedItemFromList(updatedPost: PostModel.fromJson(jsonDecode(updatedPost)));
       if (context.mounted) showSnackBar(context: context, text: postUpdatedMessage);
     }
   }

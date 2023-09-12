@@ -74,7 +74,7 @@ class PostListViewModel {
   }
 
   /// Prepend new posts to the _currentList
-  prependNewCommentToList({int index = 0, required List<PostModel> additionalList}) {
+  prependNewListToCurrentList({int index = 0, required List<PostModel> additionalList}) {
     List<PostModel> copyList = List.from(currentList);
     copyList.insertAll(index, additionalList);
     _setCurrentList(list: copyList);
@@ -98,7 +98,7 @@ class PostListViewModel {
   }
 
   /// Replace updated item from the _currentList
-  replaceUpdatedCommentFromList({required PostModel updatedPost}) {
+  replaceUpdatedItemFromList({required PostModel updatedPost}) {
     int updatedIndex = currentList.indexWhere((post) => post.getId == updatedPost.getId);
     if (updatedIndex != -1) {
       List<PostModel> copyList = List.from(currentList);
