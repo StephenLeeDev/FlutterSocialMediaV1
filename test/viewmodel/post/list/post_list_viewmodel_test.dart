@@ -8,31 +8,64 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final viewModel = PostListViewModel(getPostListUseCase: GetPostListUseCase(postRepository: PostRepositoryImpl(Dio())));
 
-  group('setPostListState ', () {
-    test('Set Ready', () {
+  group("setPostListState", () {
+    test("Set Ready", () {
       viewModel.setPostListState(postListState: Ready());
       expect(viewModel.postListState is Ready, true);
     });
 
-    test('Set Loading', () {
+    test("Set Loading", () {
       viewModel.setPostListState(postListState: Loading());
       expect(viewModel.postListState is Loading, true);
     });
 
-    test('Set MyUserInfoLoading', () {
+    test("Set MyUserInfoLoading", () {
       viewModel.setPostListState(postListState: MyUserInfoLoading());
       expect(viewModel.postListState is MyUserInfoLoading, true);
     });
 
-    test('Set Fail', () {
+    test("Set Fail", () {
       viewModel.setPostListState(postListState: Fail());
       expect(viewModel.postListState is Fail, true);
     });
 
-    test('Set Success', () {
+    test("Set Success", () {
       viewModel.setPostListState(postListState: Success(total: 0, list: []));
       expect(viewModel.postListState is Success, true);
     });
-
   });
+
+  group("setMyEmail", () {
+    test("Set myEmail", () {
+      const email = "test@gmail.com";
+      viewModel.setMyEmail(value: email);
+      expect(viewModel.myEmail, email);
+    });
+  });
+
+  group("increasePage", () {
+    test("Increase page", () {
+      final initialPage = viewModel.page;
+      viewModel.increasePage();
+      expect(viewModel.page, initialPage + 1);
+    });
+  });
+
+  group("setLimit", () {
+    test("Set limit", () {
+      viewModel.setLimit(value: 5);
+      expect(viewModel.limit, 5);
+    });
+  });
+
+  group("setHasNext", () {
+    test("Set hasNext", () {
+      viewModel.setHasNext(value: true);
+      expect(viewModel.hasNext, true);
+
+      viewModel.setHasNext(value: false);
+      expect(viewModel.hasNext, false);
+    });
+  });
+
 }
