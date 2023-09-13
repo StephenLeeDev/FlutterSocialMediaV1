@@ -1,4 +1,4 @@
-import '../../user/user_model.dart';
+import '../../user/simple/item/simple_user_info_model.dart';
 
 class PostModel {
   int? id;
@@ -6,9 +6,9 @@ class PostModel {
   String? description;
   String get getDescription => description ?? "";
   String? status;
-  UserModel? user; // TODO : Refactor this to SimpleUserInfo
-  String get getUserThumbnail => user?.thumbnail ?? "";
-  String get getUserEmail => user?.email ?? "Unknown";
+  SimpleUserInfoModel? user;
+  String get getUserThumbnail => user?.getThumbnail ?? "";
+  String get getUserEmail => user?.getEmail ?? "Unknown";
   String get getUserName => user?.getUserName ?? "Unknown";
   DateTime? createdAt;
   List<String>? imageUrls;
@@ -35,7 +35,7 @@ class PostModel {
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     List<String> imageUrls = List<String>.from(json['imageUrls']);
-    UserModel user = UserModel.fromJson(json['user']);
+    SimpleUserInfoModel user = SimpleUserInfoModel.fromJson(json['user']);
 
     return PostModel(
       id: json['id'],
@@ -77,7 +77,7 @@ class PostModel {
     int? id,
     String? description,
     String? status,
-    UserModel? user,
+    SimpleUserInfoModel? user,
     DateTime? createdAt,
     List<String>? imageUrls,
     int? likeCount,
