@@ -62,7 +62,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     /// If created post exists, prepend it to the grid list and move to the my page screen
     if (createdPostString != null) {
       final createdPost = PostModel.fromJson(jsonDecode(createdPostString));
-      _postGridListViewModel.prependNewCommentToList(additionalList: [createdPost]);
+      _postGridListViewModel.prependNewListToCurrentList(additionalList: [createdPost]);
       if (context.mounted) showSnackBar(context: context, text: postCreatedMessage);
       _onTap(4);
 
