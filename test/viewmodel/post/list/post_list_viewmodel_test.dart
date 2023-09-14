@@ -73,22 +73,21 @@ void main() {
   group("addAdditionalList", () {
     test("Add additional list", () {
       viewModel.addAdditionalList(additionalList: [PostModel(id: 1)]);
-      int lastIndex = viewModel.currentList.length - 1;
-      expect(viewModel.currentList[lastIndex].getId, 1);
+      expect(viewModel.currentList.last.getId, 1);
 
       viewModel.addAdditionalList(additionalList: [PostModel(id: 2)]);
-      lastIndex = viewModel.currentList.length - 1;
-      expect(viewModel.currentList[lastIndex].getId, 2);
+      expect(viewModel.currentList.last.getId, 2);
     });
   });
 
   group("prependNewListToCurrentList", () {
     test("Prepend additional list", () {
+      viewModel.reinitialize();
       viewModel.prependNewListToCurrentList(additionalList: [PostModel(id: 3)]);
       expect(viewModel.currentList.first.getId, 3);
 
       viewModel.prependNewListToCurrentList(index: 1, additionalList: [PostModel(id: 4)]);
-      expect(viewModel.currentList[1].getId, 4);
+      expect(viewModel.currentList.last.getId, 4);
     });
   });
 
@@ -149,7 +148,7 @@ void main() {
       final firstItemId = viewModel.currentList.first.getId;
       expect(firstItemId, 9);
 
-      final secondItemId = viewModel.currentList[viewModel.currentList.length - 1].getId;
+      final secondItemId = viewModel.currentList.last.getId;
       expect(secondItemId, 10);
     });
   });
