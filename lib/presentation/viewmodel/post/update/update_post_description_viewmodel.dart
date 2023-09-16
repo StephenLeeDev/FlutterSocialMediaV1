@@ -21,8 +21,7 @@ class UpdatePostDescriptionViewModel {
   }
 
   /// It represents state
-  final ValueNotifier<PostItemState> _updatePostDescriptionState = ValueNotifier<
-      PostItemState>(Ready());
+  final ValueNotifier<PostItemState> _updatePostDescriptionState = ValueNotifier<PostItemState>(Ready());
 
   ValueNotifier<PostItemState> get updatePostDescriptionStateNotifier => _updatePostDescriptionState;
 
@@ -30,6 +29,7 @@ class UpdatePostDescriptionViewModel {
 
   setPostItemState({required PostItemState updatePostDescriptionState}) {
     _updatePostDescriptionState.value = updatePostDescriptionState;
+    _checkIsValid();
   }
 
   /// Previous description
