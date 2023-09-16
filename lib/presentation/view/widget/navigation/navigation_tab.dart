@@ -19,7 +19,8 @@ class NavigationTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
+      child: InkWell(
+        enableFeedback: false,
         onTap: () => onTap(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
