@@ -18,6 +18,7 @@ class CreateCommentViewModel {
 
   setPostId({required int value}) {
     _postId = value;
+    _checkIsValid();
   }
 
   /// The ID of the parent comment for this reply
@@ -45,12 +46,12 @@ class CreateCommentViewModel {
 
   setContent({required String value}) {
     _content.value = value;
-    checkIsValid();
+    _checkIsValid();
   }
 
-  checkIsValid() {
+  _checkIsValid() {
     final valid = postId > 0 && content.isNotEmpty && createCommentState is! Loading;
-    setIsValid(value: valid);
+    _setIsValid(value: valid);
   }
 
   /// It represents whether comments/replies can be created
@@ -58,7 +59,7 @@ class CreateCommentViewModel {
   ValueNotifier<bool> get isValidNotifier => _isValid;
   bool get isValid => _isValid.value;
 
-  setIsValid({required bool value}) {
+  _setIsValid({required bool value}) {
     _isValid.value = value;
   }
 
@@ -69,6 +70,7 @@ class CreateCommentViewModel {
 
   setCommentItemState({required CommentItemState createCommentState}) {
     _createCommentState.value = createCommentState;
+    _checkIsValid();
   }
 
   /// Execute create comment API
