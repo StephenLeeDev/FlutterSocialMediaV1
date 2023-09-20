@@ -141,7 +141,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           );
                           /// If deleted comment exists, remove it from the list
                           if (deletedCommentId != null) {
-                            _commentListViewModel.removeDeletedCommentFromList(commentId: deletedCommentId);
+                            _commentListViewModel.removeDeletedItemFromList(commentId: deletedCommentId);
                           }
                         }
                       },
@@ -222,7 +222,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 
       if (context.mounted) showCustomToastWithTimer(context: context, message: commentDeletedMessage);
       /// Remove the deleted comment from the list
-      _commentListViewModel.removeDeletedCommentFromList(commentId: commentId);
+      _commentListViewModel.removeDeletedItemFromList(commentId: commentId);
     }
   }
 }
