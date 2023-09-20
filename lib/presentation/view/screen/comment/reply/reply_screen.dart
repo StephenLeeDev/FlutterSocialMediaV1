@@ -72,7 +72,7 @@ class _ReplyScreenState extends State<ReplyScreen> {
     if (widget.commentString.isNotEmpty) {
       _commentModel = CommentModel.fromJson(jsonDecode(widget.commentString));
       commentListViewModel.setParentComment(commentModel: _commentModel);
-      commentListViewModel.prependNewCommentToList(additionalList: [_commentModel!]);
+      commentListViewModel.prependNewListToCurrentList(additionalList: [_commentModel!]);
       createCommentViewModel.setParentCommentId(value: _commentModel?.id);
       createCommentViewModel.setParentCommentAuthor(value: _commentModel?.user?.email);
     }
@@ -245,7 +245,7 @@ class _ReplyScreenState extends State<ReplyScreen> {
                         updateCommentViewModel.setCommentId(value: comment.commentId);
                         _mode = CreateUpdateMode.update;
                         _textEditingController.text = comment.getContent;
-                        showModalBottomKeyboard(commentItemToUpdate: comment, updatedIndex: index);
+                        showModalBottomKeyboard(commentItemToUpdate: comment);
                       },
                     ),
                   );
@@ -275,21 +275,21 @@ class _ReplyScreenState extends State<ReplyScreen> {
   void onNewComment({required CommentModel newComment}) {
     KeyboardUtil().dismissKeyboard(context);
     createCommentViewModel.setContent(value: "");
-    commentListViewModel.prependNewCommentToList(index: 1, additionalList: [newComment]);
+    commentListViewModel.prependNewListToCurrentList(index: 1, additionalList: [newComment]);
     _scrollController.animateTo(1, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
   }
 
   /// When a comment is updated, replace it from the list
-  void onCommentUpdated({required CommentModel updatedComment, required int updatedIndex}) {
+  void onCommentUpdated({required CommentModel updatedComment}) {
     KeyboardUtil().dismissKeyboard(context);
     updateCommentViewModel.setUpdatedContent(value: "");
-    commentListViewModel.replaceUpdatedCommentFromList(updatedComment: updatedComment, updatedIndex: updatedIndex);
+    commentListViewModel.replaceUpdatedItemFromList(updatedComment: updatedComment);
     _mode = CreateUpdateMode.create;
     _textEditingController.text = "";
   }
 
   /// Shows a bottom sheet modal for keyboard input.
-  void showModalBottomKeyboard({CommentModel? commentItemToUpdate, int? updatedIndex}) {
+  void showModalBottomKeyboard({CommentModel? commentItemToUpdate}) {
     final FocusNode focusNode = FocusNode();
     showModalBottomSheet<void>(
       context: context,
@@ -378,7 +378,7 @@ class _ReplyScreenState extends State<ReplyScreen> {
                                 _mode = CreateUpdateMode.create;
                                 final CommentModel updatedComment = state.item;
                                 updatedComment.isMine = true;
-                                if (updatedIndex != null) onCommentUpdated(updatedComment: updatedComment, updatedIndex: updatedIndex);
+                                onCommentUpdated(updatedComment: updatedComment);
                                 _textEditingController.text = "";
 
                                 if (buildContext.mounted) Navigator.pop(buildContext);
@@ -399,7 +399,7 @@ class _ReplyScreenState extends State<ReplyScreen> {
       },
     ).then((value) {
       /// It means, it was updating a comment
-      if (commentItemToUpdate != null && updatedIndex != null) {
+      if (commentItemToUpdate != null) {
         /// Updating comment task has completed successfully
         /// Proceed initializing
         if (updateCommentViewModel.updateCommentState is CommentItemState.Success) {
@@ -408,13 +408,13 @@ class _ReplyScreenState extends State<ReplyScreen> {
         /// Updating comment task has not completed
         /// Recommend continue updating
         else if (updateCommentViewModel.updateCommentState is CommentItemState.Ready) {
-          showCancelUpdateDialog(commentItemToUpdate: commentItemToUpdate, updatedIndex: updatedIndex);
+          showCancelUpdateDialog(commentItemToUpdate: commentItemToUpdate);
         }
       }
     });
   }
 
-  void showCancelUpdateDialog({required CommentModel commentItemToUpdate, required int updatedIndex}) {
+  void showCancelUpdateDialog({required CommentModel commentItemToUpdate}) {
     showTwoButtonDialog(
       context: context,
       title: discardEdits,
@@ -428,7 +428,7 @@ class _ReplyScreenState extends State<ReplyScreen> {
       /// Keep writing
       secondButtonText: keepWriting,
       secondButtonListener: () {
-        showModalBottomKeyboard(commentItemToUpdate: commentItemToUpdate, updatedIndex: updatedIndex);
+        showModalBottomKeyboard(commentItemToUpdate: commentItemToUpdate);
       },
     );
   }

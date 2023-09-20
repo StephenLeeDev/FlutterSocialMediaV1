@@ -89,17 +89,20 @@ class CommentListViewModel {
   }
 
   /// Prepend a new comment to the _currentList
-  prependNewCommentToList({int index = 0, required List<CommentModel> additionalList}) {
+  prependNewListToCurrentList({int index = 0, required List<CommentModel> additionalList}) {
     List<CommentModel> copyList = List.from(currentList);
     copyList.insertAll(index, additionalList);
     setCurrentList(list: copyList);
   }
 
   /// Replace updated comment item from the _currentList
-  replaceUpdatedCommentFromList({required CommentModel updatedComment, required int updatedIndex}) {
-    List<CommentModel> copyList = List.from(currentList);
-    copyList[updatedIndex] = updatedComment;
-    setCurrentList(list: copyList);
+  replaceUpdatedItemFromList({required CommentModel updatedComment}) {
+    int updatedIndex = currentList.indexWhere((item) => item.commentId == updatedComment.commentId);
+    if (updatedIndex != -1) {
+      List<CommentModel> copyList = List.from(currentList);
+      copyList[updatedIndex] = updatedComment;
+      setCurrentList(list: copyList);
+    }
   }
 
   /// Fetch additional paginated comments from the application server
@@ -120,12 +123,17 @@ class CommentListViewModel {
 
   /// Refresh the list
   Future<void> refresh() async {
+    reinitialize();
+
+    if (parentComment != null) prependNewListToCurrentList(additionalList: [parentComment!]);
+    getCommentList();
+  }
+
+  /// Reinitialize
+  void reinitialize() {
     setCurrentList(list: []);
     setPage(value: 1);
     setHasNext(value: true);
-
-    if (parentComment != null) prependNewCommentToList(additionalList: [parentComment!]);
-    getCommentList();
   }
 
   /// Check is mine
@@ -138,7 +146,7 @@ class CommentListViewModel {
   }
 
   /// Remove delete comment from the list by comment ID
-  void removeDeletedCommentFromList({required int commentId}) {
+  void removeDeletedItemFromList({required int commentId}) {
     List<CommentModel> copyList = List.of(currentList);
     copyList.removeWhere((comment) => comment.id == commentId);
 
