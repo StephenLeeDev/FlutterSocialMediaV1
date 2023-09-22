@@ -8,7 +8,7 @@ import '../../../../domain/usecase/follow/unfollow_usecase.dart';
 /// It handling start follow feature with calling the follow API[StartFollowUseCase]
 /// It handling unfollow feature with calling the unfollow API[UnfollowUseCase]
 
-// REVIEW : Actually, I tried to implement these features into two different ViewModels
+// REVIEW : Actually, I tried to implement these features into two different ViewModels at the first time
 // REVIEW : But I thought they are almost the same features, and they are always used together
 // REVIEW : So I just implemented these features as one ViewModel
 // REVIEW : In my opinion, it's close to the best practice
