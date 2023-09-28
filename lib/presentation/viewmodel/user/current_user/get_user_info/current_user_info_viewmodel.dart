@@ -5,11 +5,11 @@ import '../../../../../data/model/user/my_user_info_state.dart';
 import '../../../../../domain/usecase/user/current_user/get_current_user_info_usecase.dart';
 
 class CurrentUserInfoViewModel {
-  final GetCurrentUserInfoUseCase _getMyUserInfoUseCase;
+  final GetCurrentUserInfoUseCase _getCurrentUserInfoUseCase;
 
   CurrentUserInfoViewModel({
-    required GetCurrentUserInfoUseCase getMyUserInfoUseCase,
-  }) : _getMyUserInfoUseCase = getMyUserInfoUseCase;
+    required GetCurrentUserInfoUseCase getCurrentUserInfoUseCase,
+  }) : _getCurrentUserInfoUseCase = getCurrentUserInfoUseCase;
 
   final ValueNotifier<MyUserInfoState> _myUserInfoState = ValueNotifier<MyUserInfoState>(Ready());
   ValueNotifier<MyUserInfoState> get myUserInfoStateNotifier => _myUserInfoState;
@@ -39,7 +39,7 @@ class CurrentUserInfoViewModel {
   Future<void> getMyUserInfo() async {
     _setMyUserInfoState(state: Loading());
 
-    final state = await _getMyUserInfoUseCase.execute();
+    final state = await _getCurrentUserInfoUseCase.execute();
     _setMyUserInfoState(state: state);
   }
 
