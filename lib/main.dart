@@ -106,8 +106,8 @@ void main() async {
   final getUserListByKeywordUseCase = GetUserListByKeywordUseCase(userRepository: userRepository);
   getIt.registerSingleton<GetUserListByKeywordUseCase>(getUserListByKeywordUseCase);
   // ViewModels
-  final myUserInfoViewModel = CurrentUserInfoViewModel(getMyUserInfoUseCase: getMyUserInfoUseCase);
-  getIt.registerSingleton<CurrentUserInfoViewModel>(myUserInfoViewModel);
+  final currentUserInfoViewModel = CurrentUserInfoViewModel(getCurrentUserInfoUseCase: getMyUserInfoUseCase);
+  getIt.registerSingleton<CurrentUserInfoViewModel>(currentUserInfoViewModel);
 
   /// Feed(Post List)
   // Repository
