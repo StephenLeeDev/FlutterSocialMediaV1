@@ -148,7 +148,6 @@ class _PostWidgetState extends State<PostWidget> {
                 ),
               ),
               const Spacer(),
-              // TODO : Implement follow/unfollow feature
               /// It is visible when it's the user's own post
               if (widget.postModel.isMine)
               IconButton(
@@ -198,14 +197,10 @@ class _PostWidgetState extends State<PostWidget> {
                   final result = await _postLikeViewModel.postLike(postId: postId);
                   if (result is SingleIntegerState.Success) {
                     final newLikeCount = result.getValue;
-                    _postListViewModel.setUpdatedLike(
-                        postId: postId, likeCount: newLikeCount);
 
-                    /// Update current post widget
-                    setState(() {
-                      isLiked = !isLiked!;
-                      likeCount = newLikeCount;
-                    });
+                    widget.postModel.setLike();
+                    widget.postModel.setLikeCount(value: newLikeCount);
+                    _postListViewModel.replaceUpdatedItemFromList(updatedPost: widget.postModel);
                   }
                 },
               ),
@@ -236,12 +231,8 @@ class _PostWidgetState extends State<PostWidget> {
                   final result =
                       await _bookmarkViewModel.postBookmark(postId: postId);
                   if (result is Success) {
-                    _postListViewModel.setUpdatedBookmark(postId: postId);
-
-                    /// Update current post widget
-                    setState(() {
-                      isBookmarked = !isBookmarked!;
-                    });
+                    widget.postModel.setBookmark();
+                    _postListViewModel.replaceUpdatedItemFromList(updatedPost: widget.postModel);
                   }
                 },
               ),
@@ -383,7 +374,7 @@ class _PostWidgetState extends State<PostWidget> {
     );
     /// If updated post exists, replace the item from the list
     if (updatedPost != null) {
-      _postListViewModel.replaceUpdatedCommentFromList(updatedPost: PostModel.fromJson(jsonDecode(updatedPost)));
+      _postListViewModel.replaceUpdatedItemFromList(updatedPost: PostModel.fromJson(jsonDecode(updatedPost)));
       if (context.mounted) showSnackBar(context: context, text: postUpdatedMessage);
     }
   }

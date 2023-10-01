@@ -18,6 +18,7 @@ class UpdateCommentViewModel {
 
   setCommentId({required int value}) {
     _commentId = value;
+    checkIsValid();
   }
 
   /// Original content
@@ -59,6 +60,7 @@ class UpdateCommentViewModel {
 
   setCommentItemState({required CommentItemState updateCommentState}) {
     _updateCommentState.value = updateCommentState;
+    checkIsValid();
   }
 
   /// Execute update comment API

@@ -1,8 +1,8 @@
 abstract class AuthState {}
 
-class Loading extends AuthState {}
+class Ready extends AuthState {}
 
-class Unauthorized extends AuthState {}
+class Loading extends AuthState {}
 
 class Fail extends AuthState {}
 
