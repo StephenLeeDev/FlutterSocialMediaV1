@@ -19,6 +19,7 @@ const confirm = "Confirm";
 const areYouSure = "Are you sure?";
 const somethingWentWrongPleaseTryAgain = "Something went wrong\nPlease try again";
 const submit = "Submit";
+const message = "Message";
 const newMessage = "New message";
 const nothingChanged = "Nothing's changed";
 const somethingWentWrong = "Something went wrong";

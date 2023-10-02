@@ -12,10 +12,10 @@ import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
 import '../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../widget/navigation/navigation_tab.dart';
+import '../dm/list/dm_room_list_screen.dart';
 import '../feed/feed_screen.dart';
 import '../feed/feed_screen_from_grid.dart';
 import '../my/my_page_screen.dart';
-import '../notification/notification_screen.dart';
 import '../post/create/create_post_screen.dart';
 import '../search/search_screen.dart';
 
@@ -39,7 +39,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     FeedScreen.routeName,
     SearchScreen.routeName,
     CreatePostScreen.routeName,
-    NotificationScreen.routeName,
+    DmRoomListScreen.routeName,
     MyPageScreen.routeName,
   ];
 
@@ -118,7 +118,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
           Offstage(
             offstage: _selectedIndex != 3,
-            child: const NotificationScreen(),
+            child: const DmRoomListScreen(),
           ),
           Offstage(
             offstage: _selectedIndex != 4,
@@ -162,7 +162,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               // TODO : Replace it to DirectMessage screen
               NavigationTab(
                 isSelected: _selectedIndex == 3,
-                icon: Icons.notifications,
+                icon: Icons.chat_outlined,
                 onTap: () => _onTap(3),
                 selectedIndex: _selectedIndex,
               ),
