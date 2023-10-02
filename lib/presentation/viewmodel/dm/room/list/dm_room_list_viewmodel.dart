@@ -27,10 +27,10 @@ class DmRoomListViewModel {
   int get page => _page;
 
   increasePage() {
-    setPage(value: page + 1);
+    _setPage(value: page + 1);
   }
 
-  setPage({required int value}) {
+  _setPage({required int value}) {
     _page = value;
   }
 
@@ -94,12 +94,12 @@ class DmRoomListViewModel {
   /// Reinitialize
   void reinitialize() {
     setCurrentList(list: []);
-    setPage(value: 1);
+    _setPage(value: 1);
     setHasNext(value: true);
   }
 
   /// Remove item from the currentList
-  void removeDeletedItemFromList({required int dmRoomId}) {
+  void removeItemFromListById({required int dmRoomId}) {
     List<DmRoomModel> copyList = List.of(currentList);
     copyList.removeWhere((dmRoom) => dmRoom.id == dmRoomId);
 

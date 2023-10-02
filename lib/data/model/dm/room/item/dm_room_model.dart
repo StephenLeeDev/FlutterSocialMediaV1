@@ -2,6 +2,7 @@ import '../../../user/simple/item/simple_user_info_model.dart';
 
 class DmRoomModel {
   final int? id;
+  int get getRoomId => id ?? -1;
   final String? name;
   String get getRoomName => name ?? getPartnerName;
   final String? latestMessage;

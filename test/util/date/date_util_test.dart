@@ -6,8 +6,8 @@ void main() {
     test('getTimeAgo', () {
       final now = DateTime.now();
 
-      testTimeAgo('1 second ago', now.subtract(const Duration(seconds: 1)).toString());
-      testTimeAgo('30 seconds ago', now.subtract(const Duration(seconds: 30)).toString());
+      testTimeAgo('Less than 1 minute ago', now.subtract(const Duration(seconds: 1)).toString());
+      testTimeAgo('Less than 1 minute ago', now.subtract(const Duration(seconds: 30)).toString());
       testTimeAgo('1 minute ago', now.subtract(const Duration(minutes: 1)).toString());
       testTimeAgo('30 minutes ago', now.subtract(const Duration(minutes: 30)).toString());
       testTimeAgo('1 hour ago', now.subtract(const Duration(hours: 1)).toString());
