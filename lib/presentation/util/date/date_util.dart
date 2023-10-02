@@ -6,11 +6,7 @@ class DateUtil {
     Duration difference = now.difference(dateTime);
 
     if (difference.inSeconds < 60) {
-      if (difference.inSeconds == 1) {
-        return '1 second ago';
-      } else {
-        return '${difference.inSeconds} seconds ago';
-      }
+      return "Less than 1 minute ago";
     } else if (difference.inMinutes < 60) {
       if (difference.inMinutes == 1) {
         return '1 minute ago';

@@ -37,7 +37,7 @@ class NavigationTab extends StatelessWidget {
               style: TextStyle(
                 color: isSelected
                     ? Colors.black
-                    : Colors.grey.shade500,
+                    : Colors.grey.shade300,
               ),
             )
           ],

@@ -12,6 +12,7 @@ import 'data/networking/dio_singleton.dart';
 import 'data/networking/interceptor/token_interceptor.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'data/repository/comment/comment_repository_impl.dart';
+import 'data/repository/dm/dm_repository_impl.dart';
 import 'data/repository/follow/follow_repository_impl.dart';
 import 'data/repository/post/post_repository_impl.dart';
 import 'data/repository/secure_storage/secure_storage_repository_impl.dart';
@@ -23,6 +24,8 @@ import 'domain/usecase/comment/create/create_comment_usecase.dart';
 import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
 import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
+import 'domain/usecase/dm/room/create_dm_room_usecase.dart';
+import 'domain/usecase/dm/room/get_dm_room_list_usecase.dart';
 import 'domain/usecase/follow/get_follower_list_usecase.dart';
 import 'domain/usecase/follow/get_following_list_usecase.dart';
 import 'domain/usecase/follow/start_follow_usecase.dart';
@@ -42,6 +45,7 @@ import 'domain/usecase/user/current_user/update_user_status_message_usecase.dart
 import 'domain/usecase/user/current_user/update_user_thumbnail_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
+import 'presentation/viewmodel/dm/room/list/dm_room_list_viewmodel.dart';
 import 'presentation/viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
 import 'presentation/viewmodel/post/list/other_user_post_list_viewmodel.dart';
 import 'presentation/viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
@@ -165,6 +169,16 @@ void main() async {
   final updateCommentUseCase = UpdateCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<UpdateCommentUseCase>(updateCommentUseCase);
 
+  /// DM
+  final dmRepository = DmRepositoryImpl(dio);
+  // UseCases
+  final createDmRoomUseCase = CreateDmRoomUseCase(dmRepository: dmRepository);
+  getIt.registerSingleton<CreateDmRoomUseCase>(createDmRoomUseCase);
+  final getDmRoomListUseCase = GetDmRoomListUseCase(dmRepository: dmRepository);
+  getIt.registerSingleton<GetDmRoomListUseCase>(getDmRoomListUseCase);
+  // ViewModels
+  final dmRoomListViewModel = DmRoomListViewModel(getDmRoomListUseCase: getDmRoomListUseCase);
+
   /// Follow
   final followRepository = FollowRepositoryImpl(dio);
   // UseCases
@@ -190,7 +204,7 @@ void main() async {
         ),
         /// Current user information
         Provider<CurrentUserInfoViewModel>(
-          create: (context) => myUserInfoViewModel,
+          create: (context) => currentUserInfoViewModel,
         ),
         /// Current user's grid feed
         Provider<CurrentUserPostGridListViewModel>(
@@ -199,6 +213,10 @@ void main() async {
         /// Other user's grid feed
         Provider<OtherUserPostGridListViewModel>(
           create: (context) => otherUserPostGridListViewModel,
+        ),
+        /// DM room list
+        Provider<DmRoomListViewModel>(
+          create: (context) => dmRoomListViewModel,
         ),
       ],
       child: const App(),
