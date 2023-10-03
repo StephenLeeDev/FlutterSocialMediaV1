@@ -106,4 +106,9 @@ class DmRoomListViewModel {
     setCurrentList(list: copyList);
   }
 
+  bool isAlreadyExisting({required int dmRoomId}) {
+    final room = currentList.where((dmRoom) => dmRoom.getRoomId == dmRoomId);
+    return room.isNotEmpty ? true : false;
+  }
+
 }

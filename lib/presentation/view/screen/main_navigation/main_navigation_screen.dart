@@ -162,7 +162,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               // TODO : Replace it to DirectMessage screen
               NavigationTab(
                 isSelected: _selectedIndex == 3,
-                icon: Icons.chat_outlined,
+                icon: Icons.chat,
                 onTap: () => _onTap(3),
                 selectedIndex: _selectedIndex,
               ),
