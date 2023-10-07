@@ -9,6 +9,7 @@ import '../view/screen/auth/auth_screen.dart';
 import '../view/screen/comment/comment/comment_screen.dart';
 import '../view/screen/comment/reply/reply_screen.dart';
 import '../view/screen/dm/list/dm_room_list_screen.dart';
+import '../view/screen/dm/room/dm_room_screen.dart';
 import '../view/screen/feed/feed_screen.dart';
 import '../view/screen/feed/feed_screen_from_grid.dart';
 import '../view/screen/follow/follow_list_screen.dart';
@@ -138,6 +139,16 @@ final GoRouter router = GoRouter(
         final bool isFollower = state.queryParameters['isFollowerMode'] == "true";
 
         return FollowListScreen(userEmail: userEmail, isFollowerMode: isFollower);
+      },
+    ),
+
+    /// DM room
+    GoRoute(
+      name: DmRoomScreen.routeName,
+      path: DmRoomScreen.routeURL,
+      builder: (context, state) {
+        final title = state.queryParameters['title'] ?? "";
+        return DmRoomScreen(title: title);
       },
     ),
 

@@ -48,6 +48,18 @@ class _DmRoomListScreenState extends State<DmRoomListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      /// AppBar
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        title: const Text(
+          "DMs",
+          style: TextStyle(
+            fontSize: 24,
+          ),
+        ),
+      ),
       /// Screen
       body: ValueListenableBuilder<DmRoomListState>(
         valueListenable: _dmRoomListViewModel.dmRoomListStateNotifier,
