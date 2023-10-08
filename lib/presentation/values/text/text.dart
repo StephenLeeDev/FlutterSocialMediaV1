@@ -68,6 +68,8 @@ const thumbnailUpdated = "Thumbnail updated successfully";
 const updateStatusMessage = "Update status message";
 const statusMessageUpdated = "Message updated successfully";
 const searchUser = "Search User";
+const signOut = "Sign out";
+const areYouSureYouWantToSignOut = "Are you sure you want to sign out?";
 
 /// Follow
 const follow = "Follow";
