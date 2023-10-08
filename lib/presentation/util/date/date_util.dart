@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class DateUtil {
 
   String getTimeAgo(String dateTimeString) {
@@ -34,4 +36,30 @@ class DateUtil {
       }
     }
   }
+
+  String getDateString(DateTime? date) {
+    if (date == null) {
+      return "";
+    }
+
+    DateTime now = DateTime.now();
+    DateTime yesterday = now.subtract(const Duration(days: 1));
+
+    if (date.year == now.year && date.month == now.month && date.day == now.day) {
+      /// If it's today
+      // return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')} ${date.hour >= 12 ? 'PM' : 'AM'}";
+      return "${date.hour%12}:${date.minute.toString()} ${date.hour >= 12 ? 'PM' : 'AM'}";
+    } else if (date.year == yesterday.year && date.month == yesterday.month && date.day == yesterday.day) {
+      /// If it's yesterday
+      return "Yesterday";
+    } else if (date.year == now.year) {
+      /// If it's this year
+      return DateFormat.MMMMd().format(date);
+    } else {
+      /// If it's last year or earlier
+      return "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}";
+    }
+  }
+
+
 }
