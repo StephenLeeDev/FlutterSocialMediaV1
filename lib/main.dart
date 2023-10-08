@@ -67,6 +67,7 @@ void main() async {
   final getAccessTokenUseCase = GetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
   getIt.registerSingleton<GetAccessTokenUseCase>(getAccessTokenUseCase);
   final setAccessTokenUseCase = SetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
+  getIt.registerSingleton<SetAccessTokenUseCase>(setAccessTokenUseCase);
 
   /// Dio Singleton
   final Dio dio = DioSingleton.getInstance();

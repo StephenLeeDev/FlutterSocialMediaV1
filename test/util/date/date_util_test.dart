@@ -1,6 +1,5 @@
 import 'package:flutter_social_media_v1/presentation/util/date/date_util.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intl/intl.dart';
 
 void main() {
   group('getTimeAgo', () {

@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../domain/usecase/auth/set_access_token_usecase.dart';
+import '../../../../domain/usecase/auth/social_sign_in/google_sign_in_api.dart';
 import '../../../values/text/text.dart';
 import '../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../data/model/common/single_string_state.dart' as SingleStringState;
@@ -25,6 +27,7 @@ import '../../../viewmodel/user/current_user/update/update_status_message_viewmo
 import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
+import '../auth/auth_screen.dart';
 import '../feed/feed_screen_from_grid.dart';
 import '../follow/follow_list_screen.dart';
 
@@ -574,7 +577,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
       onSelected: (value) {
         // TODO : Low priority
         // TODO : Enhance keyboard UI just like CommentScreen's showModalBottomKeyboard()
-        /// Update user's status message
+        /// Update current user's status message
         if (value == updateStatusMessage) {
           showTextInputDialogForUpdate(
               context: context,
@@ -595,11 +598,48 @@ class _MyPageScreenState extends State<MyPageScreen> {
               secondButtonText: cancel,
           );
         }
+        /// Sign out
+        else if (value == signOut) {
+          showTwoButtonDialog(
+            context: context,
+            title: areYouSureYouWantToSignOut,
+            /// Cancel
+            firstButtonText: cancel,
+            firstButtonListener: () {},
+            /// Confirm
+            secondButtonText: confirm,
+            secondButtonListener: () async {
+              /// Initialize the current user's access token
+              await GetIt.instance<SetAccessTokenUseCase>().execute(accessToken: "");
+              // TODO : Branching social sign out; Google, Facebook, Apple
+              /// Sign out from the social
+              await GoogleSignInApi.signOut();
+              /// Move to the sign in screen
+              if (context.mounted) context.goNamed(AuthScreen.routeName);
+            },
+          );
+        }
       },
       itemBuilder: (BuildContext context) => [
+        /// Update status message
         const PopupMenuItem(
           value: updateStatusMessage,
-          child: Text(updateStatusMessage),
+          child: Text(
+            updateStatusMessage,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        /// Sign out
+        const PopupMenuItem(
+          value: signOut,
+          child: Text(
+            signOut,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ],
     );
