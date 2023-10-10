@@ -116,51 +116,54 @@ class _MyPageScreenState extends State<MyPageScreen> {
       ],
 
       /// Screen
-      child: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () {
-            return _refresh();
-          },
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            controller: _scrollController,
-            children: [
-              /// User profile
-              ValueListenableBuilder<MyUserInfoState.MyUserInfoState>(
-                valueListenable: _myUserInfoViewModel.myUserInfoStateNotifier,
-                builder: (context, state, _) {
-                  if (state is MyUserInfoState.Success) {
-                    return buildUserProfileUI();
-                  } else {
-                    // TODO : Implement Loading UI
-                    return Container();
-                  }
-                },
-              ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: () {
+              return _refresh();
+            },
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              controller: _scrollController,
+              children: [
+                /// User profile
+                ValueListenableBuilder<MyUserInfoState.MyUserInfoState>(
+                  valueListenable: _myUserInfoViewModel.myUserInfoStateNotifier,
+                  builder: (context, state, _) {
+                    if (state is MyUserInfoState.Success) {
+                      return buildUserProfileUI();
+                    } else {
+                      // TODO : Implement Loading UI
+                      return Container();
+                    }
+                  },
+                ),
 
-              /// Grid feed
-              ValueListenableBuilder<PostListState.PostListState>(
-                valueListenable: _postListViewModel.postListStateNotifier,
-                builder: (context, state, _) {
+                /// Grid feed
+                ValueListenableBuilder<PostListState.PostListState>(
+                  valueListenable: _postListViewModel.postListStateNotifier,
+                  builder: (context, state, _) {
 
-                  /// Loading UI
-                  if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
-                    return buildLoadingStateUI();
-                  }
+                    /// Loading UI
+                    if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
+                      return buildLoadingStateUI();
+                    }
 
-                  /// Fail UI
-                  else if (state is PostListState.Fail) {
-                    return buildFailStateUI();
-                  }
+                    /// Fail UI
+                    else if (state is PostListState.Fail) {
+                      return buildFailStateUI();
+                    }
 
-                  /// Success UI (default)
-                  else {
-                    return buildSuccessStateUI();
-                  }
+                    /// Success UI (default)
+                    else {
+                      return buildSuccessStateUI();
+                    }
 
-                },
-              ),
-            ],
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

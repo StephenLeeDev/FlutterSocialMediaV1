@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +8,10 @@ import '../../../../data/model/auth/auth_request.dart';
 import '../../../../data/model/auth/auth_state.dart';
 import '../../../../domain/usecase/auth/social_sign_in/google_sign_in_api.dart';
 import '../../../util/snackbar/snackbar_util.dart';
+import '../../../values/color/color.dart';
+import '../../../values/text/text.dart';
 import '../../../viewmodel/auth/auth_viewmodel.dart';
+import '../../widget/auth/social_sign_in_button_widget.dart';
 import '../feed/feed_screen.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -18,26 +23,50 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: lightBlue00A7FF,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              "AuthScreen",
-              style: Theme.of(context).textTheme.headlineMedium,
+            /// Logo
+            Image(
+              width: MediaQuery.of(context).size.width / 2,
+              image: const AssetImage("assets/image/logo.png"),
+              fit: BoxFit.fitWidth,
             ),
+            const SizedBox(height: 50),
+            /// Google
+            SocialSignInButtonWidget(
+              title: continueWithGoogle,
+              image: "assets/icon/google.svg",
+              listener: () {
+                googleSignIn(context: context);
+              },
+            ),
+            /// Facebook
+            SocialSignInButtonWidget(
+              title: continueWithFacebook,
+              image: "assets/icon/facebook.svg",
+              listener: () {
+                // TODO : Implement Facebook sign in
+              },
+            ),
+            /// Apple
+            if (Platform.isIOS)
+              SocialSignInButtonWidget(
+                title: continueWithApple,
+                image: "assets/icon/apple.svg",
+                listener: () {
+                  // TODO : Implement Apple sign in
+                },
+              ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          googleSignIn(context: context);
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }
 
+  /// Google Sign in
   Future googleSignIn({ required BuildContext context }) async {
     var user = await GoogleSignInApi.signIn();
     if (user != null) {
