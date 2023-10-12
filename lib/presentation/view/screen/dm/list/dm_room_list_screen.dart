@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../../../../../data/model/dm/room/item/dm_room_model.dart';
 import '../../../../../data/model/dm/room/list/dm_room_list_state.dart';
+import '../../../../values/text/text.dart';
 import '../../../../viewmodel/dm/room/list/dm_room_list_viewmodel.dart';
+import '../../../widget/common/empty/empty_widget.dart';
 import '../../../widget/common/error/error_widget.dart';
 import '../../../widget/dm/room/dm_room_item_widget.dart';
 
@@ -38,6 +40,7 @@ class _DmRoomListScreenState extends State<DmRoomListScreen> {
 
   void _initViewModels() {
     _dmRoomListViewModel = context.read<DmRoomListViewModel>();
+    _dmRoomListViewModel.reinitialize();
   }
 
   Future<void> _fetchData() async {
@@ -112,6 +115,10 @@ class _DmRoomListScreenState extends State<DmRoomListScreen> {
       child: ValueListenableBuilder<List<DmRoomModel>>(
           valueListenable: _dmRoomListViewModel.currentListNotifier,
           builder: (context, list, _) {
+            /// Empty message UI
+            if (list.isEmpty) {
+              return const EmptyWidget(message: noDMsYet);
+            }
             return ListView.builder(
                 controller: _scrollController,
                 itemCount: list.length,
