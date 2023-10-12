@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../domain/usecase/auth/set_access_token_usecase.dart';
-import '../../../../domain/usecase/auth/social_sign_in/google_sign_in_api.dart';
+import '../../../../domain/usecase/auth/social_sign_in/google/google_sign_in_api.dart';
 import '../../../values/text/text.dart';
 import '../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../data/model/common/single_string_state.dart' as SingleStringState;
