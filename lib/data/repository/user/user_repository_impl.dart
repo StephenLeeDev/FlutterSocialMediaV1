@@ -71,6 +71,7 @@ class UserRepositoryImpl extends UserRepository {
     }
   }
 
+  /// Bookmark/Unbookmark a post
   @override
   Future<CommonState.CommonState> postBookmark({required int postId}) async {
     const api = 'user/post/bookmark';
@@ -97,6 +98,7 @@ class UserRepositoryImpl extends UserRepository {
     }
   }
 
+  /// Update the current user's thumbnail
   @override
   Future<SingleStringState.SingleStringState> updateUserThumbnail({required MultipartFile newThumbnail}) async {
     const api = 'user/thumbnail';
@@ -127,6 +129,27 @@ class UserRepositoryImpl extends UserRepository {
     }
   }
 
+  /// Delete the current user's thumbnail
+  @override
+  Future<SingleStringState.SingleStringState> deleteUserThumbnail() async {
+    const api = 'user/thumbnail';
+    const url = '$baseUrl$api';
+
+    try {
+      final response = await _dio.delete(url);
+
+      if (response.statusCode == 200) {
+        final state = SingleStringState.Success(response.data['updatedThumbnail']);
+
+        return state;
+      }
+      return SingleStringState.Fail();
+    } catch (e) {
+      return SingleStringState.Fail();
+    }
+  }
+
+  /// Update the current user's status message
   @override
   Future<CommonState.CommonState> updateUserStatusMessage({required String newStatusMessage}) async {
 

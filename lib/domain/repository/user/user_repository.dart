@@ -11,6 +11,7 @@ abstract class UserRepository {
   Future<DetailUserInfoState> getUserInfoByEmail({required String userEmail});
   Future<CommonState> postBookmark({required int postId});
   Future<SingleStringState> updateUserThumbnail({required MultipartFile newThumbnail});
+  Future<SingleStringState> deleteUserThumbnail();
   Future<CommonState> updateUserStatusMessage({required String newStatusMessage});
   Future<SimpleUserListState> getUserListByKeyword({required String keyword, required int page, required int limit});
 }
