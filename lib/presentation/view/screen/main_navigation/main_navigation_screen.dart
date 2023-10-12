@@ -94,7 +94,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   /// List
   void initGridListViewModel() {
     _postGridListViewModel = context.read<CurrentUserPostGridListViewModel>();
-    _postGridListViewModel.setLimit(value: 18);
+    _postGridListViewModel.setLimit(value: 15);
   }
 
   @override
