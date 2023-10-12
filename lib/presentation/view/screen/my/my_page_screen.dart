@@ -77,6 +77,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   /// List
   void initListViewModel() {
     _postListViewModel = context.read<CurrentUserPostGridListViewModel>();
+    _postListViewModel.reinitialize();
   }
 
   /// Update user thumbnail

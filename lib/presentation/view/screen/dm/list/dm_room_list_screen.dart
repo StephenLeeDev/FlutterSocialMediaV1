@@ -38,6 +38,7 @@ class _DmRoomListScreenState extends State<DmRoomListScreen> {
 
   void _initViewModels() {
     _dmRoomListViewModel = context.read<DmRoomListViewModel>();
+    _dmRoomListViewModel.reinitialize();
   }
 
   Future<void> _fetchData() async {
