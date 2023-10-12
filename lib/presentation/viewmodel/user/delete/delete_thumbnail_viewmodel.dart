@@ -4,27 +4,27 @@ import '../../../../../data/model/common/single_string_state.dart';
 import '../../../../../domain/usecase/user/current_user/delete_user_thumbnail_usecase.dart';
 
 class DeleteUserThumbnailViewModel {
-  final DeleteUserThumbnailUseCase _deleteThumbnailUseCase;
+  final DeleteUserThumbnailUseCase _deleteUserThumbnailUseCase;
 
   DeleteUserThumbnailViewModel({
-    required DeleteUserThumbnailUseCase deleteThumbnailUseCase,
-  }) : _deleteThumbnailUseCase = deleteThumbnailUseCase;
+    required DeleteUserThumbnailUseCase deleteUserThumbnailUseCase,
+  }) : _deleteUserThumbnailUseCase = deleteUserThumbnailUseCase;
 
   /// It represents state
   final ValueNotifier<SingleStringState> _deleteThumbnailState = ValueNotifier<SingleStringState>(Ready());
   ValueNotifier<SingleStringState> get deleteThumbnailStateNotifier => _deleteThumbnailState;
   SingleStringState get deleteThumbnailState => deleteThumbnailStateNotifier.value;
 
-  _setDeleteThumbnailState({required SingleStringState state}) {
+  setDeleteThumbnailState({required SingleStringState state}) {
     _deleteThumbnailState.value = state;
   }
 
   /// Execute API
   Future<SingleStringState> deleteThumbnail() async {
-    _setDeleteThumbnailState(state: Loading());
+    setDeleteThumbnailState(state: Loading());
 
-    final state = await _deleteThumbnailUseCase.execute();
-    _setDeleteThumbnailState(state: state);
+    final state = await _deleteUserThumbnailUseCase.execute();
+    setDeleteThumbnailState(state: state);
     return state;
   }
 

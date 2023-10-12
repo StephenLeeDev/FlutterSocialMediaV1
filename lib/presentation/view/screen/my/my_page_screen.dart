@@ -95,7 +95,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   /// Delete user thumbnail
   void initDeleteUserThumbnailViewModel() {
     _deleteUserThumbnailViewModel = DeleteUserThumbnailViewModel(
-        deleteThumbnailUseCase: GetIt.instance<DeleteUserThumbnailUseCase>(),
+        deleteUserThumbnailUseCase: GetIt.instance<DeleteUserThumbnailUseCase>(),
     );
   }
 
