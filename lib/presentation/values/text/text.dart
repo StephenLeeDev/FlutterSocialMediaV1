@@ -27,6 +27,11 @@ const pleaseTryAgain = "Please try again";
 const search = "Search";
 const noSearchResultFound = "No search results found";
 
+/// Authentication
+const continueWithGoogle = "Continue with Google";
+const continueWithFacebook = "Continue with Facebook";
+const continueWithApple = "Continue with Apple";
+
 /// Post
 const post = "Post";
 const createPost = "Create Post";
