@@ -30,7 +30,7 @@ class UpdateUserThumbnailViewModel {
     _image.value = image;
   }
 
-  /// Execute create comment API
+  /// Execute API
   Future<SingleStringState> updateThumbnail() async {
     _setUpdateThumbnailState(state: Loading());
 

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_media_v1/presentation/values/color/color.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../domain/usecase/auth/set_access_token_usecase.dart';
 import '../../../../domain/usecase/auth/social_sign_in/google/google_sign_in_api.dart';
+import '../../../../domain/usecase/user/current_user/delete_user_thumbnail_usecase.dart';
 import '../../../values/text/text.dart';
 import '../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../data/model/common/single_string_state.dart' as SingleStringState;
@@ -25,6 +27,7 @@ import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../../viewmodel/user/current_user/update/update_status_message_viewmodel.dart';
 import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.dart';
+import '../../../viewmodel/user/delete/delete_thumbnail_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
 import '../auth/auth_screen.dart';
@@ -50,6 +53,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   late final CurrentUserInfoViewModel _myUserInfoViewModel;
   late final CurrentUserPostGridListViewModel _postListViewModel;
   late final UpdateUserThumbnailViewModel _updateUserThumbnailViewModel;
+  late final DeleteUserThumbnailViewModel _deleteUserThumbnailViewModel;
   late final UpdateUserStatusMessageViewModel _updateUserStatusMessageViewModel;
 
   @override
@@ -66,6 +70,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     initMyUserInfoViewModel();
     initListViewModel();
     initUpdateUserThumbnailViewModel();
+    initDeleteUserThumbnailViewModel();
     initUpdateUserStatusMessageViewModel();
   }
 
@@ -84,6 +89,13 @@ class _MyPageScreenState extends State<MyPageScreen> {
   void initUpdateUserThumbnailViewModel() {
     _updateUserThumbnailViewModel = UpdateUserThumbnailViewModel(
         updateThumbnailUseCase: GetIt.instance<UpdateUserThumbnailUseCase>(),
+    );
+  }
+
+  /// Delete user thumbnail
+  void initDeleteUserThumbnailViewModel() {
+    _deleteUserThumbnailViewModel = DeleteUserThumbnailViewModel(
+        deleteUserThumbnailUseCase: GetIt.instance<DeleteUserThumbnailUseCase>(),
     );
   }
 
@@ -218,23 +230,52 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     onTap: () {
                       showSelectionGalleryCameraDialog();
                     },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 0),
-                      width: 120,
-                      height: 120,
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: ValueListenableBuilder<String>(
-                        valueListenable: _myUserInfoViewModel.thumbnailNotifier,
-                        builder: (context, thumbnail, _) {
-                          return Image.network(
-                            thumbnail,
-                            fit: BoxFit.cover,
-                          );
-                        },
-                      ),
+                    child: Stack(
+                      children: [
+                        /// Thumbnail
+                        Container(
+                          width: 120,
+                          height: 120,
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: ValueListenableBuilder<String>(
+                            valueListenable: _myUserInfoViewModel.thumbnailNotifier,
+                            builder: (context, thumbnail, _) {
+                              return Image.network(
+                                thumbnail,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
+                        ),
+                        /// Delete thumbnail
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: InkWell(
+                            onTap: () {
+                              // REVIEW: Should it be disabled when it's set as the default thumbnail?
+                              showDeleteThumbnailDialog();
+                            },
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                color: greyF2F2F2,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: const Icon(
+                                size: 20,
+                                Icons.delete_forever_rounded,
+                                color: darkGrey666666,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Expanded(
@@ -506,6 +547,39 @@ class _MyPageScreenState extends State<MyPageScreen> {
           _thumbnailUpdated(state: state);
         }
       },
+    );
+  }
+
+  /// Show delete thumbnail dialog
+  ///
+  /// [Features]
+  /// Confirm delete button (delete)
+  /// Cancel button (cancel)
+  void showDeleteThumbnailDialog() {
+    showTwoButtonDialog(
+      context: context,
+      title: areYouSureYouWantToDeleteThumbnail,
+      firstButtonText: delete,
+
+      /// Delete thumbnail
+      firstButtonListener: () async {
+        /// Avoiding multiple calling
+        if (_deleteUserThumbnailViewModel.deleteThumbnailState is SingleStringState.Loading) return;
+
+        final state = await _deleteUserThumbnailViewModel.deleteThumbnail();
+        /// Success
+        if (state is SingleStringState.Success) {
+          _myUserInfoViewModel.updateMyUserInfoWithNewThumbnail(newThumbnail: state.getValue);
+          if (context.mounted) showSnackBar(context: context, text: thumbnailDeleted);
+        }
+        /// Fail
+        else {
+          if (context.mounted) showSnackBar(context: context, text: somethingWentWrongPleaseTryAgain);
+        }
+      },
+
+      /// Cancel
+      secondButtonText: cancel,
     );
   }
 

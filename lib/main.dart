@@ -37,6 +37,7 @@ import 'domain/usecase/post/list/get_post_list_by_user_email_usecase.dart';
 import 'domain/usecase/post/list/get_post_list_usecase.dart';
 import 'domain/usecase/post/like/post_like_usecase.dart';
 import 'domain/usecase/post/update/update_post_description_usecase.dart';
+import 'domain/usecase/user/current_user/delete_user_thumbnail_usecase.dart';
 import 'domain/usecase/user/current_user/get_current_user_info_usecase.dart';
 import 'domain/usecase/user/list/get_user_list_by_keyword_usecase.dart';
 import 'domain/usecase/user/other_user/get_user_info_by_email_usecase.dart';
@@ -106,6 +107,8 @@ void main() async {
   getIt.registerSingleton<PostBookmarkUseCase>(postBookmarkUseCase);
   final updateUserThumbnailUseCase = UpdateUserThumbnailUseCase(userRepository: userRepository);
   getIt.registerSingleton<UpdateUserThumbnailUseCase>(updateUserThumbnailUseCase);
+  final deleteUserThumbnailUseCase = DeleteUserThumbnailUseCase(userRepository: userRepository);
+  getIt.registerSingleton<DeleteUserThumbnailUseCase>(deleteUserThumbnailUseCase);
   final updateUserStatusMessageUseCase = UpdateUserStatusMessageUseCase(userRepository: userRepository);
   getIt.registerSingleton<UpdateUserStatusMessageUseCase>(updateUserStatusMessageUseCase);
   final getUserListByKeywordUseCase = GetUserListByKeywordUseCase(userRepository: userRepository);

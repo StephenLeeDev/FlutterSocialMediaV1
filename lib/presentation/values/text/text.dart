@@ -70,6 +70,8 @@ const commentUpdatedMessage = "The comment has been updated";
 /// User
 const updateThumbnail = "Update thumbnail";
 const thumbnailUpdated = "Thumbnail updated successfully";
+const areYouSureYouWantToDeleteThumbnail = "Are you sure you want to delete thumbnail?";
+const thumbnailDeleted = "Thumbnail deleted successfully";
 const updateStatusMessage = "Update status message";
 const statusMessageUpdated = "Message updated successfully";
 const searchUser = "Search User";
