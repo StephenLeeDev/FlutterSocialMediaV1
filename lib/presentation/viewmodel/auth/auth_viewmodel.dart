@@ -6,7 +6,7 @@ import '../../../domain/usecase/auth/post_sign_in_usecase.dart';
 import '../../../domain/usecase/auth/set_access_token_usecase.dart';
 
 // TODO : Replace with ValueNotifier later
-class AuthViewModel extends ChangeNotifier {
+class AuthViewModel {
   final PostSignInUseCase _postSignInUseCase;
   final SetAccessTokenUseCase _setAccessTokenUseCase;
 
@@ -16,19 +16,25 @@ class AuthViewModel extends ChangeNotifier {
   }) : _postSignInUseCase = postSignInUseCase,
         _setAccessTokenUseCase = setAccessTokenUseCase;
 
-  AuthState _authState = Loading();
-  AuthState get authState => _authState;
+  /// It represents UI state
+  final ValueNotifier<AuthState> _authState = ValueNotifier<AuthState>(Ready());
+  ValueNotifier<AuthState> get authStateNotifier => _authState;
+  AuthState get authState => _authState.value;
 
-  setAuthState({required AuthState authState}) {
-    _authState = authState;
+  setAuthState({required AuthState state}) {
+    _authState.value = state;
   }
 
   Future<void> signIn({required AuthRequest authRequest}) async {
+    /// Avoiding multiple calling
+    if (authState is Loading) return;
+    setAuthState(state: Loading());
+
     final state = await _postSignInUseCase.execute(authRequest: authRequest);
     if (state is Success) {
       _setAccessTokenUseCase.execute(accessToken: state.getAccessToken);
     }
-    setAuthState(authState: state);
+    setAuthState(state: state);
   }
 
 }
