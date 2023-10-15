@@ -12,6 +12,7 @@ import 'data/networking/dio_singleton.dart';
 import 'data/networking/interceptor/token_interceptor.dart';
 import 'data/repository/auth/auth_repository_impl.dart';
 import 'data/repository/comment/comment_repository_impl.dart';
+import 'data/repository/dm/dm_repository_impl.dart';
 import 'data/repository/follow/follow_repository_impl.dart';
 import 'data/repository/post/post_repository_impl.dart';
 import 'data/repository/secure_storage/secure_storage_repository_impl.dart';
@@ -23,6 +24,8 @@ import 'domain/usecase/comment/create/create_comment_usecase.dart';
 import 'domain/usecase/comment/delete/delete_comment_usecase.dart';
 import 'domain/usecase/comment/list/get_comment_list_usecase.dart';
 import 'domain/usecase/comment/update/update_comment_usecase.dart';
+import 'domain/usecase/dm/room/create_dm_room_usecase.dart';
+import 'domain/usecase/dm/room/get_dm_room_list_usecase.dart';
 import 'domain/usecase/follow/get_follower_list_usecase.dart';
 import 'domain/usecase/follow/get_following_list_usecase.dart';
 import 'domain/usecase/follow/start_follow_usecase.dart';
@@ -34,6 +37,7 @@ import 'domain/usecase/post/list/get_post_list_by_user_email_usecase.dart';
 import 'domain/usecase/post/list/get_post_list_usecase.dart';
 import 'domain/usecase/post/like/post_like_usecase.dart';
 import 'domain/usecase/post/update/update_post_description_usecase.dart';
+import 'domain/usecase/user/current_user/delete_user_thumbnail_usecase.dart';
 import 'domain/usecase/user/current_user/get_current_user_info_usecase.dart';
 import 'domain/usecase/user/list/get_user_list_by_keyword_usecase.dart';
 import 'domain/usecase/user/other_user/get_user_info_by_email_usecase.dart';
@@ -42,6 +46,7 @@ import 'domain/usecase/user/current_user/update_user_status_message_usecase.dart
 import 'domain/usecase/user/current_user/update_user_thumbnail_usecase.dart';
 import 'presentation/router/router.dart';
 import 'presentation/viewmodel/auth/auth_viewmodel.dart';
+import 'presentation/viewmodel/dm/room/list/dm_room_list_viewmodel.dart';
 import 'presentation/viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
 import 'presentation/viewmodel/post/list/other_user_post_list_viewmodel.dart';
 import 'presentation/viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
@@ -63,6 +68,7 @@ void main() async {
   final getAccessTokenUseCase = GetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
   getIt.registerSingleton<GetAccessTokenUseCase>(getAccessTokenUseCase);
   final setAccessTokenUseCase = SetAccessTokenUseCase(secureStorageRepository: secureStorageRepository);
+  getIt.registerSingleton<SetAccessTokenUseCase>(setAccessTokenUseCase);
 
   /// Dio Singleton
   final Dio dio = DioSingleton.getInstance();
@@ -87,8 +93,7 @@ void main() async {
   final authRepository = AuthRepositoryImpl(dio);
   // UseCases
   final postSignInUseCase = PostSignInUseCase(authRepository: authRepository);
-  // ViewModels
-  final authViewModel = AuthViewModel(postSignInUseCase: postSignInUseCase, setAccessTokenUseCase: setAccessTokenUseCase);
+  getIt.registerSingleton<PostSignInUseCase>(postSignInUseCase);
 
   /// User
   // Repository
@@ -101,6 +106,8 @@ void main() async {
   getIt.registerSingleton<PostBookmarkUseCase>(postBookmarkUseCase);
   final updateUserThumbnailUseCase = UpdateUserThumbnailUseCase(userRepository: userRepository);
   getIt.registerSingleton<UpdateUserThumbnailUseCase>(updateUserThumbnailUseCase);
+  final deleteUserThumbnailUseCase = DeleteUserThumbnailUseCase(userRepository: userRepository);
+  getIt.registerSingleton<DeleteUserThumbnailUseCase>(deleteUserThumbnailUseCase);
   final updateUserStatusMessageUseCase = UpdateUserStatusMessageUseCase(userRepository: userRepository);
   getIt.registerSingleton<UpdateUserStatusMessageUseCase>(updateUserStatusMessageUseCase);
   final getUserListByKeywordUseCase = GetUserListByKeywordUseCase(userRepository: userRepository);
@@ -165,6 +172,16 @@ void main() async {
   final updateCommentUseCase = UpdateCommentUseCase(commentRepository: commentRepository);
   getIt.registerSingleton<UpdateCommentUseCase>(updateCommentUseCase);
 
+  /// DM
+  final dmRepository = DmRepositoryImpl(dio);
+  // UseCases
+  final createDmRoomUseCase = CreateDmRoomUseCase(dmRepository: dmRepository);
+  getIt.registerSingleton<CreateDmRoomUseCase>(createDmRoomUseCase);
+  final getDmRoomListUseCase = GetDmRoomListUseCase(dmRepository: dmRepository);
+  getIt.registerSingleton<GetDmRoomListUseCase>(getDmRoomListUseCase);
+  // ViewModels
+  final dmRoomListViewModel = DmRoomListViewModel(getDmRoomListUseCase: getDmRoomListUseCase);
+
   /// Follow
   final followRepository = FollowRepositoryImpl(dio);
   // UseCases
@@ -185,12 +202,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthViewModel>(
-          create: (context) => authViewModel,
-        ),
         /// Current user information
         Provider<CurrentUserInfoViewModel>(
-          create: (context) => myUserInfoViewModel,
+          create: (context) => currentUserInfoViewModel,
         ),
         /// Current user's grid feed
         Provider<CurrentUserPostGridListViewModel>(
@@ -199,6 +213,10 @@ void main() async {
         /// Other user's grid feed
         Provider<OtherUserPostGridListViewModel>(
           create: (context) => otherUserPostGridListViewModel,
+        ),
+        /// DM room list
+        Provider<DmRoomListViewModel>(
+          create: (context) => dmRoomListViewModel,
         ),
       ],
       child: const App(),

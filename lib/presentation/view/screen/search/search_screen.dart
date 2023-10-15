@@ -108,9 +108,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     minLines: 1,
                     maxLines: 1,
                     onChanged: (newKeyword) {
+                      _userListByKeywordViewModel.setKeyword(value: newKeyword);
                       /// Delay for 300 milliseconds and then fetch users by new keyword
                       Future.delayed(const Duration(milliseconds: 300), () {
-                        _userListByKeywordViewModel.setKeyword(value: newKeyword);
                         _userListByKeywordViewModel.getUserListByKeyword();
                       });
                     },

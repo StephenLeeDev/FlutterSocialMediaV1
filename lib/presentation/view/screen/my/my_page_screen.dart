@@ -2,11 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_media_v1/presentation/values/color/color.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../domain/usecase/auth/set_access_token_usecase.dart';
+import '../../../../domain/usecase/auth/social_sign_in/google/google_sign_in_api.dart';
+import '../../../../domain/usecase/user/current_user/delete_user_thumbnail_usecase.dart';
 import '../../../values/text/text.dart';
 import '../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../data/model/common/single_string_state.dart' as SingleStringState;
@@ -23,8 +27,10 @@ import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../../viewmodel/user/current_user/update/update_status_message_viewmodel.dart';
 import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.dart';
+import '../../../viewmodel/user/delete/delete_thumbnail_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
+import '../auth/auth_screen.dart';
 import '../feed/feed_screen_from_grid.dart';
 import '../follow/follow_list_screen.dart';
 
@@ -47,6 +53,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   late final CurrentUserInfoViewModel _myUserInfoViewModel;
   late final CurrentUserPostGridListViewModel _postListViewModel;
   late final UpdateUserThumbnailViewModel _updateUserThumbnailViewModel;
+  late final DeleteUserThumbnailViewModel _deleteUserThumbnailViewModel;
   late final UpdateUserStatusMessageViewModel _updateUserStatusMessageViewModel;
 
   @override
@@ -63,6 +70,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     initMyUserInfoViewModel();
     initListViewModel();
     initUpdateUserThumbnailViewModel();
+    initDeleteUserThumbnailViewModel();
     initUpdateUserStatusMessageViewModel();
   }
 
@@ -74,12 +82,20 @@ class _MyPageScreenState extends State<MyPageScreen> {
   /// List
   void initListViewModel() {
     _postListViewModel = context.read<CurrentUserPostGridListViewModel>();
+    _postListViewModel.reinitialize();
   }
 
   /// Update user thumbnail
   void initUpdateUserThumbnailViewModel() {
     _updateUserThumbnailViewModel = UpdateUserThumbnailViewModel(
         updateThumbnailUseCase: GetIt.instance<UpdateUserThumbnailUseCase>(),
+    );
+  }
+
+  /// Delete user thumbnail
+  void initDeleteUserThumbnailViewModel() {
+    _deleteUserThumbnailViewModel = DeleteUserThumbnailViewModel(
+        deleteUserThumbnailUseCase: GetIt.instance<DeleteUserThumbnailUseCase>(),
     );
   }
 
@@ -113,51 +129,54 @@ class _MyPageScreenState extends State<MyPageScreen> {
       ],
 
       /// Screen
-      child: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () {
-            return _refresh();
-          },
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            controller: _scrollController,
-            children: [
-              /// User profile
-              ValueListenableBuilder<MyUserInfoState.MyUserInfoState>(
-                valueListenable: _myUserInfoViewModel.myUserInfoStateNotifier,
-                builder: (context, state, _) {
-                  if (state is MyUserInfoState.Success) {
-                    return buildUserProfileUI();
-                  } else {
-                    // TODO : Implement Loading UI
-                    return Container();
-                  }
-                },
-              ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: () {
+              return _refresh();
+            },
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              controller: _scrollController,
+              children: [
+                /// User profile
+                ValueListenableBuilder<MyUserInfoState.MyUserInfoState>(
+                  valueListenable: _myUserInfoViewModel.myUserInfoStateNotifier,
+                  builder: (context, state, _) {
+                    if (state is MyUserInfoState.Success) {
+                      return buildUserProfileUI();
+                    } else {
+                      // TODO : Implement Loading UI
+                      return Container();
+                    }
+                  },
+                ),
 
-              /// Grid feed
-              ValueListenableBuilder<PostListState.PostListState>(
-                valueListenable: _postListViewModel.postListStateNotifier,
-                builder: (context, state, _) {
+                /// Grid feed
+                ValueListenableBuilder<PostListState.PostListState>(
+                  valueListenable: _postListViewModel.postListStateNotifier,
+                  builder: (context, state, _) {
 
-                  /// Loading UI
-                  if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
-                    return buildLoadingStateUI();
-                  }
+                    /// Loading UI
+                    if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
+                      return buildLoadingStateUI();
+                    }
 
-                  /// Fail UI
-                  else if (state is PostListState.Fail) {
-                    return buildFailStateUI();
-                  }
+                    /// Fail UI
+                    else if (state is PostListState.Fail) {
+                      return buildFailStateUI();
+                    }
 
-                  /// Success UI (default)
-                  else {
-                    return buildSuccessStateUI();
-                  }
+                    /// Success UI (default)
+                    else {
+                      return buildSuccessStateUI();
+                    }
 
-                },
-              ),
-            ],
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -211,23 +230,52 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     onTap: () {
                       showSelectionGalleryCameraDialog();
                     },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 0),
-                      width: 120,
-                      height: 120,
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: ValueListenableBuilder<String>(
-                        valueListenable: _myUserInfoViewModel.thumbnailNotifier,
-                        builder: (context, thumbnail, _) {
-                          return Image.network(
-                            thumbnail,
-                            fit: BoxFit.cover,
-                          );
-                        },
-                      ),
+                    child: Stack(
+                      children: [
+                        /// Thumbnail
+                        Container(
+                          width: 120,
+                          height: 120,
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: ValueListenableBuilder<String>(
+                            valueListenable: _myUserInfoViewModel.thumbnailNotifier,
+                            builder: (context, thumbnail, _) {
+                              return Image.network(
+                                thumbnail,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
+                        ),
+                        /// Delete thumbnail
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: InkWell(
+                            onTap: () {
+                              // REVIEW: Should it be disabled when it's set as the default thumbnail?
+                              showDeleteThumbnailDialog();
+                            },
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                color: greyF2F2F2,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: const Icon(
+                                size: 20,
+                                Icons.delete_forever_rounded,
+                                color: darkGrey666666,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Expanded(
@@ -502,6 +550,39 @@ class _MyPageScreenState extends State<MyPageScreen> {
     );
   }
 
+  /// Show delete thumbnail dialog
+  ///
+  /// [Features]
+  /// Confirm delete button (delete)
+  /// Cancel button (cancel)
+  void showDeleteThumbnailDialog() {
+    showTwoButtonDialog(
+      context: context,
+      title: areYouSureYouWantToDeleteThumbnail,
+      firstButtonText: delete,
+
+      /// Delete thumbnail
+      firstButtonListener: () async {
+        /// Avoiding multiple calling
+        if (_deleteUserThumbnailViewModel.deleteThumbnailState is SingleStringState.Loading) return;
+
+        final state = await _deleteUserThumbnailViewModel.deleteThumbnail();
+        /// Success
+        if (state is SingleStringState.Success) {
+          _myUserInfoViewModel.updateMyUserInfoWithNewThumbnail(newThumbnail: state.getValue);
+          if (context.mounted) showSnackBar(context: context, text: thumbnailDeleted);
+        }
+        /// Fail
+        else {
+          if (context.mounted) showSnackBar(context: context, text: somethingWentWrongPleaseTryAgain);
+        }
+      },
+
+      /// Cancel
+      secondButtonText: cancel,
+    );
+  }
+
   // TODO : Refactor this feature as a module
   /// Pick a single image from the camera.
   Future<XFile?> pickImageFromCamera() async {
@@ -574,7 +655,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
       onSelected: (value) {
         // TODO : Low priority
         // TODO : Enhance keyboard UI just like CommentScreen's showModalBottomKeyboard()
-        /// Update user's status message
+        /// Update current user's status message
         if (value == updateStatusMessage) {
           showTextInputDialogForUpdate(
               context: context,
@@ -595,11 +676,48 @@ class _MyPageScreenState extends State<MyPageScreen> {
               secondButtonText: cancel,
           );
         }
+        /// Sign out
+        else if (value == signOut) {
+          showTwoButtonDialog(
+            context: context,
+            title: areYouSureYouWantToSignOut,
+            /// Cancel
+            firstButtonText: cancel,
+            firstButtonListener: () {},
+            /// Confirm
+            secondButtonText: confirm,
+            secondButtonListener: () async {
+              /// Initialize the current user's access token
+              await GetIt.instance<SetAccessTokenUseCase>().execute(accessToken: "");
+              // TODO : Branching social sign out; Google, Facebook, Apple
+              /// Sign out from the social
+              await GoogleSignInApi.signOut();
+              /// Move to the sign in screen
+              if (context.mounted) context.goNamed(AuthScreen.routeName);
+            },
+          );
+        }
       },
       itemBuilder: (BuildContext context) => [
+        /// Update status message
         const PopupMenuItem(
           value: updateStatusMessage,
-          child: Text(updateStatusMessage),
+          child: Text(
+            updateStatusMessage,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        /// Sign out
+        const PopupMenuItem(
+          value: signOut,
+          child: Text(
+            signOut,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ],
     );

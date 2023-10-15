@@ -17,22 +17,22 @@ void main() {
 
   group("setAuthState", () {
     test("Set Ready", () {
-      viewModel.setAuthState(authState: Ready());
+      viewModel.setAuthState(state: Ready());
       expect(viewModel.authState is Ready, true);
     });
 
     test("Set Loading", () {
-      viewModel.setAuthState(authState: Loading());
+      viewModel.setAuthState(state: Loading());
       expect(viewModel.authState is Loading, true);
     });
 
     test("Set Fail", () {
-      viewModel.setAuthState(authState: Fail());
+      viewModel.setAuthState(state: Fail());
       expect(viewModel.authState is Fail, true);
     });
 
     test("Set Success", () {
-      viewModel.setAuthState(authState: Success(string));
+      viewModel.setAuthState(state: Success(string));
       expect(viewModel.authState is Success, true);
     });
   });

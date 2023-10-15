@@ -19,12 +19,18 @@ const confirm = "Confirm";
 const areYouSure = "Are you sure?";
 const somethingWentWrongPleaseTryAgain = "Something went wrong\nPlease try again";
 const submit = "Submit";
+const message = "Message";
 const newMessage = "New message";
 const nothingChanged = "Nothing's changed";
 const somethingWentWrong = "Something went wrong";
 const pleaseTryAgain = "Please try again";
 const search = "Search";
 const noSearchResultFound = "No search results found";
+
+/// Authentication
+const continueWithGoogle = "Continue with Google";
+const continueWithFacebook = "Continue with Facebook";
+const continueWithApple = "Continue with Apple";
 
 /// Post
 const post = "Post";
@@ -64,9 +70,13 @@ const commentUpdatedMessage = "The comment has been updated";
 /// User
 const updateThumbnail = "Update thumbnail";
 const thumbnailUpdated = "Thumbnail updated successfully";
+const areYouSureYouWantToDeleteThumbnail = "Are you sure you want to delete thumbnail?";
+const thumbnailDeleted = "Thumbnail deleted successfully";
 const updateStatusMessage = "Update status message";
 const statusMessageUpdated = "Message updated successfully";
 const searchUser = "Search User";
+const signOut = "Sign out";
+const areYouSureYouWantToSignOut = "Are you sure you want to sign out?";
 
 /// Follow
 const follow = "Follow";
@@ -74,3 +84,6 @@ const unfollow = "Unfollow";
 const following = "Following";
 const followers = "Followers";
 const followings = "Followings";
+
+/// DM
+const noDMsYet = "No DMs yet";
