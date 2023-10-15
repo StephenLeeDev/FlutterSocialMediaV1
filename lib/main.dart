@@ -93,8 +93,7 @@ void main() async {
   final authRepository = AuthRepositoryImpl(dio);
   // UseCases
   final postSignInUseCase = PostSignInUseCase(authRepository: authRepository);
-  // ViewModels
-  final authViewModel = AuthViewModel(postSignInUseCase: postSignInUseCase, setAccessTokenUseCase: setAccessTokenUseCase);
+  getIt.registerSingleton<PostSignInUseCase>(postSignInUseCase);
 
   /// User
   // Repository
@@ -203,9 +202,6 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthViewModel>(
-          create: (context) => authViewModel,
-        ),
         /// Current user information
         Provider<CurrentUserInfoViewModel>(
           create: (context) => currentUserInfoViewModel,

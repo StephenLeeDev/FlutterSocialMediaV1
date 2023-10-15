@@ -193,7 +193,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
       message: selectPictureSource,
       firstButtonText: gallery,
 
-      /// Pick an image from gallery
+      /// Pick images from gallery
       firstButtonListener: () async {
         var images = await pickImagesFromGallery();
 
@@ -209,7 +209,7 @@ class _PostImagePickerFragmentState extends State<PostImagePickerFragment> {
         _createPostViewModel.addAdditionalImagesToList(list: images);
       },
 
-      /// Pick images from camera
+      /// Pick an image from camera
       secondButtonText: camera,
       secondButtonListener: () async {
         var images = await pickImageFromCamera();
