@@ -657,23 +657,22 @@ class _MyPageScreenState extends State<MyPageScreen> {
         // TODO : Enhance keyboard UI just like CommentScreen's showModalBottomKeyboard()
         /// Update current user's status message
         if (value == updateStatusMessage) {
-          showTextInputDialogForUpdate(
-              context: context,
-              title: newMessage,
-              initialMessage: _myUserInfoViewModel.statusMessage,
-              firstButtonText: submit,
-              firstButtonListener: (String newStatusMessage) async {
-                /// Not execute API when nothing's changed
-                if (newStatusMessage == _myUserInfoViewModel.statusMessage) {
-                  if (context.mounted) showSnackBar(context: context, text: nothingChanged);
-                }
-                /// Execute API
-                else {
-                  final state = await _updateUserStatusMessageViewModel.updateStatusMessage(newStatusMessage: newStatusMessage);
-                  _statusMessageUpdated(state: state, newStatusMessage: newStatusMessage);
-                }
-              },
-              secondButtonText: cancel,
+          _updateUserStatusMessageViewModel.setOriginalStatusMessage(_myUserInfoViewModel.statusMessage);
+          _updateUserStatusMessageViewModel.initUpdateStatus();
+          showModalBottomKeyboard(
+            context: context,
+            initialMessage: _myUserInfoViewModel.statusMessage,
+            hint: statusMessage,
+            textEditedListener: (newStatusMessage) {
+              /// Update editing new status message
+              _updateUserStatusMessageViewModel.setNewStatusMessage(newStatusMessage);
+            },
+            completeListener: (newStatusMessage) async {
+              /// Execute update status message API
+              final state = await _updateUserStatusMessageViewModel.updateStatusMessage();
+              _statusMessageUpdated(state: state, newStatusMessage: newStatusMessage);
+            },
+            valueListenable: _updateUserStatusMessageViewModel.isValidNotifier
           );
         }
         /// Sign out
