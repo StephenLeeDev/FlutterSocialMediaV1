@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void showTwoButtonDialog({
@@ -85,6 +86,89 @@ void showTextInputDialogForUpdate({
           ),
         ],
       );
+    },
+  );
+}
+
+/// Text input dialog
+void showModalBottomKeyboard({
+  required BuildContext context,
+  required String initialMessage,
+  required String hint,
+  int minLines = 1,
+  int maxLines = 4,
+  int maxLength = 200,
+  required Function(String) textEditedListener,
+  required Function(String) completeListener,
+  required ValueListenable<bool> valueListenable,
+}) {
+  final FocusNode focusNode = FocusNode();
+  TextEditingController textEditingController = TextEditingController(text: initialMessage);
+
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    builder: (BuildContext buildContext) {
+      Future.delayed(Duration.zero, () {
+        FocusScope.of(buildContext).requestFocus(focusNode);
+      });
+      return
+        Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(buildContext).viewInsets.bottom),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey,
+                  width: 1.0,
+                ),
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                /// Text input
+                Expanded(
+                  child: TextField(
+                    focusNode: focusNode,
+                    controller: textEditingController,
+                    decoration: InputDecoration(
+                      hintText: hint,
+                      border: const OutlineInputBorder(),
+                    ),
+                    minLines: 1,
+                    maxLines: 4,
+                    maxLength: 200,
+                    onChanged: (newStatusMessage) {
+                      textEditedListener(newStatusMessage);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                /// Complete button
+                ValueListenableBuilder<bool>(
+                  valueListenable: valueListenable,
+                  builder: (buildContext, isValid, _) {
+                    return IconButton(
+                      onPressed: () async {
+                        isValid ? completeListener(textEditingController.text) : null;
+                      },
+                      icon: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: Icon(
+                          Icons.send,
+                          color: isValid ? Colors.black : Colors.grey.shade400,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
     },
   );
 }
