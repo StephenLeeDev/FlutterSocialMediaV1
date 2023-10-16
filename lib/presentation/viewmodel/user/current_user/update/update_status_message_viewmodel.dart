@@ -4,11 +4,11 @@ import '../../../../../data/model/common/common_state.dart';
 import '../../../../../domain/usecase/user/current_user/update_user_status_message_usecase.dart';
 
 class UpdateUserStatusMessageViewModel {
-  final UpdateUserStatusMessageUseCase _updateStatusMessageUseCase;
+  final UpdateUserStatusMessageUseCase _updateUserStatusMessageUseCase;
 
   UpdateUserStatusMessageViewModel({
-    required UpdateUserStatusMessageUseCase updateStatusMessageUseCase,
-  }) : _updateStatusMessageUseCase = updateStatusMessageUseCase;
+    required UpdateUserStatusMessageUseCase updateUserStatusMessageUseCase,
+  }) : _updateUserStatusMessageUseCase = updateUserStatusMessageUseCase;
 
   /// It represents state
   final ValueNotifier<CommonState> _updateStatusMessageState = ValueNotifier<CommonState>(Ready());
@@ -20,12 +20,12 @@ class UpdateUserStatusMessageViewModel {
     checkIsValid();
   }
 
-  /// Original status message
-  String _originalStatusMessage = "";
-  String get originalStatusMessage => _originalStatusMessage;
+  /// Previous status message
+  String _previousStatusMessage = "";
+  String get previousStatusMessage => _previousStatusMessage;
 
-  setOriginalStatusMessage(String originalStatusMessage) {
-    _originalStatusMessage = originalStatusMessage;
+  setPreviousStatusMessage(String previousStatusMessage) {
+    _previousStatusMessage = previousStatusMessage;
     checkIsValid();
   }
 
@@ -39,7 +39,7 @@ class UpdateUserStatusMessageViewModel {
   }
 
   checkIsValid() {
-    final valid = newStatusMessage.isNotEmpty && originalStatusMessage != newStatusMessage && updateStatusMessageState is! Loading;
+    final valid = newStatusMessage.isNotEmpty && previousStatusMessage != newStatusMessage && updateStatusMessageState is! Loading;
     setIsValid(valid);
   }
 
@@ -56,14 +56,15 @@ class UpdateUserStatusMessageViewModel {
   Future<CommonState> updateStatusMessage() async {
     setUpdateStatusMessageState(Loading());
 
-    final state = await _updateStatusMessageUseCase.execute(newStatusMessage: newStatusMessage);
+    final state = await _updateUserStatusMessageUseCase.execute(newStatusMessage: newStatusMessage);
     setUpdateStatusMessageState(state);
     return state;
   }
 
-  /// Initialize states after success/cancel task
+  /// Initialize states after success task
   initUpdateStatus() {
     setUpdateStatusMessageState(Ready());
+    setPreviousStatusMessage("");
     setNewStatusMessage("");
   }
 

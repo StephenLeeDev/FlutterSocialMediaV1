@@ -102,7 +102,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   /// Update user status message
   void initUpdateUserStatusMessageViewModel() {
     _updateUserStatusMessageViewModel = UpdateUserStatusMessageViewModel(
-        updateStatusMessageUseCase: GetIt.instance<UpdateUserStatusMessageUseCase>(),
+        updateUserStatusMessageUseCase: GetIt.instance<UpdateUserStatusMessageUseCase>(),
     );
   }
 
@@ -657,8 +657,11 @@ class _MyPageScreenState extends State<MyPageScreen> {
         // TODO : Enhance keyboard UI just like CommentScreen's showModalBottomKeyboard()
         /// Update current user's status message
         if (value == updateStatusMessage) {
-          _updateUserStatusMessageViewModel.setOriginalStatusMessage(_myUserInfoViewModel.statusMessage);
+          /// Initialize the ViewModel states before use them
+          _updateUserStatusMessageViewModel.setPreviousStatusMessage(_myUserInfoViewModel.statusMessage);
           _updateUserStatusMessageViewModel.initUpdateStatus();
+
+          /// Keyboard UI
           showModalBottomKeyboard(
             context: context,
             initialMessage: _myUserInfoViewModel.statusMessage,
