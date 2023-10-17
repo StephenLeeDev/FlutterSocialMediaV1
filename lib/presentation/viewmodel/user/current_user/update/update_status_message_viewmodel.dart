@@ -4,36 +4,60 @@ import '../../../../../data/model/common/common_state.dart';
 import '../../../../../domain/usecase/user/current_user/update_user_status_message_usecase.dart';
 
 class UpdateUserStatusMessageViewModel {
-  final UpdateUserStatusMessageUseCase _updateStatusMessageUseCase;
+  final UpdateUserStatusMessageUseCase _updateUserStatusMessageUseCase;
 
   UpdateUserStatusMessageViewModel({
-    required UpdateUserStatusMessageUseCase updateStatusMessageUseCase,
-  }) : _updateStatusMessageUseCase = updateStatusMessageUseCase;
+    required UpdateUserStatusMessageUseCase updateUserStatusMessageUseCase,
+  }) : _updateUserStatusMessageUseCase = updateUserStatusMessageUseCase;
 
   /// It represents state
   final ValueNotifier<CommonState> _updateStatusMessageState = ValueNotifier<CommonState>(Ready());
   ValueNotifier<CommonState> get updateStatusMessageStateNotifier => _updateStatusMessageState;
   CommonState get updateStatusMessageState => updateStatusMessageStateNotifier.value;
 
-  _setUpdateStatusMessageState({required CommonState state}) {
+  setUpdateStatusMessageState(CommonState state) {
     _updateStatusMessageState.value = state;
+    checkIsValid();
+  }
+
+  /// Previous status message
+  String _previousStatusMessage = "";
+  String get previousStatusMessage => _previousStatusMessage;
+
+  setPreviousStatusMessage(String previousStatusMessage) {
+    _previousStatusMessage = previousStatusMessage;
+    checkIsValid();
   }
 
   /// New status message
-  final ValueNotifier<String> _newStatusMessage = ValueNotifier<String>("");
-  ValueNotifier<String> get newStatusMessageNotifier => _newStatusMessage;
-  String get newStatusMessage => _newStatusMessage.value;
+  String _newStatusMessage = "";
+  String get newStatusMessage => _newStatusMessage;
 
-  setNewStatusMessage({required String newStatusMessage}) {
-    _newStatusMessage.value = newStatusMessage;
+  setNewStatusMessage(String newStatusMessage) {
+    _newStatusMessage = newStatusMessage;
+    checkIsValid();
+  }
+
+  checkIsValid() {
+    final valid = previousStatusMessage != newStatusMessage && updateStatusMessageState is! Loading;
+    setIsValid(valid);
+  }
+
+  /// It represents whether can be updated
+  final ValueNotifier<bool> _isValid = ValueNotifier<bool>(false);
+  ValueNotifier<bool> get isValidNotifier => _isValid;
+  bool get isValid => _isValid.value;
+
+  setIsValid(bool value) {
+    _isValid.value = value;
   }
 
   /// Execute API
-  Future<CommonState> updateStatusMessage({required String newStatusMessage}) async {
-    _setUpdateStatusMessageState(state: Loading());
+  Future<CommonState> updateStatusMessage() async {
+    setUpdateStatusMessageState(Loading());
 
-    final state = await _updateStatusMessageUseCase.execute(newStatusMessage: newStatusMessage);
-    _setUpdateStatusMessageState(state: state);
+    final state = await _updateUserStatusMessageUseCase.execute(newStatusMessage: newStatusMessage);
+    setUpdateStatusMessageState(state);
     return state;
   }
 
