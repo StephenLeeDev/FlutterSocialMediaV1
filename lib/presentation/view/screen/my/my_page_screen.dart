@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../../../domain/usecase/auth/set_access_token_usecase.dart';
 import '../../../../domain/usecase/auth/social_sign_in/google/google_sign_in_api.dart';
 import '../../../../domain/usecase/user/current_user/delete_user_thumbnail_usecase.dart';
+import '../../../util/bottom_sheet/bottom_sheet_util.dart';
 import '../../../values/text/text.dart';
 import '../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../data/model/common/single_string_state.dart' as SingleStringState;
@@ -29,6 +30,7 @@ import '../../../viewmodel/user/current_user/update/update_status_message_viewmo
 import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.dart';
 import '../../../viewmodel/user/delete/delete_thumbnail_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
+import '../../widget/dialog/multi_button_dialog_item_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
 import '../auth/auth_screen.dart';
 import '../feed/feed_screen_from_grid.dart';
@@ -62,7 +64,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
     _scrollController.addListener(_scrollListener);
 
     initViewModels();
-    fetchData(); // TODO : Move MyPostGridListViewModel to MainNavigationScreen, and synchronize it with getPostList() between MyPostGridListViewModel and PostListViewModel.
+    // TODO : Low priority
+    // TODO : Move MyPostGridListViewModel to MainNavigationScreen, and synchronize it with getPostList() between MyPostGridListViewModel and PostListViewModel.
+    fetchData();
   }
 
   /// ViewModels
@@ -102,7 +106,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   /// Update user status message
   void initUpdateUserStatusMessageViewModel() {
     _updateUserStatusMessageViewModel = UpdateUserStatusMessageViewModel(
-        updateStatusMessageUseCase: GetIt.instance<UpdateUserStatusMessageUseCase>(),
+        updateUserStatusMessageUseCase: GetIt.instance<UpdateUserStatusMessageUseCase>(),
     );
   }
 
@@ -214,10 +218,16 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     ),
                     const Spacer(),
 
-                    /// Pop up menu
-                    // TODO : Mid priority
-                    // TODO : Modify with showTwoButtonBottomSheetCupertino() for enhance
-                    popUpMenuWidget(),
+                    /// show the setting buttons bottom sheet
+                    IconButton(
+                      onPressed: () {
+                        showSettingBottomSheet();
+                      },
+                      icon: const Icon(
+                        Icons.more_vert_rounded,
+                        color: Colors.black,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -397,33 +407,54 @@ class _MyPageScreenState extends State<MyPageScreen> {
               const SizedBox(height: 8),
 
               /// Status message
-              /// It's not visible when status message is empty
-              ValueListenableBuilder<String>(
-                valueListenable: _myUserInfoViewModel.statusMessageNotifier,
-                builder: (context, message, _) {
-                  /// Status message exists
-                  if (message.isNotEmpty) {
-                    return Container(
-                      constraints: const BoxConstraints(
-                        minHeight: 50.0,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          message,
-                          style: const TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w600,
-                          ),
+              InkWell(
+                onTap: () {
+                  _updateStatusMessage(_myUserInfoViewModel.statusMessage);
+                },
+                child: Container(
+                  constraints: const BoxConstraints(
+                    minHeight: 50.0,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ValueListenableBuilder<String>(
+                          valueListenable: _myUserInfoViewModel.statusMessageNotifier,
+                          builder: (context, message, _) {
+                            /// Message exists
+                            if (message.isNotEmpty) {
+                              return Text(
+                                message,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              );
+                            }
+                            /// Empty message
+                            else {
+                              return const Text(
+                                tryToSetYourStatusMessage,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ),
-                    );
-                  }
-                  /// Empty status message space
-                  else {
-                    return const SizedBox(height: 50);
-                  }
-                },
+                      /// Edit icon
+                      const Icon(
+                        color: Colors.grey,
+                        Icons.edit
+                      )
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -513,11 +544,13 @@ class _MyPageScreenState extends State<MyPageScreen> {
     _postListViewModel.refresh();
     // FIXME : ErrorNumber 01
     // FIXME : This initializing from setLimit() not actually working with getPostList(), and I don't know why yet
+
+    // FIXME : I guess, it caused by private [limit]'s private scope
     // _postListViewModel.setLimit(value: 15);
     await _myUserInfoViewModel.getMyUserInfo();
   }
 
-  // TODO : Must test image picker features on actual iOS device later (I don't have Apple developer account yet)
+  // TODO : Must test image picker features on actual iOS device later (I don't have an Apple developer account yet)
   /// Show image source selection dialog between camera/gallery
   void showSelectionGalleryCameraDialog() {
     showTwoButtonDialog(
@@ -630,6 +663,57 @@ class _MyPageScreenState extends State<MyPageScreen> {
     }
   }
 
+  void _updateStatusMessage(String statusMessage) {
+    /// Initialize the ViewModel states before use them
+    _updateUserStatusMessageViewModel.setPreviousStatusMessage(_myUserInfoViewModel.statusMessage);
+    _updateUserStatusMessageViewModel.setNewStatusMessage(statusMessage);
+    debugPrint("statusMessage : $statusMessage");
+
+    /// Keyboard UI
+    showModalBottomKeyboard(
+      context: context,
+      initialMessage: statusMessage,
+      hint: tryToSetYourStatusMessage,
+      maxLength: 100,
+      textEditedListener: (newStatusMessage) {
+        /// Update editing new status message
+        _updateUserStatusMessageViewModel.setUpdateStatusMessageState(CommonState.Ready());
+        _updateUserStatusMessageViewModel.setNewStatusMessage(newStatusMessage);
+      },
+      completeListener: (newStatusMessage) async {
+        /// Execute update status message API
+        final state = await _updateUserStatusMessageViewModel.updateStatusMessage();
+        _statusMessageUpdated(state: state, newStatusMessage: newStatusMessage);
+      },
+      valueListenable: _updateUserStatusMessageViewModel.isValidNotifier,
+      onClosed: () {
+        /// Updating task has not completed
+        /// Recommend continue updating
+        if (_updateUserStatusMessageViewModel.updateStatusMessageState is CommonState.Ready
+            && _updateUserStatusMessageViewModel.previousStatusMessage != _updateUserStatusMessageViewModel.newStatusMessage
+        ) {
+          showConfirmCancelUpdateDialog(_updateUserStatusMessageViewModel.newStatusMessage);
+        }
+      }
+    );
+  }
+
+  /// Confirm cancel updating status message
+  void showConfirmCancelUpdateDialog(String statusMessage) {
+    showTwoButtonDialog(
+      context: context,
+      title: discardEdits,
+      /// Cancel updating and discard
+      firstButtonText: discard,
+      firstButtonListener: () {},
+      /// Keep writing
+      secondButtonText: keepWriting,
+      secondButtonListener: () {
+        _updateStatusMessage(statusMessage);
+      },
+    );
+  }
+
   /// Reload updated user status message
   void _statusMessageUpdated({required CommonState.CommonState state, required String newStatusMessage}) {
     if (state is CommonState.Success) {
@@ -645,81 +729,47 @@ class _MyPageScreenState extends State<MyPageScreen> {
     }
   }
 
-  Widget popUpMenuWidget() {
-    return PopupMenuButton(
-      color: Colors.white,
-      icon: const Icon(
-        Icons.more_vert_rounded,
-        color: Colors.black,
+  /// Setting buttons bottom sheet
+  void showSettingBottomSheet() {
+    final List<MultiButtonDialogItemWidget> buttons = [
+      /// SignOut
+      MultiButtonDialogItemWidget(
+        context: context,
+        iconData: Icons.output_outlined,
+        buttonText: signOut,
+        listener: () {
+          showConfirmSignOutDialog();
+        }
       ),
-      onSelected: (value) {
-        // TODO : Low priority
-        // TODO : Enhance keyboard UI just like CommentScreen's showModalBottomKeyboard()
-        /// Update current user's status message
-        if (value == updateStatusMessage) {
-          showTextInputDialogForUpdate(
-              context: context,
-              title: newMessage,
-              initialMessage: _myUserInfoViewModel.statusMessage,
-              firstButtonText: submit,
-              firstButtonListener: (String newStatusMessage) async {
-                /// Not execute API when nothing's changed
-                if (newStatusMessage == _myUserInfoViewModel.statusMessage) {
-                  if (context.mounted) showSnackBar(context: context, text: nothingChanged);
-                }
-                /// Execute API
-                else {
-                  final state = await _updateUserStatusMessageViewModel.updateStatusMessage(newStatusMessage: newStatusMessage);
-                  _statusMessageUpdated(state: state, newStatusMessage: newStatusMessage);
-                }
-              },
-              secondButtonText: cancel,
-          );
-        }
-        /// Sign out
-        else if (value == signOut) {
-          showTwoButtonDialog(
-            context: context,
-            title: areYouSureYouWantToSignOut,
-            /// Cancel
-            firstButtonText: cancel,
-            firstButtonListener: () {},
-            /// Confirm
-            secondButtonText: confirm,
-            secondButtonListener: () async {
-              /// Initialize the current user's access token
-              await GetIt.instance<SetAccessTokenUseCase>().execute(accessToken: "");
-              // TODO : Branching social sign out; Google, Facebook, Apple
-              /// Sign out from the social
-              await GoogleSignInApi.signOut();
-              /// Move to the sign in screen
-              if (context.mounted) context.goNamed(AuthScreen.routeName);
-            },
-          );
-        }
-      },
-      itemBuilder: (BuildContext context) => [
-        /// Update status message
-        const PopupMenuItem(
-          value: updateStatusMessage,
-          child: Text(
-            updateStatusMessage,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        /// Sign out
-        const PopupMenuItem(
-          value: signOut,
-          child: Text(
-            signOut,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
+    ];
+
+    showMultiButtonBottomSheetCupertino(
+      context: context,
+      title: settings,
+      buttons: buttons,
     );
   }
+
+  /// Confirm sign out dialog
+  void showConfirmSignOutDialog() {
+    showTwoButtonDialog(
+      context: context,
+      title: areYouSureYouWantToSignOut,
+      /// Cancel
+      firstButtonText: cancel,
+      firstButtonListener: () {},
+      /// Confirm
+      secondButtonText: confirm,
+      secondButtonListener: () async {
+        /// Initialize the current user's access token
+        await GetIt.instance<SetAccessTokenUseCase>().execute(accessToken: "");
+        // TODO : Branching social sign out; Google, Facebook, Apple
+        /// Sign out from the social
+        await GoogleSignInApi.signOut();
+        /// Move to the sign in screen
+        if (context.mounted) context.goNamed(AuthScreen.routeName);
+      },
+    );
+  }
+
 }
