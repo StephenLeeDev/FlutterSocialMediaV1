@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../../../domain/usecase/auth/set_access_token_usecase.dart';
 import '../../../../domain/usecase/auth/social_sign_in/google/google_sign_in_api.dart';
 import '../../../../domain/usecase/user/current_user/delete_user_thumbnail_usecase.dart';
+import '../../../util/bottom_sheet/bottom_sheet_util.dart';
 import '../../../values/text/text.dart';
 import '../../../../data/model/common/common_state.dart' as CommonState;
 import '../../../../data/model/common/single_string_state.dart' as SingleStringState;
@@ -29,6 +30,7 @@ import '../../../viewmodel/user/current_user/update/update_status_message_viewmo
 import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.dart';
 import '../../../viewmodel/user/delete/delete_thumbnail_viewmodel.dart';
 import '../../widget/common/error/error_widget.dart';
+import '../../widget/dialog/multi_button_dialog_item_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
 import '../auth/auth_screen.dart';
 import '../feed/feed_screen_from_grid.dart';
@@ -62,7 +64,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
     _scrollController.addListener(_scrollListener);
 
     initViewModels();
-    fetchData(); // TODO : Move MyPostGridListViewModel to MainNavigationScreen, and synchronize it with getPostList() between MyPostGridListViewModel and PostListViewModel.
+    // TODO : Low priority
+    // TODO : Move MyPostGridListViewModel to MainNavigationScreen, and synchronize it with getPostList() between MyPostGridListViewModel and PostListViewModel.
+    fetchData();
   }
 
   /// ViewModels
@@ -214,10 +218,16 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     ),
                     const Spacer(),
 
-                    /// Pop up menu
-                    // TODO : Mid priority
-                    // TODO : Modify with showTwoButtonBottomSheetCupertino() for enhance
-                    popUpMenuWidget(),
+                    /// show the setting buttons bottom sheet
+                    IconButton(
+                      onPressed: () {
+                        showSettingBottomSheet();
+                      },
+                      icon: const Icon(
+                        Icons.more_vert_rounded,
+                        color: Colors.black,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -534,11 +544,13 @@ class _MyPageScreenState extends State<MyPageScreen> {
     _postListViewModel.refresh();
     // FIXME : ErrorNumber 01
     // FIXME : This initializing from setLimit() not actually working with getPostList(), and I don't know why yet
+
+    // FIXME : I guess, it caused by private [limit]'s private scope
     // _postListViewModel.setLimit(value: 15);
     await _myUserInfoViewModel.getMyUserInfo();
   }
 
-  // TODO : Must test image picker features on actual iOS device later (I don't have Apple developer account yet)
+  // TODO : Must test image picker features on actual iOS device later (I don't have an Apple developer account yet)
   /// Show image source selection dialog between camera/gallery
   void showSelectionGalleryCameraDialog() {
     showTwoButtonDialog(
@@ -686,6 +698,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
     );
   }
 
+  /// Confirm cancel updating status message
   void showConfirmCancelUpdateDialog(String statusMessage) {
     showTwoButtonDialog(
       context: context,
@@ -716,48 +729,47 @@ class _MyPageScreenState extends State<MyPageScreen> {
     }
   }
 
-  Widget popUpMenuWidget() {
-    return PopupMenuButton(
-      color: Colors.white,
-      icon: const Icon(
-        Icons.more_vert_rounded,
-        color: Colors.black,
-      ),
-      onSelected: (value) {
-        /// Sign out
-        if (value == signOut) {
-          showTwoButtonDialog(
-            context: context,
-            title: areYouSureYouWantToSignOut,
-            /// Cancel
-            firstButtonText: cancel,
-            firstButtonListener: () {},
-            /// Confirm
-            secondButtonText: confirm,
-            secondButtonListener: () async {
-              /// Initialize the current user's access token
-              await GetIt.instance<SetAccessTokenUseCase>().execute(accessToken: "");
-              // TODO : Branching social sign out; Google, Facebook, Apple
-              /// Sign out from the social
-              await GoogleSignInApi.signOut();
-              /// Move to the sign in screen
-              if (context.mounted) context.goNamed(AuthScreen.routeName);
-            },
-          );
+  /// Setting buttons bottom sheet
+  void showSettingBottomSheet() {
+    final List<MultiButtonDialogItemWidget> buttons = [
+      /// SignOut
+      MultiButtonDialogItemWidget(
+        context: context,
+        iconData: Icons.output_outlined,
+        buttonText: signOut,
+        listener: () {
+          showConfirmSignOutDialog();
         }
-      },
-      itemBuilder: (BuildContext context) => [
-        /// Sign out
-        const PopupMenuItem(
-          value: signOut,
-          child: Text(
-            signOut,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
+      ),
+    ];
+
+    showMultiButtonBottomSheetCupertino(
+      context: context,
+      title: settings,
+      buttons: buttons,
     );
   }
+
+  /// Confirm sign out dialog
+  void showConfirmSignOutDialog() {
+    showTwoButtonDialog(
+      context: context,
+      title: areYouSureYouWantToSignOut,
+      /// Cancel
+      firstButtonText: cancel,
+      firstButtonListener: () {},
+      /// Confirm
+      secondButtonText: confirm,
+      secondButtonListener: () async {
+        /// Initialize the current user's access token
+        await GetIt.instance<SetAccessTokenUseCase>().execute(accessToken: "");
+        // TODO : Branching social sign out; Google, Facebook, Apple
+        /// Sign out from the social
+        await GoogleSignInApi.signOut();
+        /// Move to the sign in screen
+        if (context.mounted) context.goNamed(AuthScreen.routeName);
+      },
+    );
+  }
+
 }

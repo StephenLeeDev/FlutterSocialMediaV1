@@ -32,7 +32,7 @@ class AuthViewModel {
 
     final state = await _postSignInUseCase.execute(authRequest: authRequest);
     if (state is Success) {
-      _setAccessTokenUseCase.execute(accessToken: state.getAccessToken);
+      await _setAccessTokenUseCase.execute(accessToken: state.getAccessToken);
     }
     setAuthState(state: state);
   }
