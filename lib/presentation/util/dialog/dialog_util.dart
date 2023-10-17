@@ -101,6 +101,7 @@ void showModalBottomKeyboard({
   required Function(String) textEditedListener,
   required Function(String) completeListener,
   required ValueListenable<bool> valueListenable,
+  Function()? onClosed,
 }) {
   final FocusNode focusNode = FocusNode();
   TextEditingController textEditingController = TextEditingController(text: initialMessage);
@@ -137,9 +138,9 @@ void showModalBottomKeyboard({
                       hintText: hint,
                       border: const OutlineInputBorder(),
                     ),
-                    minLines: 1,
-                    maxLines: 4,
-                    maxLength: 200,
+                    minLines: minLines,
+                    maxLines: maxLines,
+                    maxLength: maxLength,
                     onChanged: (newStatusMessage) {
                       textEditedListener(newStatusMessage);
                     },
@@ -170,5 +171,8 @@ void showModalBottomKeyboard({
           ),
         );
     },
-  );
+  ).then((value) {
+    /// On the keyboard closed
+    if (onClosed != null) onClosed();
+  });
 }

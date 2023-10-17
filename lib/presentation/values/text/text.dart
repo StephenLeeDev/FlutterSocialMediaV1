@@ -73,6 +73,7 @@ const thumbnailUpdated = "Thumbnail updated successfully";
 const areYouSureYouWantToDeleteThumbnail = "Are you sure you want to delete thumbnail?";
 const thumbnailDeleted = "Thumbnail deleted successfully";
 const statusMessage = "Status message";
+const tryToSetYourStatusMessage = "Try to set your status message";
 const updateStatusMessage = "Update status message";
 const statusMessageUpdated = "Message updated successfully";
 const searchUser = "Search User";

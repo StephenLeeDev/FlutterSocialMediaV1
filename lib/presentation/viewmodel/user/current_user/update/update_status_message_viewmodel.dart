@@ -39,7 +39,7 @@ class UpdateUserStatusMessageViewModel {
   }
 
   checkIsValid() {
-    final valid = newStatusMessage.isNotEmpty && previousStatusMessage != newStatusMessage && updateStatusMessageState is! Loading;
+    final valid = previousStatusMessage != newStatusMessage && updateStatusMessageState is! Loading;
     setIsValid(valid);
   }
 
@@ -59,13 +59,6 @@ class UpdateUserStatusMessageViewModel {
     final state = await _updateUserStatusMessageUseCase.execute(newStatusMessage: newStatusMessage);
     setUpdateStatusMessageState(state);
     return state;
-  }
-
-  /// Initialize states after success task
-  initUpdateStatus() {
-    setUpdateStatusMessageState(Ready());
-    setPreviousStatusMessage("");
-    setNewStatusMessage("");
   }
 
 }

@@ -397,33 +397,54 @@ class _MyPageScreenState extends State<MyPageScreen> {
               const SizedBox(height: 8),
 
               /// Status message
-              /// It's not visible when status message is empty
-              ValueListenableBuilder<String>(
-                valueListenable: _myUserInfoViewModel.statusMessageNotifier,
-                builder: (context, message, _) {
-                  /// Status message exists
-                  if (message.isNotEmpty) {
-                    return Container(
-                      constraints: const BoxConstraints(
-                        minHeight: 50.0,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          message,
-                          style: const TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w600,
-                          ),
+              InkWell(
+                onTap: () {
+                  _updateStatusMessage(_myUserInfoViewModel.statusMessage);
+                },
+                child: Container(
+                  constraints: const BoxConstraints(
+                    minHeight: 50.0,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ValueListenableBuilder<String>(
+                          valueListenable: _myUserInfoViewModel.statusMessageNotifier,
+                          builder: (context, message, _) {
+                            /// Message exists
+                            if (message.isNotEmpty) {
+                              return Text(
+                                message,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              );
+                            }
+                            /// Empty message
+                            else {
+                              return const Text(
+                                tryToSetYourStatusMessage,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ),
-                    );
-                  }
-                  /// Empty status message space
-                  else {
-                    return const SizedBox(height: 50);
-                  }
-                },
+                      /// Edit icon
+                      const Icon(
+                        color: Colors.grey,
+                        Icons.edit
+                      )
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -630,6 +651,56 @@ class _MyPageScreenState extends State<MyPageScreen> {
     }
   }
 
+  void _updateStatusMessage(String statusMessage) {
+    /// Initialize the ViewModel states before use them
+    _updateUserStatusMessageViewModel.setPreviousStatusMessage(_myUserInfoViewModel.statusMessage);
+    _updateUserStatusMessageViewModel.setNewStatusMessage(statusMessage);
+    debugPrint("statusMessage : $statusMessage");
+
+    /// Keyboard UI
+    showModalBottomKeyboard(
+      context: context,
+      initialMessage: statusMessage,
+      hint: tryToSetYourStatusMessage,
+      maxLength: 100,
+      textEditedListener: (newStatusMessage) {
+        /// Update editing new status message
+        _updateUserStatusMessageViewModel.setUpdateStatusMessageState(CommonState.Ready());
+        _updateUserStatusMessageViewModel.setNewStatusMessage(newStatusMessage);
+      },
+      completeListener: (newStatusMessage) async {
+        /// Execute update status message API
+        final state = await _updateUserStatusMessageViewModel.updateStatusMessage();
+        _statusMessageUpdated(state: state, newStatusMessage: newStatusMessage);
+      },
+      valueListenable: _updateUserStatusMessageViewModel.isValidNotifier,
+      onClosed: () {
+        /// Updating task has not completed
+        /// Recommend continue updating
+        if (_updateUserStatusMessageViewModel.updateStatusMessageState is CommonState.Ready
+            && _updateUserStatusMessageViewModel.previousStatusMessage != _updateUserStatusMessageViewModel.newStatusMessage
+        ) {
+          showConfirmCancelUpdateDialog(_updateUserStatusMessageViewModel.newStatusMessage);
+        }
+      }
+    );
+  }
+
+  void showConfirmCancelUpdateDialog(String statusMessage) {
+    showTwoButtonDialog(
+      context: context,
+      title: discardEdits,
+      /// Cancel updating and discard
+      firstButtonText: discard,
+      firstButtonListener: () {},
+      /// Keep writing
+      secondButtonText: keepWriting,
+      secondButtonListener: () {
+        _updateStatusMessage(statusMessage);
+      },
+    );
+  }
+
   /// Reload updated user status message
   void _statusMessageUpdated({required CommonState.CommonState state, required String newStatusMessage}) {
     if (state is CommonState.Success) {
@@ -653,33 +724,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
         color: Colors.black,
       ),
       onSelected: (value) {
-        // TODO : Low priority
-        // TODO : Enhance keyboard UI just like CommentScreen's showModalBottomKeyboard()
-        /// Update current user's status message
-        if (value == updateStatusMessage) {
-          /// Initialize the ViewModel states before use them
-          _updateUserStatusMessageViewModel.setPreviousStatusMessage(_myUserInfoViewModel.statusMessage);
-          _updateUserStatusMessageViewModel.initUpdateStatus();
-
-          /// Keyboard UI
-          showModalBottomKeyboard(
-            context: context,
-            initialMessage: _myUserInfoViewModel.statusMessage,
-            hint: statusMessage,
-            textEditedListener: (newStatusMessage) {
-              /// Update editing new status message
-              _updateUserStatusMessageViewModel.setNewStatusMessage(newStatusMessage);
-            },
-            completeListener: (newStatusMessage) async {
-              /// Execute update status message API
-              final state = await _updateUserStatusMessageViewModel.updateStatusMessage();
-              _statusMessageUpdated(state: state, newStatusMessage: newStatusMessage);
-            },
-            valueListenable: _updateUserStatusMessageViewModel.isValidNotifier
-          );
-        }
         /// Sign out
-        else if (value == signOut) {
+        if (value == signOut) {
           showTwoButtonDialog(
             context: context,
             title: areYouSureYouWantToSignOut,
@@ -701,16 +747,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
         }
       },
       itemBuilder: (BuildContext context) => [
-        /// Update status message
-        const PopupMenuItem(
-          value: updateStatusMessage,
-          child: Text(
-            updateStatusMessage,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
         /// Sign out
         const PopupMenuItem(
           value: signOut,

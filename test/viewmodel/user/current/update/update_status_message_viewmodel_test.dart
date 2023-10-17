@@ -65,10 +65,9 @@ main() {
       viewModel.setUpdateStatusMessageState(Ready());
       viewModel.setPreviousStatusMessage("");
       viewModel.setNewStatusMessage("");
-      expect(viewModel.isValid, false);
 
       viewModel.setPreviousStatusMessage(string);
-      expect(viewModel.isValid, false);
+      expect(viewModel.isValid, true);
 
       viewModel.setNewStatusMessage(string);
       expect(viewModel.isValid, false);
@@ -80,26 +79,7 @@ main() {
       expect(viewModel.isValid, false);
 
       viewModel.setUpdateStatusMessageState(Ready());
-      viewModel.setNewStatusMessage("");
-      expect(viewModel.isValid, false);
-    });
-  });
-
-  group("initUpdateStatus", () {
-    test("Initialize the ViewModels states", () {
-      viewModel.setUpdateStatusMessageState(Success());
-      viewModel.setPreviousStatusMessage(testString1);
-      viewModel.setNewStatusMessage(testString2);
-
-      expect(viewModel.updateStatusMessageState is Success, true);
-      expect(viewModel.previousStatusMessage, testString1);
-      expect(viewModel.newStatusMessage, testString2);
-
-      viewModel.initUpdateStatus();
-
-      expect(viewModel.updateStatusMessageState is Ready, true);
-      expect(viewModel.previousStatusMessage, "");
-      expect(viewModel.newStatusMessage, "");
+      expect(viewModel.isValid, true);
     });
   });
 
