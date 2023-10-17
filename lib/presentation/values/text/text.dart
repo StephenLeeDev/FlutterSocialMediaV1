@@ -26,6 +26,7 @@ const somethingWentWrong = "Something went wrong";
 const pleaseTryAgain = "Please try again";
 const search = "Search";
 const noSearchResultFound = "No search results found";
+const settings = "Settings";
 
 /// Authentication
 const continueWithGoogle = "Continue with Google";
