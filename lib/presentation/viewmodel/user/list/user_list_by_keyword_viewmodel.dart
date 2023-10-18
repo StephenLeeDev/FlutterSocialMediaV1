@@ -31,7 +31,6 @@ class UserListByKeywordViewModel {
 
   setKeyword({required String value}) {
     _keyword = value;
-    _reinitialize();
   }
 
   /// Fetch user list by keyword
@@ -97,7 +96,7 @@ class UserListByKeywordViewModel {
   }
 
   /// Reinitialize
-  void _reinitialize() {
+  void reinitialize() {
     _setCurrentList(list: []);
     _setPage(value: 1);
     setHasNext(value: true);
