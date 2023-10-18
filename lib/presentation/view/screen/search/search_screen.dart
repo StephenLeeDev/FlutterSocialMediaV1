@@ -111,6 +111,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       _userListByKeywordViewModel.setKeyword(value: newKeyword);
                       /// Delay for 300 milliseconds and then fetch users by new keyword
                       Future.delayed(const Duration(milliseconds: 300), () {
+                        _userListByKeywordViewModel.reinitialize();
                         _userListByKeywordViewModel.getUserListByKeyword();
                       });
                     },
@@ -152,6 +153,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   // TODO : Enhance the loading UI
+  /// Loading UI
   Widget buildLoadingStateUI() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -182,6 +184,7 @@ class _SearchScreenState extends State<SearchScreen> {
   //   );
   // }
 
+  /// Fail UI
   Widget buildFailStateUI() {
     return Center(
       child: CustomErrorWidget(listener: () {
@@ -190,6 +193,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  /// Success UI
   Widget buildSuccessStateUI() {
     return ValueListenableBuilder<List<SimpleUserInfoModel>>(
         valueListenable: _userListByKeywordViewModel.currentListNotifier,
