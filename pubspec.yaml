@@ -4,7 +4,7 @@ description: Flutter Social Media Mobile Application
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.4 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -36,7 +36,7 @@ dependencies:
   get_it: ^7.6.0
 
   # Local Storage
-  flutter_secure_storage: ^8.0.0
+  flutter_secure_storage: ^9.0.0
 
   # Image Slider
   flutter_image_slideshow: ^0.1.5
@@ -47,10 +47,55 @@ dependencies:
   # List
   scrollable_positioned_list: ^0.3.8
 
+  # Geo location
+  geolocator: ^10.0.0
+
+  # SharedPreferences
+  shared_preferences: ^2.1.2
+
+  # Localizing
+  intl: ^0.18.1
+
+  # SVG
+  flutter_svg: ^1.1.6
+
+  # Splash
+  flutter_native_splash: ^2.2.9
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
+
+  assets:
+    # Add assets from the images directory to the application.
+    - assets/image/
+    - assets/icon/
+
+flutter_native_splash:
+  color: "#000000"
+  image: assets/image/logo_white.png
+  fullscreen: true
+  ios: true
+
+  android_12:
+    image: assets/image/logo_white.png
+    icon_background_color: "#000000"
+    icon_background_color_dark: "#000000"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/image/logo_white.png"
+  web:
+    generate: false
+  windows:
+    generate: false
+  macos:
+    generate: false
+  adaptive_icon_foreground: "assets/image/logo_white.png"
+  adaptive_icon_background: "#000000"

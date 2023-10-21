@@ -288,7 +288,9 @@ class _ReplyScreenState extends State<ReplyScreen> {
     _textEditingController.text = "";
   }
 
-  /// Shows a bottom sheet modal for keyboard input.
+  // TODO : Low priority
+  // TODO : Refactor this feature with the [showModalBottomKeyboard] module
+  /// Shows a bottom sheet modal for keyboard input
   void showModalBottomKeyboard({CommentModel? commentItemToUpdate}) {
     final FocusNode focusNode = FocusNode();
     showModalBottomSheet<void>(
