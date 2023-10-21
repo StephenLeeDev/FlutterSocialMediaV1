@@ -99,12 +99,12 @@ class _PostWidgetState extends State<PostWidget> {
             children: [
               GestureDetector(
                 onTap: () {
-                  /// Description for the '!widget.postModel.isMine' flag
+                  /// Description for the [!widget.postModel.isMine] flag
                   /// Move to the UserDetailScreen when it's not the current user's post
                   /// The UserDetailScreen is not for the current user
                   /// The current user should use MyPageScreen
                   ///
-                  /// Description for the 'widget.isAbleToMoveUserDetailScreen' flag
+                  /// Description for the [widget.isAbleToMoveUserDetailScreen] flag
                   /// Shouldn't move to the UserDetailScreen when the current location is the FeedFragment
                   /// Because if it is possible, then it causes the infinite loop screens issue
                   ///
@@ -319,6 +319,8 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
+  // TODO : Low priority
+  // TODO : Refactor this feature with the [showMultiButtonBottomSheetCupertino] module
   void showEditDeleteBottomModal() {
     showTwoButtonBottomSheetCupertino(
       context: context,
