@@ -10,7 +10,6 @@ import '../../../../domain/usecase/auth/post_sign_in_usecase.dart';
 import '../../../../domain/usecase/auth/set_access_token_usecase.dart';
 import '../../../../domain/usecase/auth/social_sign_in/google/google_sign_in_api.dart';
 import '../../../util/snackbar/snackbar_util.dart';
-import '../../../values/color/color.dart';
 import '../../../values/text/text.dart';
 import '../../../viewmodel/auth/auth_viewmodel.dart';
 import '../../widget/auth/social_sign_in_button_widget.dart';
@@ -36,7 +35,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightBlue00A7FF,
+      backgroundColor: Colors.black,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +43,7 @@ class _AuthScreenState extends State<AuthScreen> {
             /// Logo
             Image(
               width: MediaQuery.of(context).size.width / 2,
-              image: const AssetImage("assets/image/logo.png"),
+              image: const AssetImage("assets/image/logo_white.png"),
               fit: BoxFit.fitWidth,
             ),
             const SizedBox(height: 50),
@@ -56,23 +55,23 @@ class _AuthScreenState extends State<AuthScreen> {
                 googleSignIn(context: context);
               },
             ),
-            /// Facebook
-            SocialSignInButtonWidget(
-              title: continueWithFacebook,
-              image: "assets/icon/facebook.svg",
-              listener: () {
-                facebookSignIn(context: context);
-              },
-            ),
-            /// Apple
-            if (Platform.isIOS)
-              SocialSignInButtonWidget(
-                title: continueWithApple,
-                image: "assets/icon/apple.svg",
-                listener: () {
-                  // TODO : Implement Apple sign in
-                },
-              ),
+            // /// Facebook
+            // SocialSignInButtonWidget(
+            //   title: continueWithFacebook,
+            //   image: "assets/icon/facebook.svg",
+            //   listener: () {
+            //     // TODO : Implement Facebook sign in
+            //   },
+            // ),
+            // /// Apple
+            // if (Platform.isIOS)
+            //   SocialSignInButtonWidget(
+            //     title: continueWithApple,
+            //     image: "assets/icon/apple.svg",
+            //     listener: () {
+            //       // TODO : Implement Apple sign in
+            //     },
+            //   ),
           ],
         ),
       ),
