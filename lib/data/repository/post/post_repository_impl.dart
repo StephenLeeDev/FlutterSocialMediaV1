@@ -155,7 +155,7 @@ class PostRepositoryImpl extends PostRepository {
     const url = '$baseUrl$api';
 
     try {
-      final Response response = await _dio.post(url, queryParameters: {'postId': postId});
+      final Response response = await _dio.post(url, data: {'postId': postId});
 
       if (response.statusCode == 201) {
         final value = response.data['likeCount'];
