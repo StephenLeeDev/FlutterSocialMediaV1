@@ -7,6 +7,7 @@ import '../../../../domain/usecase/follow/get_follower_list_usecase.dart';
 import '../../../../domain/usecase/follow/get_following_list_usecase.dart';
 import '../../../values/text/text.dart';
 import '../../../viewmodel/follow/list/follow_list_viewmodel.dart';
+import '../../widget/common/empty/empty_widget.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/user/other_user/user_simple_profile_widget.dart';
 
@@ -143,15 +144,22 @@ class _FollowListScreenState extends State<FollowListScreen> {
       child: ValueListenableBuilder<List<SimpleUserInfoModel>>(
           valueListenable: _followerListViewModel.currentListNotifier,
           builder: (context, list, _) {
-            return ListView.builder(
-              controller: _scrollController,
-              itemCount: list.length,
-              itemBuilder: (BuildContext context, int index) {
-                return UserSimpleProfileWidget(
-                  simpleUserInfoModel: list[index],
-                );
-              }
-            );
+            /// List UI
+            if (list.isNotEmpty) {
+              return ListView.builder(
+                  controller: _scrollController,
+                  itemCount: list.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return UserSimpleProfileWidget(
+                      simpleUserInfoModel: list[index],
+                    );
+                  }
+              );
+            }
+            else {
+              /// Empty message UI
+              return EmptyWidget(message: widget.isFollowerMode ? noFollowersYet : noFollowingsYet);
+            }
           }
       ),
     );

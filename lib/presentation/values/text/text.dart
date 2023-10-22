@@ -87,6 +87,8 @@ const unfollow = "Unfollow";
 const following = "Following";
 const followers = "Followers";
 const followings = "Followings";
+const noFollowingsYet = "No followings yet";
+const noFollowersYet = "No followers yet";
 
 /// DM
 const noDMsYet = "No DMs yet";

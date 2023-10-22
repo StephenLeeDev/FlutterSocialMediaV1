@@ -61,8 +61,6 @@ class UserRepositoryImpl extends UserRepository {
       if (code == 200) {
         final state = DetailUserInfoState.Success(DetailUserInfoModel.fromJson(response.data));
 
-        debugPrint("state : ${state.toString()}");
-
         return state;
       }
       return DetailUserInfoState.Fail();
@@ -77,15 +75,13 @@ class UserRepositoryImpl extends UserRepository {
     const api = 'user/post/bookmark';
     const url = '$baseUrl$api';
 
-    final Response response = await _dio.post(url, queryParameters: {'postId': postId});
+    final Response response = await _dio.post(url, data: {'postId': postId});
 
     try {
       final code = response.statusCode;
 
       if (code == 201) {
         final state = CommonState.Success();
-
-        debugPrint("state : ${state.toString()}");
 
         return state;
       }
@@ -115,8 +111,6 @@ class UserRepositoryImpl extends UserRepository {
 
       if (response.statusCode == 200) {
         final state = SingleStringState.Success(response.data['updatedThumbnail']);
-
-        debugPrint("state : ${state.toString()}");
 
         return state;
       }
@@ -157,12 +151,10 @@ class UserRepositoryImpl extends UserRepository {
     const url = '$baseUrl$api';
 
     try {
-      final response = await _dio.patch(url, queryParameters: {'newStatusMessage': newStatusMessage});
+      final response = await _dio.patch(url, data: {'statusMessage': newStatusMessage});
 
       if (response.statusCode == 200) {
         final state = CommonState.Success();
-
-        debugPrint("state : ${state.toString()}");
 
         return state;
       }
@@ -186,8 +178,6 @@ class UserRepositoryImpl extends UserRepository {
       if (response.statusCode == 200) {
         final simpleUserListModel = SimpleUserListModel.fromJson(response.data);
         final state = SimpleUserListState.Success(total: simpleUserListModel.total, list: simpleUserListModel.userList);
-
-        debugPrint("state : ${state.toString()}");
 
         return state;
       }

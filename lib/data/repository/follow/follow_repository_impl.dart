@@ -21,7 +21,7 @@ class FollowRepositoryImpl extends FollowRepository {
     const url = '$baseUrl$api';
 
     try {
-      final Response response = await _dio.post(url, queryParameters: {'following': userEmail});
+      final Response response = await _dio.post(url, data: {'email': userEmail});
 
       if (response.statusCode == 201) {
         final state = SingleIntegerState.Success.fromJson(response.data);
