@@ -28,7 +28,7 @@ class DmRoomModel {
     return DmRoomModel(
       id: json['id'] as int?,
       name: json['name'] as String?,
-      latestMessage: json['latestMessage'] as String?,
+      latestMessage: (json['latestMessage'] as String?) ?? "",
       participants: (json['participants'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
