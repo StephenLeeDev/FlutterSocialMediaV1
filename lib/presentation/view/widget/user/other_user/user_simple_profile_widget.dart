@@ -14,7 +14,7 @@ class UserSimpleProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         final currentUserEmail = GetIt.instance<CurrentUserInfoViewModel>().myEmail;
 
