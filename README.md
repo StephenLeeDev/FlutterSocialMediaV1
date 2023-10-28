@@ -2,7 +2,7 @@
 
 This is a Social Media project that is researching best practices in Flutter development
 <br>I took inspiration from the UI/UX of YouTube and Instagram
-<br>(Work in progress; Direct messaging not yet implemented)
+<br><br>(Work in progress; Direct messaging feature not yet implemented)
 
 - MVVM design pattern
 - Clean Architecture
@@ -12,6 +12,12 @@ This is a Social Media project that is researching best practices in Flutter dev
 
 // TODO : Add YouTube link here later
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+
+## Launcher icon
+[Launcher Icon](https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/712d2aab-8bcf-4af9-96f6-92290d32b21c)
+
+## Splash
+[Splash](https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/2f38662f-aeb9-4013-8f59-812acb521608)
 
 ## Authentication
 
