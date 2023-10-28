@@ -6,10 +6,12 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
 import '../../../values/text/text.dart';
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
+import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../widget/navigation/navigation_tab.dart';
 import '../dm/list/dm_room_list_screen.dart';
@@ -32,6 +34,7 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
+  late final PostListViewModel _postListViewModel;
   late final CurrentUserPostGridListViewModel _postGridListViewModel;
 
   /// Tab items
@@ -62,6 +65,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     /// If created post exists, prepend it to the grid list and move to the my page screen
     if (createdPostString != null) {
       final createdPost = PostModel.fromJson(jsonDecode(createdPostString));
+      _postListViewModel.prependNewListToCurrentList(additionalList: [createdPost]);
       _postGridListViewModel.prependNewListToCurrentList(additionalList: [createdPost]);
       if (context.mounted) showSnackBar(context: context, text: postCreatedMessage);
       _onTap(4);
@@ -88,10 +92,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   /// ViewModels
   void initViewModels() {
+    initListViewModel();
     initGridListViewModel();
   }
 
-  /// List
+  /// Feed List [HomeScreen]
+  void initListViewModel() {
+    _postListViewModel = PostListViewModel(getPostListUseCase: GetIt.instance<GetPostListUseCase>());
+  }
+
+  /// Grid Feed List
   void initGridListViewModel() {
     _postGridListViewModel = context.read<CurrentUserPostGridListViewModel>();
     _postGridListViewModel.setLimit(value: 15);
@@ -108,9 +118,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Offstage(
-            offstage: _selectedIndex != 0,
-            child: const FeedScreen(),
+          MultiProvider(
+            providers: [
+              Provider<PostListViewModel>(
+                create: (context) => _postListViewModel,
+              ),
+            ],
+            child: Offstage(
+              offstage: _selectedIndex != 0,
+              child: const FeedScreen(),
+            ),
           ),
           Offstage(
             offstage: _selectedIndex != 1,
