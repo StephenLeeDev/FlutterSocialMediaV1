@@ -12,7 +12,7 @@ This is a Social Media project that is researching best practices in Flutter dev
 - REST API integration
 
 // TODO : Add the NestJS Github link here
-
+<br><br><br>
 
 ## YouTube
 
@@ -57,7 +57,7 @@ This is a Social Media project that is researching best practices in Flutter dev
 
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/b3044f99-6330-42b2-80dc-40b982a49701" width="200" alt="Create post">
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/c1f32bfa-2ac6-4067-a2ef-0c973efefa20" width="200" alt="Create post">
-<br>Picking image files from gallery<br><br><br>
+<br>Taking a new picture from the camera<br><br><br>
 
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/342035c9-ed5c-4cbe-99cb-7b408a687775" width="200" alt="Create post">
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/28ad581e-9c4e-4a89-b5e3-234c7e793169" width="200" alt="Create post">
