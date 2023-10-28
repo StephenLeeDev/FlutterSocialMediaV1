@@ -50,6 +50,7 @@ const quitPostWritingConfirm = "Are you sure you want to quit a new post writing
 const postCreatedMessage = "The post has been created";
 const postDeletedMessage = "The post has been deleted";
 const postUpdatedMessage = "The post has been updated";
+const noPostsYet = "No posts yet";
 
 /// Picture
 const selectPictureSource = "Select picture source";
