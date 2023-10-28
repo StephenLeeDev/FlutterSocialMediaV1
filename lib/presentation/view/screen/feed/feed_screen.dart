@@ -4,9 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../../../../data/model/post/item/post_model.dart';
 import '../../../../data/model/post/list/post_list_state.dart';
-import '../../../../domain/usecase/post/list/get_post_list_usecase.dart';
+import '../../../values/text/text.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
+import '../../widget/common/empty/empty_widget.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/feed/post_loading_widget.dart';
 import '../../widget/feed/post_widget.dart';
@@ -51,7 +52,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   /// List
   void initListViewModel() {
-    _postListViewModel = PostListViewModel(getPostListUseCase: GetIt.instance<GetPostListUseCase>());
+    _postListViewModel = context.read<PostListViewModel>();
   }
 
   void fetchData() async {
@@ -107,10 +108,10 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget buildLoadingStateUI() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        return SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
+        return const SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
           child: Column(
-            children: const [
+            children: [
               PostLoadingWidget(),
               PostLoadingWidget(),
             ],
@@ -131,25 +132,31 @@ class _FeedScreenState extends State<FeedScreen> {
   // TODO : Might enhance it from replace with FeedFragment
   // TODO : But low priority
   Widget buildSuccessStateUI() {
-    return RefreshIndicator(
-      onRefresh: () {
-        return _postListViewModel.refresh();
+    return ValueListenableBuilder<List<PostModel>>(
+        valueListenable: _postListViewModel.currentListNotifier,
+        builder: (context, list, _) {
+        return Stack(
+          children: [
+            RefreshIndicator(
+              onRefresh: () {
+                return _postListViewModel.refresh();
+              },
+              child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                controller: _scrollController,
+                itemCount: list.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return PostWidget(
+                    postModel: list[index],
+                  );
+                }, separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
+              ),
+            ),
+            /// Empty list UI
+            if (list.isEmpty) const EmptyWidget(message: noPostsYet),
+          ],
+        );
       },
-      child: ValueListenableBuilder<List<PostModel>>(
-          valueListenable: _postListViewModel.currentListNotifier,
-          builder: (context, list, _) {
-            return ListView.separated(
-              physics: const AlwaysScrollableScrollPhysics(),
-              controller: _scrollController,
-              itemCount: list.length,
-              itemBuilder: (BuildContext context, int index) {
-                return PostWidget(
-                  postModel: list[index],
-                );
-              }, separatorBuilder: (BuildContext context, int index) => const SizedBox(width: 20),
-            );
-          }
-      ),
     );
   }
 

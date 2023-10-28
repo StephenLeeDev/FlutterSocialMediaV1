@@ -30,6 +30,7 @@ class MultiButtonDialogItemWidget extends StatelessWidget {
                 fontWeight: FontWeight.w400,
                 color: Colors.black,
                 decoration: TextDecoration.none,
+                fontFamily: 'Roboto',
               ),
             ),
             const Spacer(),

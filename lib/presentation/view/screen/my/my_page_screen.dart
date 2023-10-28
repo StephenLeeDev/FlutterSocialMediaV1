@@ -29,6 +29,7 @@ import '../../../viewmodel/user/current_user/get_user_info/current_user_info_vie
 import '../../../viewmodel/user/current_user/update/update_status_message_viewmodel.dart';
 import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.dart';
 import '../../../viewmodel/user/delete/delete_thumbnail_viewmodel.dart';
+import '../../widget/common/empty/empty_widget.dart';
 import '../../widget/common/error/error_widget.dart';
 import '../../widget/dialog/multi_button_dialog_item_widget.dart';
 import '../../widget/feed/post_grid_widget.dart';
@@ -484,7 +485,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   Widget buildFailStateUI() {
     return Center(
       child: CustomErrorWidget(listener: () {
-        fetchPostList();
+        _refresh();
       }),
     );
   }
@@ -496,34 +497,45 @@ class _MyPageScreenState extends State<MyPageScreen> {
     return ValueListenableBuilder<List<PostModel>>(
       valueListenable: _postListViewModel.currentListNotifier,
       builder: (context, list, _) {
-        // TODO : Implement empty list
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-          ),
-          itemCount: list.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0),
-              child: PostGridWidget(
-                postModel: list[index],
-                isFromMyPage: true,
-                onTap: () {
-                  /// Move to the selected item's index in the FeedScreen
-                  context.pushNamed(
-                      FeedScreenFromGrid.routeName,
-                      queryParameters: {
-                        "selectedIndex": "$index",
-                        "title": "${list[index].getUserName}'s feed",
-                      }
-                  );
-                },
-              ),
-            );
-          },
-        );
+        /// List UI
+        if (list.isNotEmpty) {
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+            ),
+            itemCount: list.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: PostGridWidget(
+                  postModel: list[index],
+                  isFromMyPage: true,
+                  onTap: () {
+                    /// Move to the selected item's index in the FeedScreen
+                    context.pushNamed(
+                        FeedScreenFromGrid.routeName,
+                        queryParameters: {
+                          "selectedIndex": "$index",
+                          "title": "${list[index].getUserName}'s feed",
+                        }
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        }
+        /// Empty list UI
+        else {
+          return const Column(
+            children: [
+              SizedBox(height: 100),
+              EmptyWidget(message: noPostsYet),
+            ],
+          );
+        }
       },
     );
   }
