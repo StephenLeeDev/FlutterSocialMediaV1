@@ -100,25 +100,24 @@ This is a Social Media project that is researching best practices in Flutter dev
 
 
 ## MyPage
-<img src="" width="200" alt="MyPage">
-
-### Status message
-<img src="" width="200" alt="Status message">
-
-### Thumbnail
-<img src="" width="200" alt="Thumbnail">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/7180ad5f-774a-444c-9a87-f985e2ad2bb5" width="200" alt="MyPage">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/9c496789-d2d2-4a53-9817-3de8c216f14c" width="200" alt="MyPage">
 
 
 
 ## Search user
-<img src="" width="200" alt="Search user">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/eeb65ed6-ba64-4799-bcc5-206eec988706" width="200" alt="Search user">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/97ee9496-8364-4ce2-a60c-9214482d7c8d" width="200" alt="Search user">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/6c3b2ecb-51b6-47a8-bd6f-2469fa6ac688" width="200" alt="Search user">
 
 
 
 ## Follower/Following
-<img src="" width="200" alt="Follower/Following">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/4830ec0d-910c-4e56-8483-1aac951a2a27" width="200" alt="Follower/Following">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/2c5fc500-16bb-4d18-a03f-e7db5e393d18" width="200" alt="Follower/Following">
 
 
 
 ## SignOut
-<img src="" width="200" alt="SignOut">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/34e8974a-54d1-4a6c-bec0-49c826922ecb" width="200" alt="SignOut">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/a62967ae-d572-4a17-ab5f-6c4edc8e3591" width="200" alt="SignOut">
