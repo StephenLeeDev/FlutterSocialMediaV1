@@ -1,7 +1,8 @@
 # Flutter Social Media V1
 
 This is a Social Media project that is researching best practices in Flutter development
-(Work in progress; Direct messaging not yet implemented)
+<br>I took inspiration from the UI/UX of YouTube and Instagram
+<br>(Work in progress; Direct messaging not yet implemented)
 
 - MVVM design pattern
 - Clean Architecture
@@ -9,7 +10,7 @@ This is a Social Media project that is researching best practices in Flutter dev
 
 ## YouTube
 
-// TODO : Add YouTube link here
+// TODO : Add YouTube link here later
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
 
 ## Authentication
