@@ -1,16 +1,43 @@
-# flutter_social_media_v1
+# Flutter Social Media V1
 
-Flutter Social Media Mobile Application
+This is a Social Media project that is researching best practices in Flutter development
+(Work in progress; Direct messaging not yet implemented)
 
-## Getting Started
+- MVVM design pattern
+- Clean Architecture
+- REST API integration
 
-This project is a starting point for a Flutter application.
+## YouTube
 
-A few resources to get you started if this is your first Flutter project:
-
+// TODO : Add YouTube link here
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Authentication
+
+## Home (Feed)
+
+### Create post
+
+### Update post
+
+### Delete post
+
+## Comment/Reply
+
+### Create comment/reply
+
+### Update comment/reply
+
+### Delete comment/reply
+
+## MyPage
+
+### Status message
+
+### Thumbnail
+
+## Search user
+
+## Follower/Following
+
+## SignOut
