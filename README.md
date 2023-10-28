@@ -60,12 +60,13 @@ This is a Social Media project that is researching best practices in Flutter dev
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/f4f22de6-ba5e-4c17-a370-48b517d091f4" width="200" alt="Delete post">
 
 
+
 ## Comment
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/b265af71-6bef-4a4b-90d3-66314d110595" width="200" alt="Comment">
 
 ### Create comment
-<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/b8869923-1fd2-4936-a7b9-2b6cfc8a38f4" width="200" alt="Create comment>
-<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/8ab7e804-bc62-4b73-bc3d-63c08d2275d3" width="200" alt="Create comment>
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/b8869923-1fd2-4936-a7b9-2b6cfc8a38f4" width="200" alt="Comment">
+<img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/8ab7e804-bc62-4b73-bc3d-63c08d2275d3" width="200" alt="Comment">
 
 ### Update comment
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/e1d9499d-334c-4c0d-934d-66e80d01f39c" width="200" alt="Update comment">
