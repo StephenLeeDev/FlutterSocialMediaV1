@@ -45,10 +45,10 @@ import 'domain/usecase/user/current_user/post_bookmark_usecase.dart';
 import 'domain/usecase/user/current_user/update_user_status_message_usecase.dart';
 import 'domain/usecase/user/current_user/update_user_thumbnail_usecase.dart';
 import 'presentation/router/router.dart';
-import 'presentation/viewmodel/auth/auth_viewmodel.dart';
 import 'presentation/viewmodel/dm/room/list/dm_room_list_viewmodel.dart';
 import 'presentation/viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
 import 'presentation/viewmodel/post/list/other_user_post_list_viewmodel.dart';
+import 'presentation/viewmodel/post/list/post_list_viewmodel.dart';
 import 'presentation/viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 
 void main() async {
@@ -135,6 +135,9 @@ void main() async {
   final deletePostUseCase = DeletePostUseCase(postRepository: postRepository);
   getIt.registerSingleton<DeletePostUseCase>(deletePostUseCase);
   // ViewModels
+  final postListViewModel = PostListViewModel(
+      getPostListUseCase: getPostListUseCase,
+  );
   final myPostGridListViewModel = CurrentUserPostGridListViewModel(
       getPostListUseCase: getPostListUseCase,
       getMyPostListUseCase: getMyPostListUseCase,
@@ -202,6 +205,10 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        /// All user's feed
+        Provider<PostListViewModel>(
+          create: (context) => postListViewModel,
+        ),
         /// Current user information
         Provider<CurrentUserInfoViewModel>(
           create: (context) => currentUserInfoViewModel,

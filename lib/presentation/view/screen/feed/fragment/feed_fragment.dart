@@ -99,30 +99,21 @@ class _FeedFragmentState extends State<FeedFragment> {
 
   @override
   Widget build(BuildContext context) {
-    /// Provider
-    return MultiProvider(
-      providers: [
-        Provider<PostListViewModel>(
-          create: (context) => _postListViewModel,
-        ),
-      ],
-      /// Screen
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      /// Appbar
+      appBar: AppBar(
+        elevation: 0,
         backgroundColor: Colors.white,
-        /// Appbar
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          title: Text(
-            widget.title,
-            style: const TextStyle(
-              fontSize: 24,
-            ),
+        foregroundColor: Colors.black87,
+        title: Text(
+          widget.title,
+          style: const TextStyle(
+            fontSize: 24,
           ),
         ),
-        body: buildSuccessStateUI(),
       ),
+      body: buildSuccessStateUI(),
     );
   }
 

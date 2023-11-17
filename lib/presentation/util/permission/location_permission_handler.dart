@@ -31,7 +31,7 @@ class LocationPermissionHandler {
     /// Everything has been ready
     /// Just execute [positiveListener]
     if (permissionStatus == LocationPermission.always || permissionStatus == LocationPermission.whileInUse) {
-      positiveListener();
+      await positiveListener();
     }
     /// Permission is denied, so can't execute [positiveListener]
     /// Proceed requesting permission process first
@@ -51,7 +51,7 @@ class LocationPermissionHandler {
         /// Everything has been ready
         /// Just execute [positiveListener]
         if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
-          positiveListener();
+          await positiveListener();
         }
         /// If the user denied the permission before, request to the user to go to the setting screen and allow the permission himself or herself
         else {

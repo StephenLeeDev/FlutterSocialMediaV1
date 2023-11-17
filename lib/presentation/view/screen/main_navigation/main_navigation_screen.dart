@@ -67,6 +67,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       final createdPost = PostModel.fromJson(jsonDecode(createdPostString));
       _postListViewModel.prependNewListToCurrentList(additionalList: [createdPost]);
       _postGridListViewModel.prependNewListToCurrentList(additionalList: [createdPost]);
+
       if (context.mounted) showSnackBar(context: context, text: postCreatedMessage);
       _onTap(4);
 
@@ -98,7 +99,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   /// Feed List [HomeScreen]
   void initListViewModel() {
-    _postListViewModel = PostListViewModel(getPostListUseCase: GetIt.instance<GetPostListUseCase>());
+    _postListViewModel = context.read<PostListViewModel>();
   }
 
   /// Grid Feed List
@@ -118,16 +119,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          MultiProvider(
-            providers: [
-              Provider<PostListViewModel>(
-                create: (context) => _postListViewModel,
-              ),
-            ],
-            child: Offstage(
-              offstage: _selectedIndex != 0,
-              child: const FeedScreen(),
-            ),
+          Offstage(
+            offstage: _selectedIndex != 0,
+            child: const FeedScreen(),
           ),
           Offstage(
             offstage: _selectedIndex != 1,
