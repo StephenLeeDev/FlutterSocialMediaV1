@@ -24,7 +24,6 @@ import '../../../util/dialog/dialog_util.dart';
 import '../../../util/logger/image_file_logger_util.dart';
 import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
-import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/current_user/get_user_info/current_user_info_viewmodel.dart';
 import '../../../viewmodel/user/current_user/update/update_status_message_viewmodel.dart';
 import '../../../viewmodel/user/current_user/update/update_thumbnail_viewmodel.dart';
@@ -54,7 +53,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   final _scrollController = ScrollController();
 
   late final CurrentUserInfoViewModel _myUserInfoViewModel;
-  late final CurrentUserPostGridListViewModel _postListViewModel;
+  late final CurrentUserPostGridListViewModel _currentUserPostGridListViewModel;
   late final UpdateUserThumbnailViewModel _updateUserThumbnailViewModel;
   late final DeleteUserThumbnailViewModel _deleteUserThumbnailViewModel;
   late final UpdateUserStatusMessageViewModel _updateUserStatusMessageViewModel;
@@ -86,8 +85,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   /// List
   void initListViewModel() {
-    _postListViewModel = context.read<CurrentUserPostGridListViewModel>();
-    _postListViewModel.reinitialize();
+    _currentUserPostGridListViewModel = context.read<CurrentUserPostGridListViewModel>();
+    _currentUserPostGridListViewModel.reinitialize();
   }
 
   /// Update user thumbnail
@@ -117,7 +116,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   /// Fetch feed
   Future<void> fetchPostList() async {
-    await _postListViewModel.getPostList();
+    await _currentUserPostGridListViewModel.getPostList();
   }
 
   @override
@@ -125,9 +124,6 @@ class _MyPageScreenState extends State<MyPageScreen> {
     /// Provider
     return MultiProvider(
       providers: [
-        Provider<PostListViewModel>(
-          create: (context) => _postListViewModel,
-        ),
         Provider<CurrentUserInfoViewModel>(
           create: (context) => _myUserInfoViewModel,
         ),
@@ -160,11 +156,11 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
                 /// Grid feed
                 ValueListenableBuilder<PostListState.PostListState>(
-                  valueListenable: _postListViewModel.postListStateNotifier,
+                  valueListenable: _currentUserPostGridListViewModel.postListStateNotifier,
                   builder: (context, state, _) {
 
                     /// Loading UI
-                    if ((state is PostListState.Loading && _postListViewModel.currentList.isEmpty)) {
+                    if ((state is PostListState.Loading && _currentUserPostGridListViewModel.currentList.isEmpty)) {
                       return buildLoadingStateUI();
                     }
 
@@ -495,7 +491,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
   // TODO : Replace this function as a widget later
   Widget buildSuccessStateUI() {
     return ValueListenableBuilder<List<PostModel>>(
-      valueListenable: _postListViewModel.currentListNotifier,
+      valueListenable: _currentUserPostGridListViewModel.currentListNotifier,
       builder: (context, list, _) {
         /// List UI
         if (list.isNotEmpty) {
@@ -553,12 +549,12 @@ class _MyPageScreenState extends State<MyPageScreen> {
   }
 
   Future<void> _refresh() async {
-    _postListViewModel.refresh();
+    _currentUserPostGridListViewModel.refresh();
     // FIXME : ErrorNumber 01
     // FIXME : This initializing from setLimit() not actually working with getPostList(), and I don't know why yet
 
     // FIXME : I guess, it caused by private [limit]'s private scope
-    // _postListViewModel.setLimit(value: 15);
+    // _currentUserPostGridListViewModel.setLimit(value: 15);
     await _myUserInfoViewModel.getMyUserInfo();
   }
 

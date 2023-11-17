@@ -21,6 +21,7 @@ import '../../../util/integer/integer_util.dart';
 import '../../../util/snackbar/snackbar_util.dart';
 import '../../../viewmodel/post/delete/delete_post_viewmodel.dart';
 import '../../../viewmodel/post/like/post_like_viewmodel.dart';
+import '../../../viewmodel/post/list/current_user_post_grid_list_viewmodel.dart';
 import '../../../viewmodel/post/list/post_list_viewmodel.dart';
 import '../../../viewmodel/user/current_user/bookmark/bookmark_viewmodel.dart';
 import '../../screen/comment/comment/comment_screen.dart';
@@ -41,6 +42,7 @@ class _PostWidgetState extends State<PostWidget> {
   late final PostListViewModel _postListViewModel;
   late final DeletePostViewModel _deletePostViewModel;
   late final PostLikeViewModel _postLikeViewModel;
+  late final CurrentUserPostGridListViewModel _postGridListViewModel;
 
   @override
   void initState() {
@@ -52,6 +54,7 @@ class _PostWidgetState extends State<PostWidget> {
   /// ViewModels
   void initViewModels() {
     initListViewModel();
+    initGridListViewModel();
     initBookmarkViewModel();
     initLikeViewModel();
     initDeleteViewModel();
@@ -60,6 +63,11 @@ class _PostWidgetState extends State<PostWidget> {
   /// List
   void initListViewModel() {
     _postListViewModel = context.read<PostListViewModel>();
+  }
+
+  /// Grid Feed List
+  void initGridListViewModel() {
+    _postGridListViewModel = context.read<CurrentUserPostGridListViewModel>();
   }
 
   /// Bookmark
@@ -364,6 +372,7 @@ class _PostWidgetState extends State<PostWidget> {
       if (context.mounted) showCustomToastWithTimer(context: context, message: postDeletedMessage);
       /// Remove the deleted post from the list
       _postListViewModel.removeDeletedPostFromList(postId: postId);
+      _postGridListViewModel.removeDeletedPostFromList(postId: postId);
     }
   }
 
@@ -377,6 +386,7 @@ class _PostWidgetState extends State<PostWidget> {
     /// If updated post exists, replace the item from the list
     if (updatedPost != null) {
       _postListViewModel.replaceUpdatedItemFromList(updatedPost: PostModel.fromJson(jsonDecode(updatedPost)));
+      _postGridListViewModel.replaceUpdatedItemFromList(updatedPost: PostModel.fromJson(jsonDecode(updatedPost)));
       if (context.mounted) showSnackBar(context: context, text: postUpdatedMessage);
     }
   }

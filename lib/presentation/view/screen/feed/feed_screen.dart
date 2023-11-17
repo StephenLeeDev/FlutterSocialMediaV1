@@ -74,33 +74,25 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    /// Provider
-    return MultiProvider(
-      providers: [
-        Provider<PostListViewModel>(
-          create: (context) => _postListViewModel,
-        ),
-      ],
-      /// Screen
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: ValueListenableBuilder<PostListState>(
-          valueListenable: _postListViewModel.postListStateNotifier,
-          builder: (context, state, _) {
-            /// Loading UI
-            if ((state is MyUserInfoLoading) || (state is Loading && _postListViewModel.currentList.isEmpty)) {
-              return buildLoadingStateUI();
-            }
-            /// Fail UI
-            else if (state is Fail) {
-              return buildFailStateUI();
-            }
-            /// Success UI (default)
-            else {
-              return buildSuccessStateUI();
-            }
-          },
-        ),
+    /// Screen
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: ValueListenableBuilder<PostListState>(
+        valueListenable: _postListViewModel.postListStateNotifier,
+        builder: (context, state, _) {
+          /// Loading UI
+          if ((state is MyUserInfoLoading) || (state is Loading && _postListViewModel.currentList.isEmpty)) {
+            return buildLoadingStateUI();
+          }
+          /// Fail UI
+          else if (state is Fail) {
+            return buildFailStateUI();
+          }
+          /// Success UI (default)
+          else {
+            return buildSuccessStateUI();
+          }
+        },
       ),
     );
   }
