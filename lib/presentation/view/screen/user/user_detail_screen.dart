@@ -79,9 +79,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
         Provider<OtherUserInfoViewModel>(
           create: (context) => _otherUserInfoViewModel,
         ),
-        Provider<OtherUserPostGridListViewModel>(
-          create: (context) => _postListViewModel,
-        ),
       ],
       /// PageView screen
       /// UserProfile, and Feed fragments
