@@ -10,15 +10,20 @@ This is a Social Media project that is researching best practices in Flutter dev
 - Dio
 - ImagePicker
 - REST API integration
+- UnitTest
 
-// TODO : Add the NestJS Github link here
-<br><br><br>
+
 
 ## YouTube
-
 // TODO : Add YouTube link here later
-- [YouTube](https://docs.flutter.dev/get-started/codelab)
-<br>It's not ready yet<br><br><br>
+- [YouTube](https://www.youtube.com/watch?v=HKShTW_-Qa4)
+<br><br><br>
+
+
+
+## NestJS Server Github Repository
+- [NestJS Social Media V1](https://github.com/StephenLeeDev/NestjsSocialMediaV1)
+<br>
 
 
 
@@ -61,7 +66,7 @@ This is a Social Media project that is researching best practices in Flutter dev
 
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/342035c9-ed5c-4cbe-99cb-7b408a687775" width="200" alt="Create post">
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/28ad581e-9c4e-4a89-b5e3-234c7e793169" width="200" alt="Create post">
-<br>Fill the post's description<br><br><br>
+<br>Fill the post's description and complete<br><br><br>
 
 ### Update post
 <img src="https://github.com/StephenLeeDev/FlutterSocialMediaV1/assets/57079969/6107619a-8c86-44ae-80b8-654d602d31f5" width="200" alt="Update post">
