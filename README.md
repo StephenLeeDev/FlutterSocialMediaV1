@@ -15,7 +15,6 @@ This is a Social Media project that is researching best practices in Flutter dev
 
 
 ## YouTube
-// TODO : Add YouTube link here later
 - [YouTube](https://www.youtube.com/watch?v=HKShTW_-Qa4)
 <br><br><br>
 
