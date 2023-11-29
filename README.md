@@ -12,17 +12,17 @@ This is a Social Media project that is researching best practices in Flutter dev
 - REST API integration
 - UnitTest
 
-
+<br><br><br>
 
 ## YouTube
-- [YouTube](https://www.youtube.com/watch?v=HKShTW_-Qa4)
-<br><br><br>
+- [YouTube demo video](https://www.youtube.com/watch?v=HKShTW_-Qa4)
+<br><br><br><br>
 
 
 
 ## NestJS Server Github Repository
 - [NestJS Social Media V1](https://github.com/StephenLeeDev/NestjsSocialMediaV1)
-<br>
+<br><br>
 
 
 
