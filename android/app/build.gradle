@@ -23,7 +23,12 @@ if (flutterVersionName == null) {
 
 apply plugin: 'com.android.application'
 // START: FlutterFire Configuration
-apply plugin: 'com.google.gms.google-services'
+// Applied only when google-services.json exists: the Firebase configuration is
+// not in the repository (a new Firebase project comes in refactoring stage 2),
+// and without the file this plugin makes the whole build fail.
+if (file('google-services.json').exists()) {
+    apply plugin: 'com.google.gms.google-services'
+}
 // END: FlutterFire Configuration
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"

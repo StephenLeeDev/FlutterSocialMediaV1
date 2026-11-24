@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
@@ -73,7 +74,11 @@ void main() async {
   /// Dio Singleton
   final Dio dio = DioSingleton.getInstance();
   dio.options.connectTimeout = const Duration(seconds: 5);
-  dio.interceptors.add(TokenInterceptor(getAccessTokenUseCase: getAccessTokenUseCase));
+  dio.interceptors.add(TokenInterceptor(
+    getAccessTokenUseCase: getAccessTokenUseCase,
+    // Clears the stored token when the server answers 401 (see TokenInterceptor).
+    setAccessTokenUseCase: setAccessTokenUseCase,
+  ));
 
   /// Log output only in debug mode
   if (kDebugMode) {
@@ -197,10 +202,7 @@ void main() async {
   final getFollowingListUseCase = GetFollowingListUseCase(followRepository: followRepository);
   getIt.registerSingleton<GetFollowingListUseCase>(getFollowingListUseCase);
 
-  await Firebase.initializeApp();
-
-  final String? fcmToken = await FirebaseMessaging.instance.getToken();
-  debugPrint('FirebaseMessaging: fcmToken => $fcmToken');
+  await _initializeFirebaseIfConfigured();
 
   runApp(
     MultiProvider(
@@ -252,4 +254,28 @@ class App extends StatelessWidget {
     );
   }
 
+}
+
+/// Starts Firebase (push notifications) when the app has a Firebase
+/// configuration, and skips it otherwise.
+///
+/// The Firebase configuration files (ios/Runner/GoogleService-Info.plist,
+/// android/app/google-services.json) are not in the repository: the original
+/// Firebase project is no longer available, and a new one will be created in
+/// refactoring stage 2 (auth). Without them `Firebase.initializeApp()` throws,
+/// which used to stop the app before it showed anything.
+///
+/// So for now a missing configuration only turns push notifications off; the
+/// rest of the app works. Once the files are added again, this starts
+/// Firebase without any code change.
+Future<void> _initializeFirebaseIfConfigured() async {
+  try {
+    await Firebase.initializeApp();
+    final String? fcmToken = await FirebaseMessaging.instance.getToken();
+    debugPrint('FirebaseMessaging: fcmToken => $fcmToken');
+  } catch (error) {
+    debugPrint(
+      'Firebase is not configured, push notifications are off. ($error)',
+    );
+  }
 }
