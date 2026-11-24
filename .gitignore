@@ -5,9 +5,11 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -47,8 +49,11 @@ app.*.map.json
 /ios/firebase_app_id_file.json
 /android/app/google-services.json
 /lib/firebase_options.dart
-/pubspec.lock
+# pubspec.lock IS committed: for an app it pins the exact package versions,
+# so every machine (and CI) builds with the same dependencies.
 debug.keystore
 
 .env.debug
 .env.release
+# Xcode build output inside the ios folder (created when building from Xcode)
+/ios/build/

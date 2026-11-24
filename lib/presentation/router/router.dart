@@ -30,7 +30,7 @@ final GoRouter router = GoRouter(
 
     final isSignedIn = accessToken.isNotEmpty;
     if (!isSignedIn) {
-      if (state.location != AuthScreen.routeURL) {
+      if (state.matchedLocation != AuthScreen.routeURL) {
         return AuthScreen.routeURL;
       }
     }
@@ -63,11 +63,11 @@ final GoRouter router = GoRouter(
       path: FeedScreenFromGrid.routeURL,
       builder: (context, state) {
         /// Selected post's index from grid feed list screen
-        final selectedIndexString = state.queryParameters['selectedIndex'];
+        final selectedIndexString = state.uri.queryParameters['selectedIndex'];
         final selectedPostId = selectedIndexString == null ? -1 : int.parse(selectedIndexString);
 
-        final title = state.queryParameters['title'] ?? "";
-        final isFromMyPage = state.queryParameters['isFromMyPage'] ?? "true";
+        final title = state.uri.queryParameters['title'] ?? "";
+        final isFromMyPage = state.uri.queryParameters['isFromMyPage'] ?? "true";
 
         return FeedScreenFromGrid(
           isFromMyPage: isFromMyPage == "true",
@@ -89,7 +89,7 @@ final GoRouter router = GoRouter(
       name: UpdatePostDescriptionScreen.routeName,
       path: UpdatePostDescriptionScreen.routeURL,
       builder: (context, state) {
-        final postString = state.queryParameters[PostModel().getSimpleName()] ?? "";
+        final postString = state.uri.queryParameters[PostModel().getSimpleName()] ?? "";
         return UpdatePostDescriptionScreen(postString: postString);
       },
     ),
@@ -99,7 +99,7 @@ final GoRouter router = GoRouter(
       name: CommentScreen.routeName,
       path: CommentScreen.routeURL,
       builder: (context, state) {
-        final postId = state.queryParameters['postId'] ?? "-1";
+        final postId = state.uri.queryParameters['postId'] ?? "-1";
         return CommentScreen(postId: postId);
       }
     ),
@@ -109,8 +109,8 @@ final GoRouter router = GoRouter(
       name: ReplyScreen.routeName,
       path: ReplyScreen.routeURL,
       builder: (context, state) {
-        final postId = state.queryParameters['postId'] ?? "-1";
-        final commentString = state.queryParameters[CommentModel().getSimpleName()] ?? "";
+        final postId = state.uri.queryParameters['postId'] ?? "-1";
+        final commentString = state.uri.queryParameters[CommentModel().getSimpleName()] ?? "";
         return ReplyScreen(postId: postId, commentString: commentString);
       },
     ),
@@ -120,7 +120,7 @@ final GoRouter router = GoRouter(
       name: UserDetailScreen.routeName,
       path: UserDetailScreen.routeURL,
       builder: (context, state) {
-        final userEmail = state.queryParameters['userEmail'] ?? "";
+        final userEmail = state.uri.queryParameters['userEmail'] ?? "";
         return UserDetailScreen(userEmail: userEmail);
       },
     ),
@@ -132,11 +132,11 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
 
         /// The user's email address to fetch
-        final userEmail = state.queryParameters['userEmail'] ?? "";
+        final userEmail = state.uri.queryParameters['userEmail'] ?? "";
 
         /// When [isFollower] is true, it works as a Follower list screen
         /// When [isFollower] is false, it works as a Following list screen
-        final bool isFollower = state.queryParameters['isFollowerMode'] == "true";
+        final bool isFollower = state.uri.queryParameters['isFollowerMode'] == "true";
 
         return FollowListScreen(userEmail: userEmail, isFollowerMode: isFollower);
       },
@@ -147,7 +147,7 @@ final GoRouter router = GoRouter(
       name: DmRoomScreen.routeName,
       path: DmRoomScreen.routeURL,
       builder: (context, state) {
-        final title = state.queryParameters['title'] ?? "";
+        final title = state.uri.queryParameters['title'] ?? "";
         return DmRoomScreen(title: title);
       },
     ),
