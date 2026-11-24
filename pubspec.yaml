@@ -9,34 +9,34 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^2.0.0
 
   # Firebase
-  firebase_core: ^2.13.1
-  firebase_auth: ^4.6.0
-  firebase_messaging: ^14.6.2
+  firebase_core: ^5.2.0
+  firebase_auth: ^7.1.0
+  firebase_messaging: ^17.1.0
 
   # Notification
-  flutter_local_notifications: ^14.1.1
+  flutter_local_notifications: ^23.0.4
 
   # Social SignIn
-  google_sign_in: ^6.1.0
+  google_sign_in: ^7.2.0
 
   # Networking
   dio: ^5.1.2
   pretty_dio_logger: ^1.3.1
 
   # Route
-  go_router: ^8.1.0
+  go_router: ^18.1.4
 
   # State Management
   provider: ^6.0.5
 
   # Dependency Injection
-  get_it: ^7.6.0
+  get_it: ^9.3.0
 
   # Local Storage
-  flutter_secure_storage: ^9.0.0
+  flutter_secure_storage: ^11.2.0
 
   # Image Slider
   flutter_image_slideshow: ^0.1.5
@@ -48,16 +48,16 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
 
   # Geo location
-  geolocator: ^10.0.0
+  geolocator: ^14.1.2
 
   # SharedPreferences
   shared_preferences: ^2.1.2
 
   # Localizing
-  intl: ^0.18.1
+  intl: ^0.20.3
 
   # SVG
-  flutter_svg: ^1.1.6
+  flutter_svg: ^2.5.0
 
   # Splash
   flutter_native_splash: ^2.2.9
@@ -65,8 +65,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
-  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  mocktail: ^1.0.5
 
 flutter:
   uses-material-design: true
